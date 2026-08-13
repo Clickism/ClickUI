@@ -1,0 +1,104 @@
+package de.clickism.clickui;
+
+import org.junit.jupiter.api.Test;
+
+import javax.swing.*;
+import java.awt.*;
+
+class LayoutEngineTest {
+
+    @Test
+    void renderLayout() {
+        Element root = new Element()
+                .vertical()
+                .padding(20)
+                .childGap(10)
+                .children(
+                        new Element()
+                                .width(300)
+                                .height(50),
+
+                        new Element()
+                                .horizontal()
+                                .width(500)
+                                .padding(10)
+                                .childGap(10)
+                                .children(
+                                        new Element()
+                                                .width(100)
+                                                .height(150),
+
+                                        new Element()
+                                                .width(Sizing.grow())
+                                                .height(100),
+
+                                        new Element()
+                                                .width(20)
+                                                .height(Sizing.grow())
+                                ),
+
+                        new Element()
+                                .width(300)
+                                .height(40)
+                );
+
+        LayoutEngine engine = new LayoutEngine();
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("ClickUI Layout Test");
+
+            JPanel panel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    engine.layout(
+                            root,
+                            new Size(getWidth(), getHeight())
+                    );
+
+                    renderElement(g, root, 0);
+                }
+            };
+
+            frame.setContentPane(panel);
+            frame.setSize(800, 600);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setVisible(true);
+        });
+
+        // Keep the JUnit test alive while developing.
+        try {
+            Thread.sleep(Long.MAX_VALUE);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private static void renderElement(
+            Graphics g,
+            Element element,
+            int depth
+    ) {
+        Rect bounds = element.bounds();
+
+        // Draw the element's bounds.
+        g.drawRect(
+                bounds.x(),
+                bounds.y(),
+                bounds.width(),
+                bounds.height()
+        );
+
+        // Draw its name/depth for debugging.
+        g.drawString(
+                "Element " + depth,
+                bounds.x() + 4,
+                bounds.y() + 15
+        );
+
+        for (Element child : element.children()) {
+            renderElement(g, child, depth + 1);
+        }
+    }
+}
