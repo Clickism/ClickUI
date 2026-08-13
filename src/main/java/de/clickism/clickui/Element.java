@@ -2,6 +2,7 @@ package de.clickism.clickui;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,6 +170,7 @@ public abstract class Element {
      */
     public void renderTree(RenderContext context) {
         this.render(context);
+        context.graphics().renderOutline(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height(), 0xffff0000);
         // Render children
         for (Element child : children) {
             child.renderTree(context);
