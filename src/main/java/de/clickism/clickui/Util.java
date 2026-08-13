@@ -1,5 +1,8 @@
 package de.clickism.clickui;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+
 import java.util.function.Consumer;
 
 public class Util {
@@ -15,5 +18,9 @@ public class Util {
         for (Element child : element.children()) {
             preOrder(child, consumer);
         }
+    }
+
+    public static Font font() {
+        return Minecraft.getInstance().font;
     }
 }

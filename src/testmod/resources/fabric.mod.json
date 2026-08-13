@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "clickui-test-mod",
+  "version": "0.1",
+  "name": "ClickUI Test Mod",
+  "description": "A test mod for ClickUI.",
+  "authors": [
+    "Clickism"
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      {
+        "value": "de.clickism.clickui.testmod.TestMod"
+      }
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}

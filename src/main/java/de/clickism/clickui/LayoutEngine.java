@@ -5,11 +5,10 @@ public class LayoutEngine {
      * Lays out the given root element and its children based on their sizing and layout axis.
      *
      * @param root the root element to layout
-     * @param size the size to lay out the root element within
      */
-    public void layout(Element root, Size size) {
+    public void layout(Element root) {
         // Set the root element size to the given size
-        root.bounds(new Rect(0, 0, size.width(), size.height()));
+        root.bounds(root.bounds().withPosition(0, 0));
         // Measure the fit size
         measureSizes(root);
         // Measure the grow size

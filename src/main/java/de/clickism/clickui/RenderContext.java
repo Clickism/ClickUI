@@ -1,5 +1,19 @@
 package de.clickism.clickui;
 
-public interface RenderContext {
+import net.minecraft.client.gui.GuiGraphics;
 
+/**
+ * Represents the render context when rendering a UI element.
+ *
+ * @param graphics
+ * @param mouseX
+ * @param mouseY
+ * @param delta
+ */
+public record RenderContext(
+        GuiGraphics graphics,
+        int mouseX,
+        int mouseY,
+        float delta
+) {
 }

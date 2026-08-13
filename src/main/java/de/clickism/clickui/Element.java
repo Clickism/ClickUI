@@ -13,6 +13,8 @@ public abstract class Element {
 
     // UI Tree
 
+    // TODO: Alignment, visibility, style, hover, events, etc.
+
     /**
      * The children of this element.
      */
@@ -153,6 +155,11 @@ public abstract class Element {
 
     public @Nullable Element parent() {
         return this.parent;
+    }
+
+    // Invalidates the element
+    public void invalidate() {
+
     }
 
     /**

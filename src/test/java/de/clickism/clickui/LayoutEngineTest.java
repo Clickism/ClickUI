@@ -1,5 +1,6 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.elements.Box;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -9,35 +10,34 @@ class LayoutEngineTest {
 
     @Test
     void renderLayout() {
-        Element root = new Element()
+        Element root = new Box()
                 .vertical()
                 .padding(20)
                 .childGap(10)
                 .children(
-                        new Element()
+                        new Box()
                                 .width(300)
                                 .height(50),
 
-                        new Element()
+                        new Box()
                                 .horizontal()
-                                .width(500)
                                 .padding(10)
                                 .childGap(10)
                                 .children(
-                                        new Element()
+                                        new Box()
                                                 .width(100)
                                                 .height(150),
 
-                                        new Element()
-                                                .width(Sizing.grow())
+                                        new Box()
+                                                .width(100)
                                                 .height(100),
 
-                                        new Element()
+                                        new Box()
                                                 .width(20)
-                                                .height(Sizing.grow())
+                                                .height(50)
                                 ),
 
-                        new Element()
+                        new Box()
                                 .width(300)
                                 .height(40)
                 );
