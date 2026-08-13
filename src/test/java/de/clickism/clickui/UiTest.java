@@ -22,16 +22,5 @@ public class UiTest {
                                 .width(32)
                                 .height(32)
                 );
-
-        new Component() {
-            @Override
-            public Element build() {
-                return box()
-                        .vertical()
-                        .children(
-                                box()
-                        );
-            }
-        };
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * An element in the UI hierarchy.
  */
-public class Element {
+public abstract class Element {
 
     // UI Tree
 
@@ -35,7 +35,6 @@ public class Element {
      * Calculated bounds of the element.
      */
     private Rect bounds = Rect.ZERO;
-    private Size measuredSize = Size.ZERO;
 
     /**
      * Returns the intrinsic size of this element, which is the size that this element would like to be if it could be any size.
@@ -155,4 +154,24 @@ public class Element {
     public @Nullable Element parent() {
         return this.parent;
     }
+
+    /**
+     * Renders this element and all of its children recursively.
+     *
+     * @param context the render context to render to
+     */
+    public void renderTree(RenderContext context) {
+        this.render(context);
+        // Render children
+        for (Element child : children) {
+            child.renderTree(context);
+        }
+    }
+
+    /**
+     * Renders this element only, without rendering its children.
+     *
+     * @param context the render context to render with
+     */
+    public abstract void render(RenderContext context);
 }
