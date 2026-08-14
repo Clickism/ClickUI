@@ -1,5 +1,8 @@
 package de.clickism.clickui;
 
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
+
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -61,11 +64,10 @@ public class LayoutEngine {
         height += padding.top() + padding.bottom();
 
         // Add child gap
-        int gapCount = Math.max(0, element.children().size() - 1);
         if (element.axis() == LayoutAxis.HORIZONTAL) {
-            width += element.childGap() * gapCount;
+            width += element.totalChildGap();
         } else {
-            height += element.childGap() * gapCount;
+            height += element.totalChildGap();
         }
 
         // Check if the element has fixed sizing and override the calculated size if so
@@ -84,76 +86,127 @@ public class LayoutEngine {
         Util.preOrder(element, this::growChildElements);
     }
 
-    private void growChildElements(Element element) {
-        // TODO: FIX
+    private ToIntFunction<Element> crossGetter(LayoutAxis axis) {
+        return axis == LayoutAxis.HORIZONTAL
+                ? child -> child.bounds().height()
+                : child -> child.bounds().width();
+    }
 
-//        if (element.axis() == LayoutAxis.HORIZONTAL) {
-//            int remainingWidth = element.bounds().width();
-//            remainingWidth -= element.padding().left() + element.padding().right();
-//            remainingWidth -= element.childGap() * Math.max(0, element.children().size() - 1);
-//            remainingWidth -= element.children().stream().mapToInt(child -> child.bounds().width()).sum();
-//
-//            int remainingHeight = element.bounds().height();
-//            remainingHeight -= element.padding().top() + element.padding().bottom();
-//
-//            // Distribute remaining width to children with grow sizing
-//            var growChildren = element.children().stream()
-//                    .filter(child -> child.width().type() == Sizing.Type.GROW)
-//                    .toList();
-//            if (growChildren.isEmpty()) return;
-//            while (remainingWidth > 0) {
-//                int smallest = growChildren.get(0).bounds().width();
-//                int secondSmallest = Integer.MAX_VALUE;
-//                int widthToAdd = remainingWidth;
-//                for (Element child : growChildren) {
-//                    int width = child.bounds().width();
-//                    if (width < smallest) {
-//                        secondSmallest = smallest;
-//                        smallest = width;
-//                    }
-//                    if (width > smallest) {
-//                        secondSmallest = Math.min(secondSmallest, width);
-//                        widthToAdd = secondSmallest - smallest;
-//                    }
-//                }
-//
-//                widthToAdd = Math.min(widthToAdd, remainingWidth / growChildren.size());
-//
-//                for (Element child : growChildren) {
-//                    if (child.bounds().width() == smallest) {
-//                        int newWidth = child.bounds().width() + widthToAdd;
-//                        child.bounds(child.bounds().withWidth(newWidth));
-//                        remainingWidth -= widthToAdd;
-//                    }
-//                }
-//            }
-//
-//            // Distribute remaining height to children with grow sizing
-//            for (Element child : element.children()) {
-//                if (child.height().type() == Sizing.Type.GROW) {
-//                    child.bounds(child.bounds().withSize(child.bounds().width(), remainingHeight));
-//                }
-//            }
-//        } else {
-//            int remainingHeight = element.bounds().height();
-//            remainingHeight -= element.padding().top() + element.padding().bottom();
-//            remainingHeight -= element.childGap() * Math.max(0, element.children().size() - 1);
-//            remainingHeight -= element.children().stream().mapToInt(child -> child.bounds().height()).sum();
-//
-//            int remainingWidth = element.bounds().width();
-//            remainingWidth -= element.padding().left() + element.padding().right();
-//
-//            // Distribute remaining height to children with grow sizing
-//            for (Element child : element.children()) {
-//                if (child.height().type() == Sizing.Type.GROW) {
-//                    int height = child.bounds().height() + remainingHeight;
-//                    child.bounds(child.bounds().withSize(child.bounds().width(), height));
-//                }
-//                if (child.width().type() == Sizing.Type.GROW) {
-//                    child.bounds(child.bounds().withSize(remainingWidth, child.bounds().height()));
-//                }
-//            }
-//        }
+    private ToIntFunction<Element> axisGetter(LayoutAxis axis) {
+        return axis == LayoutAxis.HORIZONTAL
+                ? child -> child.bounds().width()
+                : child -> child.bounds().height();
+    }
+
+    private void growChildElements(Element element) {
+        int remainingAxis = calculateRemainingAxisSpace(element);
+        int remainingCross = calculateRemainingCrossSpace(element);
+
+        distributeAxisSpace(element, remainingAxis);
+        distributeCrossSpace(element, remainingCross);
+    }
+
+    private void distributeAxisSpace(Element element, int remainingAxis) {
+        boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
+        // Distribute remaining axis space to children
+        Predicate<Element> mapper = horizontal
+                ? child -> child.width().type() == Sizing.Type.GROW
+                : child -> child.height().type() == Sizing.Type.GROW;
+        var growAxisChildren = element.children().stream().filter(mapper).toList();
+
+        if (growAxisChildren.isEmpty()) return;
+
+        while (remainingAxis > 0) {
+            // Find smallest axis size
+            int smallest = growAxisChildren.stream()
+                    .mapToInt(axisGetter(element.axis()))
+                    .min()
+                    .orElse(Integer.MAX_VALUE);
+            // Find second smallest axis size
+            int secondSmallest = growAxisChildren.stream()
+                    .mapToInt(axisGetter(element.axis()))
+                    .filter(axis -> axis > smallest)
+                    .min()
+                    .orElse(Integer.MAX_VALUE);
+
+            // By default, make the smallest one's size match the second smallest
+            int axisToAdd = secondSmallest - smallest;
+            // Make sure we at most add as much as remaining space
+            axisToAdd = Math.min(remainingAxis, axisToAdd);
+            // At each step, add only the max share possible
+            axisToAdd = Math.min(axisToAdd, remainingAxis / growAxisChildren.size());
+
+            for (Element child : growAxisChildren) {
+                int axis = axisGetter(element.axis()).applyAsInt(child);
+                if (axis != smallest) continue;
+                // Grow smallest boxes by width to add
+                if (horizontal) {
+                    int width = child.bounds().width() + axisToAdd;
+                    child.bounds(child.bounds().withWidth(width));
+                } else {
+                    int height = child.bounds().height() + axisToAdd;
+                    child.bounds(child.bounds().withHeight(height));
+                }
+                remainingAxis -= axisToAdd;
+            }
+        }
+    }
+
+    private void distributeCrossSpace(Element element, int remainingCross) {
+        // Distribute remaining cross space to children
+        boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
+        for (Element child : element.children()) {
+            boolean growCross = horizontal
+                    ? child.height().type() == Sizing.Type.GROW
+                    : child.width().type() == Sizing.Type.GROW;
+            if (!growCross) continue;
+            // Grow to remaining cross if smaller
+            if (horizontal) {
+                int height = Math.max(child.bounds().height(), remainingCross);
+                child.bounds(child.bounds().withHeight(height));
+            } else {
+                int width = Math.max(child.bounds().width(), remainingCross);
+                child.bounds(child.bounds().withWidth(width));
+            }
+        }
+    }
+
+    /**
+     * Calculates the remaining soace in the axis of the element
+     *
+     * @param element the element to use
+     * @return remaining space in axis
+     */
+    private int calculateRemainingAxisSpace(Element element) {
+        boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
+        int remainingAxis = horizontal
+                ? element.bounds().width()
+                : element.bounds().height();
+        remainingAxis -= horizontal
+                ? element.padding().left() + element.padding().right()
+                : element.padding().top() + element.padding().bottom();
+        remainingAxis -= element.totalChildGap();
+        remainingAxis -= element.children().stream()
+                .mapToInt(axisGetter(element.axis()))
+                .sum();
+        return remainingAxis;
+    }
+
+    /**
+     * Calculates th remaining cross space in the element
+     *
+     * @param element the elment to use
+     * @return remaining cross space
+     */
+    private int calculateRemainingCrossSpace(Element element) {
+        boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
+        int remainingHeight = horizontal
+                ? element.bounds().height()
+                : element.bounds().width();
+        remainingHeight -= horizontal
+                ? element.padding().top() + element.padding().bottom()
+                : element.padding().left() + element.padding().right();
+        return remainingHeight;
     }
 
     /**

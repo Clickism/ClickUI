@@ -17,12 +17,28 @@ class LayoutEngineTest {
                 .children(
                         new Box()
                                 .width(300)
-                                .height(50),
+                                .horizontal()
+                                .padding(10)
+                                .childGap(10)
+                                .children(
+                                        new Box()
+                                                .width(30)
+                                                .height(30),
+
+                                        new Box()
+                                                .width(Sizing.grow())
+                                                .height(Sizing.grow()),
+
+                                        new Box()
+                                                .width(Sizing.grow())
+                                                .height(Sizing.grow())
+                                ),
 
                         new Box()
                                 .horizontal()
                                 .padding(10)
                                 .childGap(10)
+                                .width(Sizing.grow())
                                 .children(
                                         new Box()
                                                 .width(100)
@@ -52,10 +68,10 @@ class LayoutEngineTest {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
 
-                    engine.layout(
-                            root,
-                            new Size(getWidth(), getHeight())
-                    );
+                    engine.layout(new Box()
+                            .width(800)
+                            .height(500)
+                            .children(root));
 
                     renderElement(g, root, 0);
                 }

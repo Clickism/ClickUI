@@ -93,6 +93,10 @@ public abstract class Element {
         return this.childGap;
     }
 
+    int totalChildGap() {
+        return childGap * Math.max(0, this.children.size() - 1);
+    }
+
     public Element padding(int padding) {
         this.padding = Padding.uniform(padding);
         return this;
