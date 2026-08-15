@@ -2,6 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.layout.Layout;
 import de.clickism.clickui.layout.Layoutable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -62,10 +63,12 @@ public abstract class Element implements Layoutable<Element> {
 
     /**
      * Sets the bounds of this element, which is the rectangle that this element occupies in the coordinate space.
+     * This method is intended to be called by the layout system, and should not be called directly by user code.
      *
      * @param bounds The new bounds of this element.
      */
-    void bounds(Rect bounds) {
+    @ApiStatus.Internal
+    public void bounds(Rect bounds) {
         this.bounds = bounds;
     }
 

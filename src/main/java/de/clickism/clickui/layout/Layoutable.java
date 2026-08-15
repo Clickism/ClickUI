@@ -2,31 +2,33 @@ package de.clickism.clickui.layout;
 
 import de.clickism.clickui.LayoutAxis;
 import de.clickism.clickui.Padding;
+import de.clickism.clickui.Self;
 import de.clickism.clickui.Sizing;
 
-public interface Layoutable<T extends Layoutable<T>> {
+public interface Layoutable<S extends Layoutable<S>>
+        extends Self<S> {
+    /**
+     * Returns the layout information for the UI element.
+     *
+     * @return the layout information
+     */
     Layout layout();
-
-    @SuppressWarnings("unchecked")
-    default T self() {
-        return (T) this;
-    }
 
     default LayoutAxis axis() {
         return layout().axis;
     }
 
-    default T axis(LayoutAxis axis) {
+    default S axis(LayoutAxis axis) {
         layout().axis = axis;
         return self();
     }
 
-    default T vertical() {
+    default S vertical() {
         layout().axis = LayoutAxis.VERTICAL;
         return self();
     }
 
-    default T horizontal() {
+    default S horizontal() {
         layout().axis = LayoutAxis.HORIZONTAL;
         return self();
     }
@@ -35,12 +37,12 @@ public interface Layoutable<T extends Layoutable<T>> {
         return layout().width;
     }
 
-    default T width(Sizing width) {
+    default S width(Sizing width) {
         layout().width = width;
         return self();
     }
 
-    default T width(int width) {
+    default S width(int width) {
         layout().width = Sizing.fixed(width);
         return self();
     }
@@ -49,12 +51,12 @@ public interface Layoutable<T extends Layoutable<T>> {
         return layout().height;
     }
 
-    default T height(Sizing height) {
+    default S height(Sizing height) {
         layout().height = height;
         return self();
     }
 
-    default T height(int height) {
+    default S height(int height) {
         layout().height = Sizing.fixed(height);
         return self();
     }
@@ -63,12 +65,12 @@ public interface Layoutable<T extends Layoutable<T>> {
         return layout().padding;
     }
 
-    default T padding(Padding padding) {
+    default S padding(Padding padding) {
         layout().padding = padding;
         return self();
     }
 
-    default T padding(int padding) {
+    default S padding(int padding) {
         layout().padding = Padding.uniform(padding);
         return self();
     }
@@ -77,7 +79,7 @@ public interface Layoutable<T extends Layoutable<T>> {
         return layout().childGap;
     }
 
-    default T childGap(int childGap) {
+    default S childGap(int childGap) {
         layout().childGap = childGap;
         return self();
     }
