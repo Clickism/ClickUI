@@ -3,6 +3,11 @@ package de.clickism.clickui;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
+/**
+ * The LayoutEngine class is responsible for laying out the elements in a UI hierarchy based on their sizing and
+ * layout axis. It calculates the sizes and positions of each element and its children, taking into account padding,
+ * child gaps, and sizing types (fixed, fit, or grow).
+ */
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -65,9 +70,9 @@ public class LayoutEngine {
 
         // Add child gap
         if (element.axis() == LayoutAxis.HORIZONTAL) {
-            width += element.totalChildGap();
+            width += totalChildGap(element);
         } else {
-            height += element.totalChildGap();
+            height += totalChildGap(element);
         }
 
         // Check if the element has fixed sizing and override the calculated size if so
@@ -192,7 +197,7 @@ public class LayoutEngine {
         boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
         int remainingAxis = horizontal ? element.bounds().width() : element.bounds().height();
         remainingAxis -= horizontal ? element.padding().left() + element.padding().right() : element.padding().top() + element.padding().bottom();
-        remainingAxis -= element.totalChildGap();
+        remainingAxis -= totalChildGap(element);
         remainingAxis -= element.children().stream().mapToInt(axisGetter(element.axis())).sum();
         return remainingAxis;
     }
@@ -253,5 +258,15 @@ public class LayoutEngine {
      */
     private static ToIntFunction<Element> axisGetter(LayoutAxis axis) {
         return axis == LayoutAxis.HORIZONTAL ? child -> child.bounds().width() : child -> child.bounds().height();
+    }
+
+    /**
+     * Calculates the total gap between the children of the given element based on its child gap and number of children.
+     *
+     * @param element the element to calculate the total child gap for
+     * @return the total gap between the children of the element
+     */
+    private static int totalChildGap(Element element) {
+        return element.childGap() * Math.max(0, element.children().size() - 1);
     }
 }

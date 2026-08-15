@@ -1,8 +1,9 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.layout.Layout;
+import de.clickism.clickui.layout.Layoutable;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,12 +11,9 @@ import java.util.List;
 /**
  * An element in the UI hierarchy.
  */
-public abstract class Element {
-
-    // UI Tree
-
+// TODO: Generic self type
+public abstract class Element implements Layoutable<Element> {
     // TODO: Alignment, visibility, style, hover, events, etc.
-
     /**
      * The children of this element.
      */
@@ -25,14 +23,10 @@ public abstract class Element {
      */
     private @Nullable Element parent;
 
-    // Layout
-    private LayoutAxis layoutAxis = LayoutAxis.VERTICAL;
-
-    private Sizing width = Sizing.fit();
-    private Sizing height = Sizing.fit();
-
-    private Padding padding = Padding.ZERO;
-    private int childGap = 0;
+    /**
+     * Layout information for this element,
+     */
+    private final Layout layout = new Layout();
 
     /**
      * Calculated bounds of the element.
@@ -57,92 +51,30 @@ public abstract class Element {
         return Size.ZERO;
     }
 
+    /**
+     * Gets the bounds of this element, which is the rectangle that this element occupies in the coordinate space.
+     *
+     * @return The bounds of this element.
+     */
     public Rect bounds() {
         return bounds;
     }
 
+    /**
+     * Sets the bounds of this element, which is the rectangle that this element occupies in the coordinate space.
+     *
+     * @param bounds The new bounds of this element.
+     */
     void bounds(Rect bounds) {
         this.bounds = bounds;
     }
 
-    public Element vertical() {
-        this.layoutAxis = LayoutAxis.VERTICAL;
-        return this;
-    }
-
-    public Element horizontal() {
-        this.layoutAxis = LayoutAxis.HORIZONTAL;
-        return this;
-    }
-
-    public Element axis(LayoutAxis axis) {
-        this.layoutAxis = axis;
-        return this;
-    }
-
-    public LayoutAxis axis() {
-        return this.layoutAxis;
-    }
-
-    public Element childGap(int gap) {
-        this.childGap = gap;
-        return this;
-    }
-
-    public int childGap() {
-        return this.childGap;
-    }
-
-    int totalChildGap() {
-        return childGap * Math.max(0, this.children.size() - 1);
-    }
-
-    public Element padding(int padding) {
-        this.padding = Padding.uniform(padding);
-        return this;
-    }
-
-    public Element padding(Padding padding) {
-        this.padding = padding;
-        return this;
-    }
-
-    public Padding padding() {
-        return this.padding;
-    }
-
-    public Element width(Sizing sizing) {
-        this.width = sizing;
-        return this;
-    }
-
-    public Element width(int width) {
-        this.width = Sizing.fixed(width);
-        return this;
-    }
-
-    public Sizing width() {
-        return this.width;
-    }
-
-    public Element height(Sizing sizing) {
-        this.height = sizing;
-        return this;
-    }
-
-    public Element height(int height) {
-        this.height = Sizing.fixed(height);
-        return this;
-    }
-
-    public Sizing height() {
-        return this.height;
-    }
-
-    public Size size() {
-        return new Size(this.width().value(), this.height().value());
-    }
-
+    /**
+     * Adds the given children to this element, and sets their parent to this element.
+     *
+     * @param children the children to add
+     * @return this element
+     */
     public Element children(Element... children) {
         for (Element child : children) {
             this.children.add(child);
@@ -154,17 +86,34 @@ public abstract class Element {
         return this;
     }
 
+    /**
+     * Returns an unmodifiable list of the children of this element.
+     *
+     * @return an unmodifiable list of the children of this element
+     */
     public List<Element> children() {
         return Collections.unmodifiableList(this.children);
     }
 
+    /**
+     * Returns the parent of this element, or null if this element is the root element.
+     *
+     * @return the parent of this element, or null if this element is the root element
+     */
     public @Nullable Element parent() {
         return this.parent;
     }
 
-    // Invalidates the element
-    public void invalidate() {
+    @Override
+    public Layout layout() {
+        return this.layout;
+    }
 
+    /**
+     * Invalidates the layout of this element and all of its children.
+     */
+    public void invalidate() {
+        // TODO: Implement
     }
 
     /**
@@ -174,6 +123,7 @@ public abstract class Element {
      */
     public void renderTree(RenderContext context) {
         this.render(context);
+        // TODO: Remove debug rendering
         context.graphics().renderOutline(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height(), 0xffff0000);
         // Render children
         for (Element child : children) {

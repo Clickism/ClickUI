@@ -1,6 +1,7 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.elements.Box;
+import de.clickism.clickui.layout.Layout;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -57,6 +58,10 @@ class LayoutEngineTest {
                                 .width(300)
                                 .height(40)
                 );
+
+        new Layout()
+                .width(100)
+                .height(100);
 
         LayoutEngine engine = new LayoutEngine();
 
