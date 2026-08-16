@@ -12,9 +12,8 @@ import java.util.List;
 /**
  * An element in the UI hierarchy.
  */
-// TODO: Generic self type
 public abstract class Element<S extends Element<S>> implements Layoutable<S> {
-    // TODO: Alignment, visibility, style, hover, events, etc.
+    // TODO: Visibility, style, hover, events, etc.
     /**
      * The children of this element.
      */
