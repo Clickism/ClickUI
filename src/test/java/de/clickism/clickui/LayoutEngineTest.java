@@ -1,7 +1,6 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.elements.Box;
-import de.clickism.clickui.layout.Layout;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -10,8 +9,8 @@ import java.awt.*;
 class LayoutEngineTest implements UiBuilder {
 
     @Test
-    void renderLayout() {
-        var root = box()
+    void renderSimple() {
+        renderScreen(box()
             .vertical()
             .padding(20)
             .childGap(10)
@@ -69,12 +68,44 @@ class LayoutEngineTest implements UiBuilder {
                 new Box()
                     .width(300)
                     .height(40)
-            );
+            )
+        );
+    }
 
-        new Layout()
-            .width(100)
-            .height(100);
+    @Test
+    void renderGrid() {
+        renderScreen(box()
+            .horizontal()
+            .height(Sizing.grow())
+            .width(Sizing.grow())
+            .children(
+                // First panel
+                box()
+                    .width(300)
+                    .height(Sizing.grow())
+                    .padding(10),
 
+                // Space
+                box()
+                    .width(Sizing.grow())
+                    .height(Sizing.grow())
+                    .mainAlign(Align.END)
+                    .padding(20)
+                    .children(
+                        box()
+                            .width(Sizing.grow())
+                            .height(50)
+                    ),
+
+                // Second panel
+                box()
+                    .width(300)
+                    .height(Sizing.grow())
+            )
+        );
+    }
+
+    private void renderScreen(Element<?> root) {
         LayoutEngine engine = new LayoutEngine();
 
         SwingUtilities.invokeLater(() -> {
@@ -85,14 +116,27 @@ class LayoutEngineTest implements UiBuilder {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
 
-                    engine.layout(new Box()
-                        .width(800)
-                        .height(500)
-                        .children(root));
+                    int width = getWidth();
+                    int height = getHeight();
+
+                    // The root represents the actual available window space.
+                    Box screen = new Box()
+                        .width(width)
+                        .height(height)
+                        .children(root);
+
+                    engine.layout(screen);
 
                     renderElement(g, root, 0);
                 }
             };
+
+            panel.addComponentListener(new java.awt.event.ComponentAdapter() {
+                @Override
+                public void componentResized(java.awt.event.ComponentEvent e) {
+                    panel.repaint();
+                }
+            });
 
             frame.setContentPane(panel);
             frame.setSize(800, 600);
@@ -101,7 +145,6 @@ class LayoutEngineTest implements UiBuilder {
             frame.setVisible(true);
         });
 
-        // Keep the JUnit test alive while developing.
         try {
             Thread.sleep(Long.MAX_VALUE);
         } catch (InterruptedException ignored) {

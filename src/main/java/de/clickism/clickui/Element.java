@@ -76,7 +76,7 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
      * @param children the children to add
      * @return this element
      */
-    public Element<?> children(Element<?>... children) {
+    public S children(Element<?>... children) {
         for (var child : children) {
             this.children.add(child);
             if (child.parent != null) {
@@ -84,7 +84,7 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
             }
             child.parent = this;
         }
-        return this;
+        return self();
     }
 
     /**
