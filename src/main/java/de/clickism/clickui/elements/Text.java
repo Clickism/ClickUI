@@ -26,6 +26,8 @@ public class Text extends Element<Text> {
     @Override
     public void render(RenderContext context) {
         var graphics = context.graphics();
-        graphics.drawString(Util.font(), text, this.bounds().x(), this.bounds().y(), 0xFFFFFFFF);
+        var x = this.bounds().x() + this.padding().left();
+        var y = this.bounds().y() + this.padding().top();
+        graphics.drawString(Util.font(), text, x, y, 0xFFFFFFFF);
     }
 }

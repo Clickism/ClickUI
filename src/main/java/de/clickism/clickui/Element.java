@@ -2,9 +2,8 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.layout.Layout;
 import de.clickism.clickui.layout.Layoutable;
-import de.clickism.clickui.style.ResolvedStyle;
+import de.clickism.clickui.state.State;
 import de.clickism.clickui.style.Style;
-import de.clickism.clickui.style.Styleable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +19,10 @@ public abstract class Element<S extends Element<S>>
     implements Layoutable<S> {
     // TODO: Visibility, style, hover, events, etc.
     /**
+     * The parent element of this element, or null if this element is the root element.
+     */
+    private @Nullable Element<?> parent;
+    /**
      * The children of this element.
      */
     private final List<Element<?>> children = new ArrayList<>();
@@ -32,14 +35,13 @@ public abstract class Element<S extends Element<S>>
      */
     private Style style = new Style();
     /**
-     * The parent element of this element, or null if this element is the root element.
+     * The state of this element, used for rendering.
      */
-    private @Nullable Element<?> parent;
+    private State state = new State();
     /**
      * Calculated bounds of the element.
      */
     private Rect bounds = Rect.ZERO;
-
 
     /**
      * Returns the intrinsic size of this element, which is the size that this element would like to be if it could be any size.
@@ -119,6 +121,10 @@ public abstract class Element<S extends Element<S>>
         return this.layout;
     }
 
+    public State state() {
+        return this.state;
+    }
+
     public Style style() {
         return this.style;
     }
@@ -146,13 +152,28 @@ public abstract class Element<S extends Element<S>>
      * @param context the render context to render to
      */
     public void renderTree(RenderContext context) {
-        this.render(context);
+        this.renderWithStyle(context);
         // TODO: Remove debug rendering
-        context.graphics().renderOutline(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height(), 0xffff0000);
+//        context.graphics().renderOutline(
+//            bounds().x(),
+//            bounds().y(),
+//            bounds().width(),
+//            bounds().height(),
+//            0xffff0000
+//        );
         // Render children
         for (var child : children) {
             child.renderTree(context);
         }
+    }
+
+    /**
+     * Renders this element with its style applied, but does not render its children.
+     *
+     * @param context the render context to render with
+     */
+    public void renderWithStyle(RenderContext context) {
+        new StyleRenderer(this, context).renderElement();
     }
 
     /**

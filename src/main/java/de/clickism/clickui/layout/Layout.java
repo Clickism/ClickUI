@@ -13,6 +13,7 @@ public class Layout implements Layoutable<Layout> {
     int childGap = 0;
     Align mainAlign = Align.START;
     Align crossAlign = Align.START;
+    // TODO: Don't count elements with ABSOLUTE sizing in the gap calculation
     Positioning positioning = Positioning.layout();
 
     @Override

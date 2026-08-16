@@ -6,8 +6,10 @@ import java.awt.*;
 
 public final class ResolvedStyle implements Styleable<ResolvedStyle> {
     @Nullable Color background = null;
-    @Nullable Color outline = null;
-    int outlineWidth = 0;
+    @Nullable Color border = null;
+    // TODO: Different border styles for each side
+    // TODO: Border position (inside, outside, center)
+    int borderWidth = 1;
     float alpha = 1.0f;
 
     @Override
@@ -18,8 +20,8 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
     public ResolvedStyle copy() {
         var copy = new ResolvedStyle();
         copy.background = this.background;
-        copy.outline = this.outline;
-        copy.outlineWidth = this.outlineWidth;
+        copy.border = this.border;
+        copy.borderWidth = this.borderWidth;
         copy.alpha = this.alpha;
         return copy;
     }

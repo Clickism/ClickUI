@@ -1,10 +1,10 @@
 package de.clickism.clickui.state;
 
-public class ElementState implements ElementStateHolder<ElementState> {
+public class State implements StateHolder<State> {
     boolean hovered = false;
 
     @Override
-    public ElementState state() {
+    public State state() {
         return this;
     }
 }

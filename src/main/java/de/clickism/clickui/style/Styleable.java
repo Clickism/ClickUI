@@ -23,21 +23,21 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
         return self();
     }
 
-    default @Nullable Color outline() {
-        return style().outline;
+    default @Nullable Color border() {
+        return style().border;
     }
 
-    default S outline(@Nullable Color outline) {
-        style().outline = outline;
+    default S border(@Nullable Color border) {
+        style().border = border;
         return self();
     }
 
-    default int outlineWidth() {
-        return style().outlineWidth;
+    default int borderWidth() {
+        return style().borderWidth;
     }
 
-    default S outlineWidth(int outlineWidth) {
-        style().outlineWidth = outlineWidth;
+    default S borderWidth(int borderWidth) {
+        style().borderWidth = borderWidth;
         return self();
     }
 
