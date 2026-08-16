@@ -264,7 +264,20 @@ public class LayoutEngine {
      * @param y       the y position to start laying out the element
      */
     private void calculatePositions(Element<?> element, int x, int y) {
+        if (element.positioning().type() == Positioning.Type.ABSOLUTE) {
+            // Absolute positioning, use the specified position
+            x = element.positioning().x();
+            y = element.positioning().y();
+        }
+        if (element.positioning().type() == Positioning.Type.RELATIVE) {
+            // Relative positioning, offset from the current position
+            x += element.positioning().x();
+            y += element.positioning().y();
+        }
+        // Set the position of the element
         element.bounds(element.bounds().withPosition(x, y));
+
+        // Calculate position of children based on layout axis and padding
         var horizontal = element.axis().isHorizontal();
 
         var padding = element.padding();

@@ -1,9 +1,6 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.Align;
-import de.clickism.clickui.LayoutAxis;
-import de.clickism.clickui.Padding;
-import de.clickism.clickui.Sizing;
+import de.clickism.clickui.*;
 
 /**
  * Represents the layout information for a UI element.
@@ -16,6 +13,7 @@ public class Layout implements Layoutable<Layout> {
     int childGap = 0;
     Align mainAlign = Align.START;
     Align crossAlign = Align.START;
+    Positioning positioning = Positioning.layout();
 
     @Override
     public Layout layout() {

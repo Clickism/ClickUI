@@ -104,4 +104,23 @@ public interface Layoutable<S extends Layoutable<S>>
         layout().crossAlign = Align.CENTER;
         return self();
     }
+
+    default Positioning positioning() {
+        return layout().positioning;
+    }
+
+    default S positioning(Positioning positioning) {
+        layout().positioning = positioning;
+        return self();
+    }
+
+    default S relative(int x, int y) {
+        layout().positioning = Positioning.relative(x, y);
+        return self();
+    }
+
+    default S absolute(int x, int y) {
+        layout().positioning = Positioning.absolute(x, y);
+        return self();
+    }
 }

@@ -17,7 +17,7 @@ class LayoutEngineTest implements UiBuilder {
             .childGap(10)
             .children(
                 box()
-                    .width(300)
+                    .width(400)
                     .horizontal()
                     .padding(10)
                     .childGap(10)
@@ -40,6 +40,8 @@ class LayoutEngineTest implements UiBuilder {
                     .padding(10)
                     .childGap(10)
                     .width(Sizing.grow())
+                    .mainAlign(Align.CENTER)
+                    .crossAlign(Align.CENTER)
                     .children(
                         new Box()
                             .width(100)
@@ -51,7 +53,17 @@ class LayoutEngineTest implements UiBuilder {
 
                         new Box()
                             .width(20)
-                            .height(50)
+                            .height(Sizing.grow())
+                            .children(
+                                box()
+                                    .absolute(600, 400)
+                                    .height(20)
+                                    .width(20),
+                                box()
+                                    .relative(-20, 0)
+                                    .height(20)
+                                    .width(20)
+                            )
                     ),
 
                 new Box()
