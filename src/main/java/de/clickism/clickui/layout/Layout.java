@@ -1,6 +1,9 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.*;
+import de.clickism.clickui.Align;
+import de.clickism.clickui.LayoutAxis;
+import de.clickism.clickui.Padding;
+import de.clickism.clickui.Sizing;
 
 /**
  * Represents the layout information for a UI element.

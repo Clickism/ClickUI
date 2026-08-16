@@ -7,15 +7,6 @@ package de.clickism.clickui;
  * @param value The value of the size (only used for fixed size)
  */
 public record Sizing(Type type, int value) {
-    /**
-     * The type of size.
-     */
-    public enum Type {
-        FIXED,
-        FIT,
-        GROW
-    }
-
     public static Sizing fixed(int value) {
         return new Sizing(Type.FIXED, value);
     }
@@ -35,6 +26,17 @@ public record Sizing(Type type, int value) {
      */
     @Override
     public int value() {
-        return type == Type.FIXED ? value : 0;
+        return type == Type.FIXED
+               ? value
+               : 0;
+    }
+
+    /**
+     * The type of size.
+     */
+    public enum Type {
+        FIXED,
+        FIT,
+        GROW
     }
 }

@@ -1,14 +1,10 @@
 package de.clickism.clickui.elements;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.Element;
 import de.clickism.clickui.RenderContext;
 import de.clickism.clickui.Size;
 import de.clickism.clickui.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-
-import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 
 public class Button extends Element<Button> {
     private Component label;
@@ -33,9 +29,9 @@ public class Button extends Element<Button> {
 //        graphics.fill(this.bounds().x(), this.bounds().y(), this.bounds().x() + this.bounds().width(), this.bounds().y() + this.bounds().height(), 0xFF0000FF);
 //        graphics.drawString(Util.font(), label, this.bounds().x() + 5, this.bounds().y() + 5, 0xFFFFFFFF);
 
-        var button = net.minecraft.client.gui.components.Button.builder(label, net.minecraft.client.gui.components.Button::onPress).
-                bounds(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height())
-                .build();
+        var button = net.minecraft.client.gui.components.Button.builder(label, net.minecraft.client.gui.components.Button::onPress)
+            .bounds(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height())
+            .build();
         button.render(graphics, context.mouseX(), context.mouseY(), context.delta());
 
 //        // Yoinked from button

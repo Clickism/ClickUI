@@ -20,15 +20,13 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
      */
     private final List<Element<?>> children = new ArrayList<>();
     /**
-     * The parent element of this element, or null if this element is the root element.
-     */
-    private @Nullable Element<?> parent;
-
-    /**
      * Layout information for this element,
      */
     private final Layout layout = new Layout();
-
+    /**
+     * The parent element of this element, or null if this element is the root element.
+     */
+    private @Nullable Element<?> parent;
     /**
      * Calculated bounds of the element.
      */

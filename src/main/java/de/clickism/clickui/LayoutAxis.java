@@ -5,7 +5,9 @@ public enum LayoutAxis {
     VERTICAL;
 
     public LayoutAxis opposite() {
-        return isHorizontal() ? VERTICAL : HORIZONTAL;
+        return isHorizontal()
+               ? VERTICAL
+               : HORIZONTAL;
     }
 
     public boolean isHorizontal() {

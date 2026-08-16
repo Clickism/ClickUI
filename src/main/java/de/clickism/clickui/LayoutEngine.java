@@ -10,6 +10,28 @@ import java.util.function.ToIntFunction;
  */
 public class LayoutEngine {
     /**
+     * Returns a function that retrieves the axis size of an element based on the given layout axis.
+     *
+     * @param axis the layout axis to determine the axis size
+     * @return a function that retrieves the axis size of an element
+     */
+    private static ToIntFunction<Element<?>> axisGetter(LayoutAxis axis) {
+        return axis.isHorizontal()
+               ? child -> child.bounds().width()
+               : child -> child.bounds().height();
+    }
+
+    /**
+     * Calculates the total gap between the children of the given element based on its child gap and number of children.
+     *
+     * @param element the element to calculate the total child gap for
+     * @return the total gap between the children of the element
+     */
+    private static int totalChildGap(Element<?> element) {
+        return element.childGap() * Math.max(0, element.children().size() - 1);
+    }
+
+    /**
      * Lays out the given root element and its children based on their sizing and layout axis.
      *
      * @param root the root element to layout
@@ -345,27 +367,5 @@ public class LayoutEngine {
             case CENTER -> remaining / 2;
             case END -> remaining;
         };
-    }
-
-    /**
-     * Returns a function that retrieves the axis size of an element based on the given layout axis.
-     *
-     * @param axis the layout axis to determine the axis size
-     * @return a function that retrieves the axis size of an element
-     */
-    private static ToIntFunction<Element<?>> axisGetter(LayoutAxis axis) {
-        return axis.isHorizontal()
-               ? child -> child.bounds().width()
-               : child -> child.bounds().height();
-    }
-
-    /**
-     * Calculates the total gap between the children of the given element based on its child gap and number of children.
-     *
-     * @param element the element to calculate the total child gap for
-     * @return the total gap between the children of the element
-     */
-    private static int totalChildGap(Element<?> element) {
-        return element.childGap() * Math.max(0, element.children().size() - 1);
     }
 }

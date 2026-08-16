@@ -11,9 +11,9 @@ import net.minecraft.client.gui.GuiGraphics;
  * @param delta
  */
 public record RenderContext(
-        GuiGraphics graphics,
-        int mouseX,
-        int mouseY,
-        float delta
+    GuiGraphics graphics,
+    int mouseX,
+    int mouseY,
+    float delta
 ) {
 }

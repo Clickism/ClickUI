@@ -3,7 +3,7 @@ package de.clickism.clickui.layout;
 import de.clickism.clickui.*;
 
 public interface Layoutable<S extends Layoutable<S>>
-        extends Self<S> {
+    extends Self<S> {
     /**
      * Returns the layout information for the UI element.
      *
