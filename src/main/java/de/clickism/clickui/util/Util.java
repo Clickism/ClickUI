@@ -1,5 +1,6 @@
-package de.clickism.clickui;
+package de.clickism.clickui.util;
 
+import de.clickism.clickui.Element;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 

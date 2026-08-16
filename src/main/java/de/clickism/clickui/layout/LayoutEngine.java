@@ -1,4 +1,7 @@
-package de.clickism.clickui;
+package de.clickism.clickui.layout;
+
+import de.clickism.clickui.Element;
+import de.clickism.clickui.util.Util;
 
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;

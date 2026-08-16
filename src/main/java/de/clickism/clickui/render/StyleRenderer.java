@@ -1,5 +1,6 @@
-package de.clickism.clickui;
+package de.clickism.clickui.render;
 
+import de.clickism.clickui.Element;
 import de.clickism.clickui.style.StyleContext;
 
 public class StyleRenderer {

@@ -1,6 +1,6 @@
 package de.clickism.clickui.style;
 
-import de.clickism.clickui.Self;
+import de.clickism.clickui.util.Self;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;

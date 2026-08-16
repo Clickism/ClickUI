@@ -1,6 +1,6 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.*;
+import de.clickism.clickui.util.Self;
 
 public interface Layoutable<S extends Layoutable<S>>
     extends Self<S> {

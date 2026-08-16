@@ -1,4 +1,4 @@
-package de.clickism.clickui;
+package de.clickism.clickui.layout;
 
 public record Padding(int top, int right, int bottom, int left) {
     public static Padding ZERO = new Padding(0, 0, 0, 0);

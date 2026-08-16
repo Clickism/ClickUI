@@ -1,9 +1,9 @@
 package de.clickism.clickui.elements;
 
 import de.clickism.clickui.Element;
-import de.clickism.clickui.RenderContext;
-import de.clickism.clickui.Size;
-import de.clickism.clickui.Util;
+import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.layout.Size;
+import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
 
 public class Text extends Element<Text> {

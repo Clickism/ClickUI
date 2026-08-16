@@ -1,4 +1,4 @@
-package de.clickism.clickui;
+package de.clickism.clickui.render;
 
 import net.minecraft.client.gui.GuiGraphics;
 

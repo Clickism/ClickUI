@@ -1,6 +1,6 @@
 package de.clickism.clickui.state;
 
-import de.clickism.clickui.Self;
+import de.clickism.clickui.util.Self;
 
 public interface StateHolder<S extends StateHolder<S>>
     extends Self<S> {

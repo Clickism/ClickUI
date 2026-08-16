@@ -1,4 +1,4 @@
-package de.clickism.clickui;
+package de.clickism.clickui.layout;
 
 public record Rect(int x, int y, int width, int height) {
     public static Rect ZERO = new Rect(0, 0, 0, 0);

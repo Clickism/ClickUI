@@ -1,4 +1,4 @@
-package de.clickism.clickui;
+package de.clickism.clickui.layout;
 
 /**
  * Represents the size of a UI element.

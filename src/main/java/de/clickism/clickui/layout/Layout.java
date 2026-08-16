@@ -1,7 +1,5 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.*;
-
 /**
  * Represents the layout information for a UI element.
  */

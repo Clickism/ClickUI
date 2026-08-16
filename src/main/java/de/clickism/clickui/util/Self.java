@@ -1,4 +1,4 @@
-package de.clickism.clickui;
+package de.clickism.clickui.util;
 
 /**
  * A generic interface that provides a method to return the current instance as a specific type.

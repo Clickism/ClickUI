@@ -1,6 +1,10 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.elements.Box;
+import de.clickism.clickui.layout.Align;
+import de.clickism.clickui.layout.LayoutEngine;
+import de.clickism.clickui.layout.Rect;
+import de.clickism.clickui.layout.Sizing;
 import de.clickism.clickui.style.Style;
 import org.junit.jupiter.api.Test;
 
