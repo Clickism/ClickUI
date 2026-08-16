@@ -7,61 +7,61 @@ import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
 
-class LayoutEngineTest {
+class LayoutEngineTest implements UiBuilder {
 
     @Test
     void renderLayout() {
-        var root = new Box()
-                .vertical()
-                .padding(20)
-                .childGap(10)
-                .children(
+        var root = box()
+            .vertical()
+            .padding(20)
+            .childGap(10)
+            .children(
+                box()
+                    .width(300)
+                    .horizontal()
+                    .padding(10)
+                    .childGap(10)
+                    .children(
+                        box()
+                            .width(30)
+                            .height(30),
+
+                        box()
+                            .width(Sizing.grow())
+                            .height(Sizing.grow()),
+
+                        box()
+                            .width(Sizing.grow())
+                            .height(Sizing.grow())
+                    ),
+
+                box()
+                    .horizontal()
+                    .padding(10)
+                    .childGap(10)
+                    .width(Sizing.grow())
+                    .children(
                         new Box()
-                                .width(300)
-                                .horizontal()
-                                .padding(10)
-                                .childGap(10)
-                                .children(
-                                        new Box()
-                                                .width(30)
-                                                .height(30),
-
-                                        new Box()
-                                                .width(Sizing.grow())
-                                                .height(Sizing.grow()),
-
-                                        new Box()
-                                                .width(Sizing.grow())
-                                                .height(Sizing.grow())
-                                ),
-
-                        new Box()
-                                .horizontal()
-                                .padding(10)
-                                .childGap(10)
-                                .width(Sizing.grow())
-                                .children(
-                                        new Box()
-                                                .width(100)
-                                                .height(150),
-
-                                        new Box()
-                                                .width(100)
-                                                .height(100),
-
-                                        new Box()
-                                                .width(20)
-                                                .height(50)
-                                ),
+                            .width(100)
+                            .height(150),
 
                         new Box()
-                                .width(300)
-                                .height(40)
-                );
+                            .width(100)
+                            .height(100),
+
+                        new Box()
+                            .width(20)
+                            .height(50)
+                    ),
+
+                new Box()
+                    .width(300)
+                    .height(40)
+            );
 
         new Layout()
-                .width(100)
-                .height(100);
+            .width(100)
+            .height(100);
 
         LayoutEngine engine = new LayoutEngine();
 
@@ -74,9 +74,9 @@ class LayoutEngineTest {
                     super.paintComponent(g);
 
                     engine.layout(new Box()
-                            .width(800)
-                            .height(500)
-                            .children(root));
+                        .width(800)
+                        .height(500)
+                        .children(root));
 
                     renderElement(g, root, 0);
                 }
@@ -97,25 +97,25 @@ class LayoutEngineTest {
     }
 
     private static void renderElement(
-            Graphics g,
-            Element<?> element,
-            int depth
+        Graphics g,
+        Element<?> element,
+        int depth
     ) {
         Rect bounds = element.bounds();
 
         // Draw the element's bounds.
         g.drawRect(
-                bounds.x(),
-                bounds.y(),
-                bounds.width(),
-                bounds.height()
+            bounds.x(),
+            bounds.y(),
+            bounds.width(),
+            bounds.height()
         );
 
         // Draw its name/depth for debugging.
         g.drawString(
-                "Element " + depth,
-                bounds.x() + 4,
-                bounds.y() + 15
+            "Element " + depth,
+            bounds.x() + 4,
+            bounds.y() + 15
         );
 
         for (var child : element.children()) {

@@ -1,9 +1,6 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.LayoutAxis;
-import de.clickism.clickui.Padding;
-import de.clickism.clickui.Self;
-import de.clickism.clickui.Sizing;
+import de.clickism.clickui.*;
 
 public interface Layoutable<S extends Layoutable<S>>
         extends Self<S> {
@@ -81,6 +78,30 @@ public interface Layoutable<S extends Layoutable<S>>
 
     default S childGap(int childGap) {
         layout().childGap = childGap;
+        return self();
+    }
+
+    default Align mainAlign() {
+        return layout().mainAlign;
+    }
+
+    default Align crossAlign() {
+        return layout().crossAlign;
+    }
+
+    default S mainAlign(Align align) {
+        layout().mainAlign = align;
+        return self();
+    }
+
+    default S crossAlign(Align align) {
+        layout().crossAlign = align;
+        return self();
+    }
+
+    default S alignCenter() {
+        layout().mainAlign = Align.CENTER;
+        layout().crossAlign = Align.CENTER;
         return self();
     }
 }
