@@ -2,17 +2,22 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.layout.Layout;
 import de.clickism.clickui.layout.Layoutable;
+import de.clickism.clickui.style.ResolvedStyle;
+import de.clickism.clickui.style.Style;
+import de.clickism.clickui.style.Styleable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An element in the UI hierarchy.
  */
-public abstract class Element<S extends Element<S>> implements Layoutable<S> {
+public abstract class Element<S extends Element<S>>
+    implements Layoutable<S> {
     // TODO: Visibility, style, hover, events, etc.
     /**
      * The children of this element.
@@ -23,6 +28,10 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
      */
     private final Layout layout = new Layout();
     /**
+     * Style information for this element.
+     */
+    private Style style = new Style();
+    /**
      * The parent element of this element, or null if this element is the root element.
      */
     private @Nullable Element<?> parent;
@@ -30,6 +39,7 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
      * Calculated bounds of the element.
      */
     private Rect bounds = Rect.ZERO;
+
 
     /**
      * Returns the intrinsic size of this element, which is the size that this element would like to be if it could be any size.
@@ -107,6 +117,20 @@ public abstract class Element<S extends Element<S>> implements Layoutable<S> {
     @Override
     public Layout layout() {
         return this.layout;
+    }
+
+    public Style style() {
+        return this.style;
+    }
+
+    public S style(Style style) {
+        this.style = style;
+        return self();
+    }
+
+    public S style(Consumer<Style> styleConsumer) {
+        styleConsumer.accept(this.style);
+        return self();
     }
 
     /**
