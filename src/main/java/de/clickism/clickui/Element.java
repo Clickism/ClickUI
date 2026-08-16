@@ -1,5 +1,7 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.event.EventManager;
+import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.Layout;
 import de.clickism.clickui.layout.Layoutable;
 import de.clickism.clickui.layout.Rect;
@@ -20,8 +22,10 @@ import java.util.function.Consumer;
  * An element in the UI hierarchy.
  */
 public abstract class Element<S extends Element<S>>
-    implements Layoutable<S> {
+    implements Layoutable<S>, EventTarget<S> {
     // TODO: Visibility, style, hover, events, etc.
+    // TODO: Simple scheduler
+    // TODO: Tooltip support
     /**
      * The parent element of this element, or null if this element is the root element.
      */
@@ -30,6 +34,7 @@ public abstract class Element<S extends Element<S>>
      * The children of this element.
      */
     private final List<Element<?>> children = new ArrayList<>();
+
     /**
      * Layout information for this element,
      */
@@ -42,6 +47,11 @@ public abstract class Element<S extends Element<S>>
      * The state of this element, used for rendering.
      */
     private State state = new State();
+    /**
+     * The event manager for this element, used for handling events.
+     */
+    private EventManager events = new EventManager();
+
     /**
      * Calculated bounds of the element.
      */
@@ -131,6 +141,11 @@ public abstract class Element<S extends Element<S>>
 
     public Style style() {
         return this.style;
+    }
+
+    @Override
+    public EventManager events() {
+        return this.events;
     }
 
     public S style(Style style) {

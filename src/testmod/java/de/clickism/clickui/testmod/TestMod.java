@@ -31,7 +31,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .padding(20),
                 text("Whaaat?"),
                 button("Click me!")
-                    .width(200),
+                    .width(200)
+                    .onClick(event -> {
+                        System.out.println("Button clicked!");
+                    }),
                 box()
                     .height(200)
                     .horizontal()
