@@ -10,7 +10,7 @@ import net.minecraft.util.Mth;
 
 import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 
-public class Button extends Element {
+public class Button extends Element<Button> {
     private Component label;
 
     public Button(Component label) {

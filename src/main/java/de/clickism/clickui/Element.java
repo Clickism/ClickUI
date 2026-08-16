@@ -13,16 +13,16 @@ import java.util.List;
  * An element in the UI hierarchy.
  */
 // TODO: Generic self type
-public abstract class Element implements Layoutable<Element> {
+public abstract class Element<S extends Element<S>> implements Layoutable<S> {
     // TODO: Alignment, visibility, style, hover, events, etc.
     /**
      * The children of this element.
      */
-    private final List<Element> children = new ArrayList<>();
+    private final List<Element<?>> children = new ArrayList<>();
     /**
      * The parent element of this element, or null if this element is the root element.
      */
-    private @Nullable Element parent;
+    private @Nullable Element<?> parent;
 
     /**
      * Layout information for this element,
@@ -78,8 +78,8 @@ public abstract class Element implements Layoutable<Element> {
      * @param children the children to add
      * @return this element
      */
-    public Element children(Element... children) {
-        for (Element child : children) {
+    public Element<?> children(Element<?>... children) {
+        for (var child : children) {
             this.children.add(child);
             if (child.parent != null) {
                 child.parent.children.remove(child);
@@ -94,7 +94,7 @@ public abstract class Element implements Layoutable<Element> {
      *
      * @return an unmodifiable list of the children of this element
      */
-    public List<Element> children() {
+    public List<Element<?>> children() {
         return Collections.unmodifiableList(this.children);
     }
 
@@ -103,7 +103,7 @@ public abstract class Element implements Layoutable<Element> {
      *
      * @return the parent of this element, or null if this element is the root element
      */
-    public @Nullable Element parent() {
+    public @Nullable Element<?> parent() {
         return this.parent;
     }
 
@@ -129,7 +129,7 @@ public abstract class Element implements Layoutable<Element> {
         // TODO: Remove debug rendering
         context.graphics().renderOutline(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height(), 0xffff0000);
         // Render children
-        for (Element child : children) {
+        for (var child : children) {
             child.renderTree(context);
         }
     }

@@ -6,16 +6,16 @@ import net.minecraft.client.gui.Font;
 import java.util.function.Consumer;
 
 public class Util {
-    public static void postOrder(Element element, Consumer<Element> consumer) {
-        for (Element child : element.children()) {
+    public static void postOrder(Element<?> element, Consumer<Element<?>> consumer) {
+        for (var child : element.children()) {
             postOrder(child, consumer);
         }
         consumer.accept(element);
     }
 
-    public static void preOrder(Element element, Consumer<Element> consumer) {
+    public static void preOrder(Element<?> element, Consumer<Element<?>> consumer) {
         consumer.accept(element);
-        for (Element child : element.children()) {
+        for (var child : element.children()) {
             preOrder(child, consumer);
         }
     }

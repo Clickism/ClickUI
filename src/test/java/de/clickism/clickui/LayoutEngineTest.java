@@ -11,7 +11,7 @@ class LayoutEngineTest {
 
     @Test
     void renderLayout() {
-        Element root = new Box()
+        var root = new Box()
                 .vertical()
                 .padding(20)
                 .childGap(10)
@@ -98,7 +98,7 @@ class LayoutEngineTest {
 
     private static void renderElement(
             Graphics g,
-            Element element,
+            Element<?> element,
             int depth
     ) {
         Rect bounds = element.bounds();
@@ -118,7 +118,7 @@ class LayoutEngineTest {
                 bounds.y() + 15
         );
 
-        for (Element child : element.children()) {
+        for (var child : element.children()) {
             renderElement(g, child, depth + 1);
         }
     }

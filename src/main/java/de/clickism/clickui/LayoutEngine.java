@@ -14,7 +14,7 @@ public class LayoutEngine {
      *
      * @param root the root element to layout
      */
-    public void layout(Element root) {
+    public void layout(Element<?> root) {
         // Set the root element size to the given size
         root.bounds(root.bounds().withPosition(0, 0));
         // Measure the fit size
@@ -30,7 +30,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void measureSizes(Element element) {
+    private void measureSizes(Element<?> element) {
         // First measure the fit size
         Util.postOrder(element, this::measureElementSize);
     }
@@ -40,14 +40,14 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void measureElementSize(Element element) {
+    private void measureElementSize(Element<?> element) {
         // Fit the element size to its children and layout axis
         Size intrinsic = element.intrinsicSize();
         // Use intrinsic size of the element and add padding to it
         int width = intrinsic.width();
         int height = intrinsic.height();
 
-        for (Element child : element.children()) {
+        for (Element<?> child : element.children()) {
             // Use calculated size of children
             var bounds = child.bounds();
             int childWidth = bounds.width();
@@ -92,7 +92,7 @@ public class LayoutEngine {
      *
      * @param element the element to grow
      */
-    private void growAll(Element element) {
+    private void growAll(Element<?> element) {
         Util.preOrder(element, this::growChildElements);
     }
 
@@ -101,7 +101,7 @@ public class LayoutEngine {
      *
      * @param parent the element whose children will be grown
      */
-    private void growChildElements(Element parent) {
+    private void growChildElements(Element<?> parent) {
         int remainingAxis = calculateRemainingAxisSpace(parent);
         int remainingCross = calculateRemainingCrossSpace(parent);
 
@@ -116,10 +116,12 @@ public class LayoutEngine {
      * @param parent        the parent element whose children will receive the remaining axis space
      * @param remainingAxis the remaining axis space to distribute
      */
-    private void distributeAxisSpace(Element parent, int remainingAxis) {
+    private void distributeAxisSpace(Element<?> parent, int remainingAxis) {
         boolean horizontal = parent.axis() == LayoutAxis.HORIZONTAL;
         // Distribute remaining axis space to children
-        Predicate<Element> mapper = horizontal ? child -> child.width().type() == Sizing.Type.GROW : child -> child.height().type() == Sizing.Type.GROW;
+        Predicate<Element<?>> mapper = horizontal
+                                       ? child -> child.width().type() == Sizing.Type.GROW
+                                       : child -> child.height().type() == Sizing.Type.GROW;
         var growAxisChildren = parent.children().stream().filter(mapper).toList();
 
         if (growAxisChildren.isEmpty() || remainingAxis <= 0) return;
@@ -145,7 +147,7 @@ public class LayoutEngine {
             // Don't add more than remaining space
             axisToAdd = Math.min(remainingAxis, axisToAdd);
 
-            for (Element child : growAxisChildren) {
+            for (var child : growAxisChildren) {
                 int axis = axisGetter.applyAsInt(child);
                 if (axis != smallest) continue;
                 // Grow smallest boxes by width to add
@@ -170,11 +172,13 @@ public class LayoutEngine {
      * @param parent         the parent element whose children will receive the remaining cross space
      * @param remainingCross the remaining cross space to distribute
      */
-    private void distributeCrossSpace(Element parent, int remainingCross) {
+    private void distributeCrossSpace(Element<?> parent, int remainingCross) {
         // Distribute remaining cross space to children
         boolean horizontal = parent.axis() == LayoutAxis.HORIZONTAL;
-        for (Element child : parent.children()) {
-            boolean growCross = horizontal ? child.height().type() == Sizing.Type.GROW : child.width().type() == Sizing.Type.GROW;
+        for (var child : parent.children()) {
+            boolean growCross = horizontal
+                                ? child.height().type() == Sizing.Type.GROW
+                                : child.width().type() == Sizing.Type.GROW;
             if (!growCross) continue;
             // Grow to remaining cross if smaller
             if (horizontal) {
@@ -193,10 +197,14 @@ public class LayoutEngine {
      * @param element the element to use
      * @return remaining space in axis
      */
-    private int calculateRemainingAxisSpace(Element element) {
+    private int calculateRemainingAxisSpace(Element<?> element) {
         boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
-        int remainingAxis = horizontal ? element.bounds().width() : element.bounds().height();
-        remainingAxis -= horizontal ? element.padding().left() + element.padding().right() : element.padding().top() + element.padding().bottom();
+        int remainingAxis = horizontal
+                            ? element.bounds().width()
+                            : element.bounds().height();
+        remainingAxis -= horizontal
+                         ? element.padding().left() + element.padding().right()
+                         : element.padding().top() + element.padding().bottom();
         remainingAxis -= totalChildGap(element);
         remainingAxis -= element.children().stream().mapToInt(axisGetter(element.axis())).sum();
         return remainingAxis;
@@ -208,10 +216,14 @@ public class LayoutEngine {
      * @param element the elment to use
      * @return remaining cross space
      */
-    private int calculateRemainingCrossSpace(Element element) {
+    private int calculateRemainingCrossSpace(Element<?> element) {
         boolean horizontal = element.axis() == LayoutAxis.HORIZONTAL;
-        int remainingHeight = horizontal ? element.bounds().height() : element.bounds().width();
-        remainingHeight -= horizontal ? element.padding().top() + element.padding().bottom() : element.padding().left() + element.padding().right();
+        int remainingHeight = horizontal
+                              ? element.bounds().height()
+                              : element.bounds().width();
+        remainingHeight -= horizontal
+                           ? element.padding().top() + element.padding().bottom()
+                           : element.padding().left() + element.padding().right();
         return remainingHeight;
     }
 
@@ -222,13 +234,13 @@ public class LayoutEngine {
      * @param x       the x position to start laying out the element
      * @param y       the y position to start laying out the element
      */
-    private void calculatePositions(Element element, int x, int y) {
+    private void calculatePositions(Element<?> element, int x, int y) {
         element.bounds(element.bounds().withPosition(x, y));
 
         int currentX = x + element.padding().left();
         int currentY = y + element.padding().top();
 
-        for (Element child : element.children()) {
+        for (var child : element.children()) {
             // Position the child based on the current position and layout axis
             if (element.axis() == LayoutAxis.HORIZONTAL) {
                 calculatePositions(child, currentX, currentY);
@@ -246,8 +258,10 @@ public class LayoutEngine {
      * @param axis the layout axis to determine the cross-axis size
      * @return a function that retrieves the cross-axis size of an element
      */
-    private static ToIntFunction<Element> crossGetter(LayoutAxis axis) {
-        return axis == LayoutAxis.HORIZONTAL ? child -> child.bounds().height() : child -> child.bounds().width();
+    private static ToIntFunction<Element<?>> crossGetter(LayoutAxis axis) {
+        return axis == LayoutAxis.HORIZONTAL
+               ? child -> child.bounds().height()
+               : child -> child.bounds().width();
     }
 
     /**
@@ -256,8 +270,10 @@ public class LayoutEngine {
      * @param axis the layout axis to determine the axis size
      * @return a function that retrieves the axis size of an element
      */
-    private static ToIntFunction<Element> axisGetter(LayoutAxis axis) {
-        return axis == LayoutAxis.HORIZONTAL ? child -> child.bounds().width() : child -> child.bounds().height();
+    private static ToIntFunction<Element<?>> axisGetter(LayoutAxis axis) {
+        return axis == LayoutAxis.HORIZONTAL
+               ? child -> child.bounds().width()
+               : child -> child.bounds().height();
     }
 
     /**
@@ -266,7 +282,7 @@ public class LayoutEngine {
      * @param element the element to calculate the total child gap for
      * @return the total gap between the children of the element
      */
-    private static int totalChildGap(Element element) {
+    private static int totalChildGap(Element<?> element) {
         return element.childGap() * Math.max(0, element.children().size() - 1);
     }
 }

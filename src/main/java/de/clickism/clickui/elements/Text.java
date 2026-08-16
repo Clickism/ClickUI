@@ -6,7 +6,7 @@ import de.clickism.clickui.Size;
 import de.clickism.clickui.Util;
 import net.minecraft.network.chat.Component;
 
-public class Text extends Element {
+public class Text extends Element<Text> {
     private Component text;
 
     public Text(Component text) {

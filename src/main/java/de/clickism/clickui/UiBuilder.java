@@ -6,7 +6,7 @@ import de.clickism.clickui.elements.Text;
 import net.minecraft.network.chat.Component;
 
 public interface UiBuilder {
-    default Element box() {
+    default Box box() {
         return new Box();
     }
 

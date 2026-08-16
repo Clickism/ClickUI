@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 
 public abstract class UiScreen extends Screen {
 
-    private Element built;
+    private Element<?> built;
 
     public UiScreen(Component component) {
         super(component);
@@ -18,7 +18,7 @@ public abstract class UiScreen extends Screen {
         this(Component.empty());
     }
 
-    public abstract Element build();
+    public abstract Element<?> build();
 
     @Override
     protected void init() {
@@ -35,10 +35,10 @@ public abstract class UiScreen extends Screen {
         built.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta));
     }
 
-    public static UiScreen create(Element content) {
+    public static UiScreen create(Element<?> content) {
         return new UiScreen() {
             @Override
-            public Element build() {
+            public Element<?> build() {
                 return content;
             }
         };
