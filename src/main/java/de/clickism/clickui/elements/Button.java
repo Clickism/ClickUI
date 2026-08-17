@@ -41,6 +41,7 @@ public class Button extends Element<Button> {
             20, 4, 200, 20, 0, textureY()
         );
         // Render label
+        // TODO: Move outline into real border logic
         // TODO: Scrolling text if it doesn't fit in the button
         var fontScale = resolvedStyle().fontScale();
         var renderer = new ScaledTextRenderer(context);
@@ -51,7 +52,9 @@ public class Button extends Element<Button> {
         var textY = (int) (bounds.y() + (bounds.height() - textHeight) / 2);
         textY += 1; // Adjust for better visual alignment
         // Text color
-        var color = state().disabled() ? 0xFFAAAAAA : 0xFFFFFFFF;
+        var color = state().disabled()
+                    ? 0xFFAAAAAA
+                    : 0xFFFFFFFF;
         renderer.render(label, textX, textY, fontScale, color);
     }
 

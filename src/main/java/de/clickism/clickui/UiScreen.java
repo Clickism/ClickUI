@@ -31,7 +31,13 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      */
     public UiScreen(Component component) {
         super(component);
-        this.root = build();
+        var root = build();
+        if (root != null) {
+            this.root = root;
+        } else {
+            // Empty fallback element
+            this.root = box();
+        }
     }
 
     /**

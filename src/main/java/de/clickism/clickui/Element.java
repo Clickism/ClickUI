@@ -43,15 +43,15 @@ public abstract class Element<S extends Element<S>>
     /**
      * Style information for this element.
      */
-    private Style style = new Style();
+    private final Style style = new Style();
     /**
      * The state of this element, used for rendering.
      */
-    private State state = new State();
+    private final State state = new State();
     /**
      * The event manager for this element, used for handling events.
      */
-    private EventManager events = new EventManager();
+    private final EventManager events = new EventManager();
 
     /**
      * Calculated bounds of the element.
