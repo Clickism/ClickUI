@@ -49,4 +49,13 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
         style().alpha = alpha;
         return self();
     }
+
+    default float fontScale() {
+        return style().fontScale;
+    }
+
+    default S fontScale(float fontScale) {
+        style().fontScale = fontScale;
+        return self();
+    }
 }

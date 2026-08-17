@@ -7,7 +7,9 @@ import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
 import de.clickism.clickui.state.State;
+import de.clickism.clickui.style.ResolvedStyle;
 import de.clickism.clickui.style.Style;
+import de.clickism.clickui.style.StyleContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,6 +146,10 @@ public abstract class Element<S extends Element<S>>
 
     public Style style() {
         return this.style;
+    }
+
+    public ResolvedStyle resolvedStyle() {
+        return this.style.resolve(new StyleContext(this, this.state));
     }
 
     @Override

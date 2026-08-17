@@ -25,6 +25,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .children(
                 text("Hello, this is a test screen!")
                     .style(style -> style
+                        .fontScale(2.0f)
                         .background(Color.BLUE)
                         .border(Color.YELLOW)
                         .borderWidth(5))

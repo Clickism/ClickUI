@@ -11,6 +11,7 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
     // TODO: Border position (inside, outside, center)
     int borderWidth = 1;
     float alpha = 1.0f;
+    float fontScale = 1.0f;
 
     @Override
     public ResolvedStyle style() {
@@ -23,6 +24,7 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
         copy.border = this.border;
         copy.borderWidth = this.borderWidth;
         copy.alpha = this.alpha;
+        copy.fontScale = this.fontScale;
         return copy;
     }
 }
