@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
+// TODO: Refactor style to be more flexible, and be layered with nullable props maybe
 public final class ResolvedStyle implements Styleable<ResolvedStyle> {
     @Nullable Color background = null;
     @Nullable Color border = null;

@@ -30,4 +30,12 @@ public record ScaledTextRenderer(
 
         graphics.pose().popPose();
     }
+
+    public float measureWidth(Component text, float scale) {
+        return Util.font().width(text) * scale;
+    }
+
+    public float measureHeight(float scale) {
+        return Util.font().lineHeight * scale;
+    }
 }

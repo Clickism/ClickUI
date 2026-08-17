@@ -97,6 +97,7 @@ public abstract class UiEventScreen extends Screen {
         int y = (int) mouseY;
         updateState(x, y);
         if (hoveredElement == null) return false;
+        if (hoveredElement.disabled()) return false;
 
         // Fire mouse click event to the hovered element
         var event = new MouseClickEvent(x, y, button);

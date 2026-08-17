@@ -20,4 +20,13 @@ public interface StateHolder<S extends StateHolder<S>>
         state().hovered = hovered;
         return self();
     }
+
+    default boolean disabled() {
+        return state().disabled;
+    }
+
+    default S disabled(boolean disabled) {
+        state().disabled = disabled;
+        return self();
+    }
 }

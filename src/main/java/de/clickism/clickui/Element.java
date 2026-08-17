@@ -7,6 +7,7 @@ import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
 import de.clickism.clickui.state.State;
+import de.clickism.clickui.state.StateHolder;
 import de.clickism.clickui.style.ResolvedStyle;
 import de.clickism.clickui.style.Style;
 import de.clickism.clickui.style.StyleContext;
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
  * An element in the UI hierarchy.
  */
 public abstract class Element<S extends Element<S>>
-    implements Layoutable<S>, EventTarget<S> {
+    implements Layoutable<S>, StateHolder<S>, EventTarget<S> {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
     // TODO: Tooltip support
@@ -106,8 +107,10 @@ public abstract class Element<S extends Element<S>>
      * @param children the children to add
      * @return this element
      */
-    public S children(Element<?>... children) {
+    public S children(@Nullable Element<?>... children) {
         for (var child : children) {
+            // Allow null children to be passed in, but ignore them
+            if (child == null) continue;
             this.children.add(child);
             if (child.parent != null) {
                 child.parent.children.remove(child);
@@ -140,6 +143,7 @@ public abstract class Element<S extends Element<S>>
         return this.layout;
     }
 
+    @Override
     public State state() {
         return this.state;
     }
