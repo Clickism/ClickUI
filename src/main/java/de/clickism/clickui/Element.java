@@ -166,6 +166,7 @@ public abstract class Element<S extends Element<S>>
         this.events.fireEvent(event);
     }
 
+    // TODO: Make style api nicer
     public S style(Consumer<Style> styleConsumer) {
         styleConsumer.accept(this.style);
         return self();

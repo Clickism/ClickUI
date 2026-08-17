@@ -1,10 +1,7 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.event.HitTester;
-import de.clickism.clickui.event.events.KeyPressEvent;
-import de.clickism.clickui.event.events.MouseClickEvent;
-import de.clickism.clickui.event.events.MouseReleaseEvent;
-import de.clickism.clickui.event.events.MouseScrollEvent;
+import de.clickism.clickui.event.events.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -38,7 +35,7 @@ public abstract class UiEventScreen extends Screen {
      *
      * @param element the element that is currently hovered, or null if no element is hovered
      */
-    protected void hoveredElement(@Nullable Element<?> element) {
+    private void hoveredElement(@Nullable Element<?> element) {
         // Update hovered state
         if (hoveredElement != null && hoveredElement != element) {
             hoveredElement.state().hovered(false);
@@ -72,8 +69,19 @@ public abstract class UiEventScreen extends Screen {
             return;
         }
 
+        // Send hover events
+        var target = hit.target();
+        if (hoveredElement != target) {
+            // Mouse exit event
+            if (hoveredElement != null) {
+                hoveredElement.events().fireEvent(new MouseExitEvent(mouseX, mouseY));
+            }
+            // Mouse enter event
+            target.events().fireEvent(new MouseEnterEvent(mouseX, mouseY));
+        }
+
         // Update hovered state
-        hoveredElement(hit.target());
+        hoveredElement(target);
     }
 
     @Override
