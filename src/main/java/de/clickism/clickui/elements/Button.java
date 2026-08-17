@@ -14,7 +14,10 @@ public class Button extends Element<Button> {
 
     public Button(Component label) {
         this.label = label;
+        // Adjust default padding
         this.padding(4, 8);
+        // Play down sound on click
+        this.onClick(event -> Util.playDownSound());
     }
 
     public void label(Component label) {

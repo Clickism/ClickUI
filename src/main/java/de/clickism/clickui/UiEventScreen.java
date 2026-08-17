@@ -111,6 +111,7 @@ public abstract class UiEventScreen extends Screen {
         int y = (int) mouseY;
         updateState(x, y);
         if (hoveredElement == null) return false;
+        if (hoveredElement.disabled()) return false;
 
         // Fire mouse release event to the hovered element
         var event = new MouseReleaseEvent(x, y, button);
@@ -123,11 +124,10 @@ public abstract class UiEventScreen extends Screen {
         int x = (int) mouseX;
         int y = (int) mouseY;
         updateState(x, y);
-        if (hoveredElement == null) return false;
 
-        // Fire mouse scroll event to the hovered element
+        // Fire mouse scroll event to all elements in the tree
         var event = new MouseScrollEvent(x, y, delta);
-        hoveredElement.events().fireEvent(event);
+        eventRoot().propagateEvent(event);
         return true;
     }
 

@@ -3,6 +3,8 @@ package de.clickism.clickui.util;
 import de.clickism.clickui.Element;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.function.Consumer;
 
@@ -23,5 +25,13 @@ public class Util {
 
     public static Font font() {
         return Minecraft.getInstance().font;
+    }
+
+    /**
+     * Plays the sound for when a button is clicked.
+     */
+    public static void playDownSound() {
+        var soundManager = Minecraft.getInstance().getSoundManager();
+        soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }
