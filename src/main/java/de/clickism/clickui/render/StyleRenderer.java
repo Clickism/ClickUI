@@ -49,8 +49,8 @@ public class StyleRenderer {
             context.graphics().renderOutline(
                 element.bounds().x() - width - 1,
                 element.bounds().y() - width - 1,
-                element.bounds().width() + width * 2 + 1,
-                element.bounds().height() + width * 2 + 1,
+                element.bounds().width() + width * 2 + 2,
+                element.bounds().height() + width * 2 + 2,
                 color
             );
         }

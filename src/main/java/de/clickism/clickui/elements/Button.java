@@ -1,16 +1,20 @@
 package de.clickism.clickui.elements;
 
 import de.clickism.clickui.Element;
-import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.layout.Size;
+import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
+
+import java.awt.*;
 
 public class Button extends Element<Button> {
     private Component label;
 
     public Button(Component label) {
         this.label = label;
+        this.style(style -> style
+            .hovered(s -> s.border(Color.ORANGE)));
     }
 
     public void label(Component label) {
@@ -26,13 +30,13 @@ public class Button extends Element<Button> {
     @Override
     public void render(RenderContext context) {
         var graphics = context.graphics();
-//        graphics.fill(this.bounds().x(), this.bounds().y(), this.bounds().x() + this.bounds().width(), this.bounds().y() + this.bounds().height(), 0xFF0000FF);
-//        graphics.drawString(Util.font(), label, this.bounds().x() + 5, this.bounds().y() + 5, 0xFFFFFFFF);
+        graphics.fill(this.bounds().x(), this.bounds().y(), this.bounds().x() + this.bounds().width(), this.bounds().y() + this.bounds().height(), 0xFF0000FF);
+        graphics.drawString(Util.font(), label, this.bounds().x() + 5, this.bounds().y() + 5, 0xFFFFFFFF);
 
-        var button = net.minecraft.client.gui.components.Button.builder(label, net.minecraft.client.gui.components.Button::onPress)
-            .bounds(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height())
-            .build();
-        button.render(graphics, context.mouseX(), context.mouseY(), context.delta());
+//        var button = net.minecraft.client.gui.components.Button.builder(label, net.minecraft.client.gui.components.Button::onPress)
+//            .bounds(this.bounds().x(), this.bounds().y(), this.bounds().width(), this.bounds().height())
+//            .build();
+//        button.render(graphics, context.mouseX(), context.mouseY(), context.delta());
 
 //        // Yoinked from button
 //        var bounds = this.bounds();

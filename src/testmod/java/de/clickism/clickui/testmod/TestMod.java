@@ -24,7 +24,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .padding(30)
             .children(
                 text("Hello, this is a test screen!")
-                    .style(Style.empty()
+                    .style(style -> style
                         .background(Color.BLUE)
                         .border(Color.YELLOW)
                         .borderWidth(5))
@@ -38,7 +38,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 box()
                     .height(200)
                     .horizontal()
-                    .style(Style.empty()
+                    .style(style -> style
                         .background(Color.GREEN)
                         .alpha(0.5f))
                     .children(

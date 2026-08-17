@@ -6,6 +6,7 @@ import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
 
+// TODO: Text alignment and wrapping
 public class Text extends Element<Text> {
     private Component text;
 

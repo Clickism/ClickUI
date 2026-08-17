@@ -2,10 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.event.EventManager;
 import de.clickism.clickui.event.EventTarget;
-import de.clickism.clickui.layout.Layout;
-import de.clickism.clickui.layout.Layoutable;
-import de.clickism.clickui.layout.Rect;
-import de.clickism.clickui.layout.Size;
+import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
 import de.clickism.clickui.state.State;
@@ -56,6 +53,11 @@ public abstract class Element<S extends Element<S>>
      * Calculated bounds of the element.
      */
     private Rect bounds = Rect.ZERO;
+
+    /**
+     * Whether this element can be hit by a mouse click event.
+     */
+    private boolean hitTestable = true;
 
     /**
      * Returns the intrinsic size of this element, which is the size that this element would like to be if it could be any size.
@@ -148,11 +150,6 @@ public abstract class Element<S extends Element<S>>
         return this.events;
     }
 
-    public S style(Style style) {
-        this.style = style;
-        return self();
-    }
-
     public S style(Consumer<Style> styleConsumer) {
         styleConsumer.accept(this.style);
         return self();
@@ -163,6 +160,40 @@ public abstract class Element<S extends Element<S>>
      */
     public void invalidate() {
         // TODO: Implement
+    }
+
+    /**
+     * Converts a point from the coordinate space of this element's parent
+     * to the coordinate space of this element.
+     * <p>
+     * By default, this method returns the point unchanged, but subclasses
+     * can override it to apply transformations such as translation, scaling, or rotation.
+     *
+     * @param point the point in the parent coordinate space
+     * @return the point in this element's coordinate space
+     */
+    public Point toChildCoordinates(Point point) {
+        return point;
+    }
+
+    /**
+     * Returns whether this element can be hit by a mouse click event.
+     *
+     * @return whether this element can be hit by a mouse click event
+     */
+    public boolean hitTestable() {
+        return this.hitTestable;
+    }
+
+    /**
+     * Sets whether this element can be hit by a mouse click event.
+     *
+     * @param hitTestable whether this element can be hit by a mouse click event
+     * @return this element
+     */
+    public S hitTestable(boolean hitTestable) {
+        this.hitTestable = hitTestable;
+        return self();
     }
 
     /**

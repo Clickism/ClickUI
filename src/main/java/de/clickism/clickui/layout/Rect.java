@@ -3,6 +3,10 @@ package de.clickism.clickui.layout;
 public record Rect(int x, int y, int width, int height) {
     public static Rect ZERO = new Rect(0, 0, 0, 0);
 
+    public boolean contains(Point point) {
+        return contains(point.x(), point.y());
+    }
+
     public boolean contains(int px, int py) {
         return px >= x && px < x + width && py >= y && py < y + height;
     }
