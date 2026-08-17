@@ -1,7 +1,10 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.event.HitTester;
+import de.clickism.clickui.event.events.KeyPressEvent;
 import de.clickism.clickui.event.events.MouseClickEvent;
+import de.clickism.clickui.event.events.MouseReleaseEvent;
+import de.clickism.clickui.event.events.MouseScrollEvent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -70,7 +73,7 @@ public abstract class UiEventScreen extends Screen {
         }
 
         // Update hovered state
-        hoveredElement(hoveredElement);
+        hoveredElement(hit.target());
     }
 
     @Override
@@ -79,8 +82,6 @@ public abstract class UiEventScreen extends Screen {
         // Update element states first
         updateState(mouseX, mouseY);
     }
-
-    // Handle events
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -94,4 +95,43 @@ public abstract class UiEventScreen extends Screen {
         hoveredElement.events().fireEvent(event);
         return true;
     }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        int x = (int) mouseX;
+        int y = (int) mouseY;
+        updateState(x, y);
+        if (hoveredElement == null) return false;
+
+        // Fire mouse release event to the hovered element
+        var event = new MouseReleaseEvent(x, y, button);
+        hoveredElement.events().fireEvent(event);
+        return true;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        int x = (int) mouseX;
+        int y = (int) mouseY;
+        updateState(x, y);
+        if (hoveredElement == null) return false;
+
+        // Fire mouse scroll event to the hovered element
+        var event = new MouseScrollEvent(x, y, delta);
+        hoveredElement.events().fireEvent(event);
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int code, int scanCode, int modifiers) {
+        if (super.keyPressed(code, scanCode, modifiers)) return true;
+
+        // Fire key press event to all elements in the tree
+        var event = new KeyPressEvent(code, scanCode, modifiers);
+        eventRoot().propagateEvent(event);
+
+        return false;
+    }
+
+    // TODO: Good drag controls
 }

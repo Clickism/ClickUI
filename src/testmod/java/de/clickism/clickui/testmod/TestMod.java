@@ -2,10 +2,10 @@ package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.style.Style;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 
@@ -33,7 +33,13 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 button("Click me!")
                     .width(200)
                     .onClick(event -> {
-                        System.out.println("Button clicked!");
+                        event.player().sendSystemMessage(Component.literal("Button clicked!"));
+                    })
+                    .onRelease(event -> {
+                        event.player().sendSystemMessage(Component.literal("Button released!"));
+                    })
+                    .onKeyPress(event -> {
+                        event.player().sendSystemMessage(Component.literal("Key pressed on button!"));
                     }),
                 box()
                     .height(200)

@@ -1,6 +1,9 @@
 package de.clickism.clickui.event;
 
+import de.clickism.clickui.event.events.KeyPressEvent;
 import de.clickism.clickui.event.events.MouseClickEvent;
+import de.clickism.clickui.event.events.MouseReleaseEvent;
+import de.clickism.clickui.event.events.MouseScrollEvent;
 import de.clickism.clickui.util.Self;
 
 /**
@@ -39,5 +42,35 @@ public interface EventTarget<S extends EventTarget<S>>
      */
     default S onClick(EventListener<MouseClickEvent> listener) {
         return on(MouseClickEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for mouse release events.
+     *
+     * @param listener The listener to handle mouse release events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onRelease(EventListener<MouseReleaseEvent> listener) {
+        return on(MouseReleaseEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for key press events.
+     *
+     * @param listener The listener to handle key press events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onKeyPress(EventListener<KeyPressEvent> listener) {
+        return on(KeyPressEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for mouse scroll events.
+     *
+     * @param listener The listener to handle mouse scroll events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onScroll(EventListener<MouseScrollEvent> listener) {
+        return on(MouseScrollEvent.class, listener);
     }
 }

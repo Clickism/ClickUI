@@ -1,5 +1,6 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.event.Event;
 import de.clickism.clickui.event.EventManager;
 import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
@@ -148,6 +149,21 @@ public abstract class Element<S extends Element<S>>
     @Override
     public EventManager events() {
         return this.events;
+    }
+
+    /**
+     * Propagates the given event to this element and all of its children recursively.
+     *
+     * @param event the event to propagate
+     */
+    public void propagateEvent(Event event) {
+        // Fire children first
+        for (var child : children) {
+            child.propagateEvent(event);
+        }
+
+        // Fire this element's event manager
+        this.events.fireEvent(event);
     }
 
     public S style(Consumer<Style> styleConsumer) {
