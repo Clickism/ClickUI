@@ -28,4 +28,24 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
         copy.fontScale = this.fontScale;
         return copy;
     }
+
+    public @Nullable Color background() {
+        return background;
+    }
+
+    public @Nullable Color border() {
+        return border;
+    }
+
+    public int borderWidth() {
+        return borderWidth;
+    }
+
+    public float alpha() {
+        return alpha;
+    }
+
+    public float fontScale() {
+        return fontScale;
+    }
 }

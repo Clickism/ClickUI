@@ -44,6 +44,11 @@ public interface Layoutable<S extends Layoutable<S>>
         return self();
     }
 
+    default S growWidth() {
+        layout().width = Sizing.grow();
+        return self();
+    }
+
     default Sizing height() {
         return layout().height;
     }
@@ -55,6 +60,17 @@ public interface Layoutable<S extends Layoutable<S>>
 
     default S height(int height) {
         layout().height = Sizing.fixed(height);
+        return self();
+    }
+
+    default S growHeight() {
+        layout().height = Sizing.grow();
+        return self();
+    }
+
+    default S grow() {
+        layout().width = Sizing.grow();
+        layout().height = Sizing.grow();
         return self();
     }
 

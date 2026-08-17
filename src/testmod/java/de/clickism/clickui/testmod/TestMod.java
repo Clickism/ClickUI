@@ -2,10 +2,10 @@ package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiScreen;
+import de.clickism.clickui.util.Util;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 import java.awt.*;
@@ -25,12 +25,12 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .padding(30)
             .children(
                 text("Hello, this is a test screen!")
-                    .style(style -> style
+                    .padding(20)
+                    .style(s -> s
                         .fontScale(2.0f)
                         .background(Color.BLUE)
                         .border(Color.YELLOW)
-                        .borderWidth(5))
-                    .padding(20),
+                        .borderWidth(5)),
                 text(Component.literal("Whaaat?").withStyle(ChatFormatting.BOLD)),
                 button("Click me!")
                     .width(200)
@@ -47,7 +47,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 box()
                     .height(200)
                     .vertical()
-                    .style(style -> style
+                    .style(s -> s
                         .background(Color.GREEN)
                         .alpha(0.5f))
                     .children(
@@ -62,7 +62,31 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             )
         );
 
-        var client = Minecraft.getInstance();
-        client.execute(() -> client.setScreen(screen));
+        var newScreen = UiScreen.create(box()
+            .alignCenter()
+            .grow()
+            .style(s -> s
+                .background(Color.BLACK)
+                .alpha(0.5f))
+            .children(
+                box()
+                    .style(s -> s
+                        .border(Color.GRAY))
+                    .padding(4)
+                    .childGap(8)
+                    .alignCenter()
+                    .children(
+                        text("This is a new screen"),
+                        text("You can go back to the previous screen by clicking the button below")
+                            .padding(4),
+                        button("Go back")
+                            .onClick(event -> {
+                                event.screen().back();
+                            })
+                    )
+            )
+        );
+
+        Util.openScreen(newScreen);
     }
 }

@@ -18,8 +18,9 @@ public final class Style implements Styleable<Style> {
         return this;
     }
 
-    public void when(Predicate<StyleContext> condition, StyleConfig config) {
+    public Style when(Predicate<StyleContext> condition, StyleConfig config) {
         rules.add(new StyleRule(condition, config));
+        return this;
     }
 
     public ResolvedStyle resolve(StyleContext context) {

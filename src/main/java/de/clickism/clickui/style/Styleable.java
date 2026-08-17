@@ -14,17 +14,9 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
      */
     ResolvedStyle style();
 
-    default @Nullable Color background() {
-        return style().background;
-    }
-
     default S background(@Nullable Color background) {
         style().background = background;
         return self();
-    }
-
-    default @Nullable Color border() {
-        return style().border;
     }
 
     default S border(@Nullable Color border) {
@@ -32,26 +24,14 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
         return self();
     }
 
-    default int borderWidth() {
-        return style().borderWidth;
-    }
-
     default S borderWidth(int borderWidth) {
         style().borderWidth = borderWidth;
         return self();
     }
 
-    default float alpha() {
-        return style().alpha;
-    }
-
     default S alpha(float alpha) {
         style().alpha = alpha;
         return self();
-    }
-
-    default float fontScale() {
-        return style().fontScale;
     }
 
     default S fontScale(float fontScale) {

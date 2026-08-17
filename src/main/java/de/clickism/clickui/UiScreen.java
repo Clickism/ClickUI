@@ -2,18 +2,27 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A screen that contains a UI tree and handles rendering and layout.
- * Subclasses should implement the build() method to define the structure of the UI.
+ * <p>
+ * Subclasses should implement the {@link build()} method to define the structure of the UI.
  */
 public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     /**
      * The root element of the UI tree.
      */
     private final Element<?> root;
+
+    /**
+     * The parent screen of this UiScreen, if any.
+     * This can be used to navigate back to the previous screen.
+     */
+    private @Nullable UiScreen parent;
 
     /**
      * Creates a new UiScreen with the specified title component.
@@ -47,6 +56,53 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         };
     }
 
+    /**
+     * Returns the parent screen of this UiScreen, if any.
+     *
+     * @return the parent screen, or null if there is no parent
+     */
+    public @Nullable UiScreen parent() {
+        return parent;
+    }
+
+    /**
+     * Sets the parent screen of this UiScreen.
+     *
+     * @param parent the parent screen to set, or null if there is no parent
+     */
+    public void parent(@Nullable UiScreen parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Opens the specified UiScreen, setting this screen as its parent.
+     *
+     * @param screen the UiScreen to open
+     */
+    public void open(UiScreen screen) {
+        screen.parent(this);
+        Util.openScreen(screen);
+    }
+
+    /**
+     * Opens this UiScreen in the Minecraft client.
+     */
+    public void open() {
+        Util.openScreen(this);
+    }
+
+    /**
+     * Navigates back to the parent screen, if any.
+     * If there is no parent screen, it closes the current screen.
+     */
+    public void back() {
+        if (parent == null) {
+            Util.openScreen(null);
+            return;
+        }
+        Util.openScreen(parent);
+    }
+
     @Override
     protected Element<?> eventRoot() {
         return root; // Return the root element for event handling
@@ -77,5 +133,10 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         super.render(guiGraphics, mouseX, mouseY, delta);
         // Render the tree
         root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta));
+    }
+
+    @Override
+    public void onClose() {
+        this.back();
     }
 }
