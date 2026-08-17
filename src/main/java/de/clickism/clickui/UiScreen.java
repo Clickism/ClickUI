@@ -1,28 +1,43 @@
 package de.clickism.clickui;
 
-import de.clickism.clickui.event.HitTester;
-import de.clickism.clickui.event.events.MouseClickEvent;
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.render.RenderContext;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public abstract class UiScreen extends Screen implements UiBuilder {
-
+/**
+ * A screen that contains a UI tree and handles rendering and layout.
+ * Subclasses should implement the build() method to define the structure of the UI.
+ */
+public abstract class UiScreen extends UiEventScreen implements UiBuilder {
+    /**
+     * The root element of the UI tree.
+     */
     private final Element<?> root;
-    private final HitTester hitTester = new HitTester();
-    private Element<?> hoveredElement = null;
 
+    /**
+     * Creates a new UiScreen with the specified title component.
+     *
+     * @param component the title component of the screen
+     */
     public UiScreen(Component component) {
         super(component);
         this.root = build();
     }
 
+    /**
+     * Creates a new UiScreen.
+     */
     public UiScreen() {
         this(Component.empty());
     }
 
+    /**
+     * Creates a new UiScreen with the specified content element.
+     *
+     * @param content the root element of the UI tree
+     * @return a new UiScreen instance with the specified content
+     */
     public static UiScreen create(Element<?> content) {
         return new UiScreen() {
             @Override
@@ -32,6 +47,19 @@ public abstract class UiScreen extends Screen implements UiBuilder {
         };
     }
 
+    @Override
+    protected Element<?> eventRoot() {
+        return root; // Return the root element for event handling
+    }
+
+    /**
+     * Builds the root element of the UI tree.
+     * This method should be implemented by subclasses to define the structure of the UI.
+     * <p>
+     * This function is called only once during the initialization of the screen.
+     *
+     * @return the root element of the UI tree
+     */
     public abstract Element<?> build();
 
     @Override
@@ -40,47 +68,14 @@ public abstract class UiScreen extends Screen implements UiBuilder {
             .width(this.width)
             .height(this.height);
         screen.children(this.root);
+        // Layout again
         new LayoutEngine().layout(screen);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         super.render(guiGraphics, mouseX, mouseY, delta);
-        // Update element states first
-        updateState(mouseX, mouseY);
-        // Then render the tree
+        // Render the tree
         root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta));
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int x = (int) mouseX;
-        int y = (int) mouseY;
-        updateState(x, y);
-        if (hoveredElement == null) return false;
-
-        // Fire mouse click event to the hovered element
-        var event = new MouseClickEvent(x, y, button);
-        hoveredElement.events().fireEvent(event);
-        return true;
-    }
-
-    private void updateState(int mouseX, int mouseY) {
-        var hit = hitTester.hitTest(root, mouseX, mouseY);
-        if (hit == null) {
-            // Clear hovered state if no element is hit
-            if (hoveredElement != null) {
-                hoveredElement.state().hovered(false);
-                hoveredElement = null;
-            }
-            return;
-        }
-
-        // Update hovered state
-        if (hoveredElement != null && hoveredElement != hit.target()) {
-            hoveredElement.state().hovered(false);
-        }
-        hoveredElement = hit.target();
-        hoveredElement.state().hovered(true);
     }
 }
