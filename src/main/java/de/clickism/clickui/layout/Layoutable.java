@@ -62,6 +62,16 @@ public interface Layoutable<S extends Layoutable<S>>
         return layout().padding;
     }
 
+    default S padding(int top, int right, int bottom, int left) {
+        layout().padding = new Padding(top, right, bottom, left);
+        return self();
+    }
+
+    default S padding(int vertical, int horizontal) {
+        layout().padding = new Padding(vertical, horizontal, vertical, horizontal);
+        return self();
+    }
+
     default S padding(Padding padding) {
         layout().padding = padding;
         return self();

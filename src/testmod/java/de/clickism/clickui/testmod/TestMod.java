@@ -46,13 +46,16 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     }),
                 box()
                     .height(200)
-                    .horizontal()
+                    .vertical()
                     .style(style -> style
                         .background(Color.GREEN)
                         .alpha(0.5f))
                     .children(
                         text("This is a box")
                             .padding(10),
+                        button("I don't feel like I fit in")
+                            .width(50),
+                        button("I do though"),
                         button("Click me too!")
                             .padding(20)
                     )

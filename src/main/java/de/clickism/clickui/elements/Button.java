@@ -14,6 +14,7 @@ public class Button extends Element<Button> {
 
     public Button(Component label) {
         this.label = label;
+        this.padding(4, 8);
     }
 
     public void label(Component label) {
@@ -23,7 +24,7 @@ public class Button extends Element<Button> {
 
     @Override
     public Size intrinsicSize() {
-        return new Size(Util.font().width(label) + 10, Util.font().lineHeight + 10);
+        return new Size(Util.font().width(label), Util.font().lineHeight + 3);
     }
 
     @Override
@@ -45,7 +46,10 @@ public class Button extends Element<Button> {
         var textHeight = renderer.measureHeight(fontScale);
         var textX = (int) (bounds.x() + (bounds.width() - textWidth) / 2);
         var textY = (int) (bounds.y() + (bounds.height() - textHeight) / 2);
-        renderer.render(label, textX, textY, fontScale, 0xFFFFFFFF);
+        textY += 1; // Adjust for better visual alignment
+        // Text color
+        var color = state().disabled() ? 0xFFAAAAAA : 0xFFFFFFFF;
+        renderer.render(label, textX, textY, fontScale, color);
     }
 
     /**
