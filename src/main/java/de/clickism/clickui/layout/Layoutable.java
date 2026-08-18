@@ -145,6 +145,7 @@ public interface Layoutable<S extends Layoutable<S>>
         return layout().positioning;
     }
 
+    // TODO: Test different positioning modes and their effects on layout
     default S positioning(Positioning positioning) {
         layout().positioning = positioning;
         return self();
