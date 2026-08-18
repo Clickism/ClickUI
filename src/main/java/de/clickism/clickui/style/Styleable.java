@@ -29,6 +29,11 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
         return self();
     }
 
+    default S borderPosition(BorderPosition borderPosition) {
+        style().borderPosition = borderPosition;
+        return self();
+    }
+
     default S alpha(float alpha) {
         style().alpha = alpha;
         return self();

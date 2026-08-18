@@ -72,8 +72,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .children(
                 box()
                     .style(s -> s
-                        .border(Color.GRAY))
-                    .padding(4)
+                        .border(Color.LIGHT_GRAY)
+                        .background(Color.BLACK)
+                        .alpha(0.5f))
+                    .padding(8)
                     .childGap(8)
                     .alignCenter()
                     .children(

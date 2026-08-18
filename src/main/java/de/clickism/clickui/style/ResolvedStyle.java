@@ -11,6 +11,7 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
     // TODO: Different border styles for each side
     // TODO: Border position (inside, outside, center)
     int borderWidth = 1;
+    BorderPosition borderPosition = BorderPosition.OUTSIDE;
     float alpha = 1.0f;
     float fontScale = 1.0f;
 
@@ -23,6 +24,7 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
         var copy = new ResolvedStyle();
         copy.background = this.background;
         copy.border = this.border;
+        copy.borderPosition = this.borderPosition;
         copy.borderWidth = this.borderWidth;
         copy.alpha = this.alpha;
         copy.fontScale = this.fontScale;
@@ -39,6 +41,10 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
 
     public int borderWidth() {
         return borderWidth;
+    }
+
+    public BorderPosition borderPosition() {
+        return borderPosition;
     }
 
     public float alpha() {

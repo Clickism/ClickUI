@@ -4,8 +4,11 @@ import de.clickism.clickui.Element;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
+import de.clickism.clickui.style.BorderPosition;
 import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
+
+import java.awt.*;
 
 import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 
@@ -16,6 +19,10 @@ public class Button extends Element<Button> {
         this.label = label;
         // Adjust default padding
         this.padding(4, 8);
+        this.style(s -> s
+            .hovered(h -> h
+                .border(Color.WHITE)
+                .borderPosition(BorderPosition.CENTER)));
         // Play down sound on click
         this.onClick(event -> Util.playDownSound());
     }
@@ -70,9 +77,9 @@ public class Button extends Element<Button> {
         int textureY = 46;
         if (!state().disabled()) {
             textureY += 20;
-            if (state().hovered()) {
-                textureY += 20;
-            }
+//            if (state().hovered()) {
+//                textureY += 20;
+//            }
         }
         return textureY;
     }

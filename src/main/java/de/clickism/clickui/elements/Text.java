@@ -8,20 +8,83 @@ import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
 
 // TODO: Text alignment and wrapping
+
+/**
+ * A simple UI element used for displaying text.
+ */
 public class Text extends Element<Text> {
     private Component text;
+    private Align align = Align.LEFT;
 
+    /**
+     * Creates a new Text element with the specified text.
+     *
+     * @param text The text to display in the Text element.
+     */
     public Text(Component text) {
         this.text = text;
     }
 
-    public void text(Component text) {
+    /**
+     * Sets the text of the Text element.
+     *
+     * @param text The text to display in the Text element.
+     * @return The current Text element instance.
+     */
+    public Text text(Component text) {
         this.text = text;
         this.invalidate();
+        return this;
     }
 
-    public void text(String text) {
+    /**
+     * Sets the text of the Text element using a String.
+     *
+     * @param text The text to display in the Text element.
+     * @return The current Text element instance.
+     */
+    public Text text(String text) {
         this.text(Component.literal(text));
+        return this;
+    }
+
+    /**
+     * Sets the text alignment of the Text element.
+     *
+     * @param align The alignment to set for the text.
+     * @return The current Text element instance.
+     */
+    public Text textAlign(Align align) {
+        this.align = align;
+        this.invalidate();
+        return this;
+    }
+
+    /**
+     * Sets the text alignment of the Text element to left.
+     *
+     * @return The current Text element instance.
+     */
+    public Text textAlignLeft() {
+        return textAlign(Align.LEFT);
+    }
+
+    /**
+     * Sets the text alignment of the Text element to center.
+     *
+     * @return The current Text element instance.
+     */
+    public Text textAlignCenter() {
+        return textAlign(Align.CENTER);
+    }
+
+    /**
+     * Sets the text alignment of the Text element to right.
+     *
+     * @return The current Text element instance.
+     */
+    public Text textAlignRight() {
+        return textAlign(Align.RIGHT);
     }
 
     @Override
@@ -41,7 +104,18 @@ public class Text extends Element<Text> {
         var y = this.bounds().y() + this.padding().top();
         var renderer = new ScaledTextRenderer(context);
         var style = this.resolvedStyle();
+        // TODO: Cascading text color?
+        // TODO: Render alignment
         // TODO: Text color?
         renderer.render(text, x, y, style.fontScale(), 0xFFFFFFFF);
+    }
+
+    /**
+     * Text alignment enum.
+     */
+    public enum Align {
+        LEFT,
+        CENTER,
+        RIGHT
     }
 }

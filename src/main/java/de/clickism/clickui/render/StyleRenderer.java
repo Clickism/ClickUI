@@ -1,6 +1,7 @@
 package de.clickism.clickui.render;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.style.BorderPosition;
 import de.clickism.clickui.style.StyleContext;
 
 public class StyleRenderer {
@@ -30,7 +31,7 @@ public class StyleRenderer {
         // Render border
         var border = style.border();
         if (border != null && style.borderWidth() > 0) {
-            renderBorder(border.getRGB(), style.borderWidth());
+            renderBorder(border.getRGB(), style.borderWidth(), style.borderPosition());
         }
 
         // Revert alpha
@@ -47,15 +48,21 @@ public class StyleRenderer {
         );
     }
 
-    protected void renderBorder(int color, int width) {
+    protected void renderBorder(int color, int width, BorderPosition position) {
+        int offset = switch (position) {
+            case OUTSIDE -> -width;
+            case CENTER -> -width / 2;
+            case INSIDE -> 0;
+        };
         while (width-- > 0) {
             context.graphics().renderOutline(
-                element.bounds().x() - width - 1,
-                element.bounds().y() - width - 1,
-                element.bounds().width() + width * 2 + 2,
-                element.bounds().height() + width * 2 + 2,
+                element.bounds().x() + offset,
+                element.bounds().y() + offset,
+                element.bounds().width() - offset * 2,
+                element.bounds().height() - offset * 2,
                 color
             );
+            offset++;
         }
     }
 }
