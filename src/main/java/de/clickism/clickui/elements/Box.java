@@ -9,14 +9,21 @@ import net.minecraft.util.Mth;
 // TODO: Overflow hidden, show, scroll etc.
 // TODO: Fix nested scroll boxes don't work
 // TODO: Fix scroll boxes capture scroll events even when not hovered
+
 /**
  * A simple container element that can hold other elements
  * and provides scrolling functionality in case of
  * vertical overflow.
  */
 public class Box extends Element<Box> {
+    /**
+     * The default scroll rate for all boxes.
+     */
     private static final double DEFAULT_SCROLL_RATE = 9;
 
+    /**
+     * Scrollbar colors and dimensions.
+     */
     protected static final int SCROLLBAR_BACKGROUND = 0xFF000000;
     protected static final int SCROLLBAR_COLOR = 0xFF808080;
     protected static final int SCROLLBAR_SHADOW_COLOR = 0xFFC0C0C0;
@@ -37,6 +44,9 @@ public class Box extends Element<Box> {
      */
     private boolean scrollable = true;
 
+    /**
+     * Whether the scrollbar is currently being dragged by the user.
+     */
     private boolean draggingScrollbar = false;
 
     /**
