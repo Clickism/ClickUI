@@ -6,8 +6,8 @@ import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
-import de.clickism.clickui.state.State;
-import de.clickism.clickui.state.StateHolder;
+import de.clickism.clickui.state.ElementState;
+import de.clickism.clickui.state.ElementStateHolder;
 import de.clickism.clickui.style.ResolvedStyle;
 import de.clickism.clickui.style.Style;
 import de.clickism.clickui.style.StyleContext;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  * An element in the UI hierarchy.
  */
 public abstract class Element<S extends Element<S>>
-    implements Layoutable<S>, StateHolder<S>, EventTarget<S> {
+    implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S> {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
     // TODO: Tooltip support
@@ -52,7 +52,7 @@ public abstract class Element<S extends Element<S>>
     /**
      * The state of this element, used for rendering.
      */
-    private final State state = new State();
+    private final ElementState state = new ElementState();
     /**
      * The event manager for this element, used for handling events.
      */
@@ -188,7 +188,7 @@ public abstract class Element<S extends Element<S>>
     }
 
     @Override
-    public State state() {
+    public ElementState state() {
         return this.state;
     }
 
@@ -334,4 +334,13 @@ public abstract class Element<S extends Element<S>>
      * @param context the render context to render with
      */
     public abstract void render(RenderContext context);
+
+    /**
+     * Initializes this element.
+     * This method is guaranteed to be called once after the element
+     * is added to the UI tree, and before it is rendered for the first time.
+     */
+    public void initialize() {
+        // Nothing here
+    }
 }

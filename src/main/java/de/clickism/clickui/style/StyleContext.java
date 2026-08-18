@@ -1,11 +1,11 @@
 package de.clickism.clickui.style;
 
 import de.clickism.clickui.Element;
-import de.clickism.clickui.state.State;
-import de.clickism.clickui.state.StateHolder;
+import de.clickism.clickui.state.ElementState;
+import de.clickism.clickui.state.ElementStateHolder;
 
 public record StyleContext(
     Element<?> element,
-    State state
-) implements StateHolder<StyleContext> {
+    ElementState state
+) implements ElementStateHolder<StyleContext> {
 }

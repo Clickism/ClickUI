@@ -38,6 +38,8 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
             // Empty fallback element
             this.root = box();
         }
+        // Initialize all elements
+        Util.preOrder(this.root, Element::initialize);
     }
 
     /**

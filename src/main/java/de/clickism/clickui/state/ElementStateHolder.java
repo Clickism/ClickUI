@@ -2,7 +2,7 @@ package de.clickism.clickui.state;
 
 import de.clickism.clickui.util.Self;
 
-public interface StateHolder<S extends StateHolder<S>>
+public interface ElementStateHolder<S extends ElementStateHolder<S>>
     extends Self<S> {
 
     /**
@@ -10,7 +10,7 @@ public interface StateHolder<S extends StateHolder<S>>
      *
      * @return the state of the UI element
      */
-    State state();
+    ElementState state();
 
     default boolean hovered() {
         return state().hovered;
