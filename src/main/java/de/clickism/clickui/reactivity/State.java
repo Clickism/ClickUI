@@ -1,14 +1,16 @@
 package de.clickism.clickui.reactivity;
 
+import de.clickism.clickui.Component;
+
 import java.util.function.Function;
 
 public class State<T> {
     private T value;
-    private final Runnable callback;
+    private final Component<?> parent;
 
-    public State(T value, Runnable callback) {
+    public State(T value, Component<?> parent) {
         this.value = value;
-        this.callback = callback;
+        this.parent = parent;
     }
 
     public T get() {
@@ -17,11 +19,11 @@ public class State<T> {
 
     public void update(T value) {
         this.value = value;
-        this.callback.run();
+        this.parent.rebuild();
     }
 
     public void update(Function<T, T> updater) {
         this.value = updater.apply(this.value);
-        this.callback.run();
+        this.parent.rebuild();
     }
 }

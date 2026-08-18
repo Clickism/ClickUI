@@ -7,7 +7,7 @@ public class Counter extends Component<Counter> {
     private final State<Integer> count = state(0);
 
     @Override
-    public void build() {
+    protected void build() {
         add(text("Count: " + count.get()));
         add(button("Increment")
             .onClick(event -> count.update(c -> c + 1)));

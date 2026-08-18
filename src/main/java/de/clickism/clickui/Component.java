@@ -2,6 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.reactivity.State;
 import de.clickism.clickui.render.RenderContext;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Components are the reactive layer of the UI.
@@ -19,15 +20,16 @@ public abstract class Component<S extends Component<S>> extends Element<S>
      * Builds the UI tree for this component.
      * <p>
      * This method is called when the component is first created,
-     * and whenever the component's state changes and it needs to be rebuilt.
+     * and whenever the component's state changes, and it needs to be rebuilt.
      * <p>
      * It's always called after clearing all children.
      */
-    public abstract void build();
+    protected abstract void build();
 
     /**
      * Rebuilds the UI tree for this component.
      */
+    @ApiStatus.Internal
     public final void rebuild() {
         super.invalidate();
         clear();
@@ -60,7 +62,7 @@ public abstract class Component<S extends Component<S>> extends Element<S>
      * @param <T>          the type of the state variable
      * @return a new state variable that is tied to this component
      */
-    public <T> State<T> state(T initialValue) {
-        return new State<>(initialValue, this::rebuild);
+    protected <T> State<T> state(T initialValue) {
+        return new State<>(initialValue, this);
     }
 }
