@@ -299,6 +299,18 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
+     * Sets the given ref to this element, allowing external code to hold a reference to this element.
+     *
+     * @param ref the ref to set
+     * @return this element
+     */
+
+    public S ref(Ref<S> ref) {
+        ref.set(self());
+        return self();
+    }
+
+    /**
      * Renders this element and all of its children recursively.
      *
      * @param context the render context to render to

@@ -8,8 +8,11 @@ public class Counter extends Component<Counter> {
 
     @Override
     protected void build() {
-        add(text("Count: " + count.get()));
-        add(button("Increment")
-            .onClick(event -> count.update(c -> c + 1)));
+        alignCenter();
+        children(
+            text("Count: " + count.get()),
+            button("Increment")
+                .onClick(event -> count.update(c -> c + 1))
+        );
     }
 }

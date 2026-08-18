@@ -20,6 +20,10 @@ public class Text extends Element<Text> {
         this.invalidate();
     }
 
+    public void text(String text) {
+        this.text(Component.literal(text));
+    }
+
     @Override
     public Size intrinsicSize() {
         // TODO: Font size, multiline, etc.

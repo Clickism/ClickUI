@@ -65,4 +65,16 @@ public abstract class Component<S extends Component<S>> extends Element<S>
     protected <T> State<T> state(T initialValue) {
         return new State<>(initialValue, this);
     }
+
+    /**
+     * Creates a new ref variable that is tied to this component.
+     *
+     * @param <T> the type of the ref variable
+     * @return a new ref variable that is tied to this component
+     */
+    protected <T> Ref<T> ref() {
+        return new Ref<>();
+    }
+
+    // TODO: Memoization?
 }
