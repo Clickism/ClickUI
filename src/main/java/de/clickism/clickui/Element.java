@@ -81,11 +81,12 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Returns the minimum size of this element, which is the smallest size that this element can be without breaking its layout.
+     * Returns the minimum size of this element,
+     * which is the smallest size that this element can be without breaking its layout.
      *
      * @return The minimum size of this element.
      */
-    public Size minSize() {
+    public Size defaultMinSize() {
         return Size.ZERO;
     }
 

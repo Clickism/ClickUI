@@ -71,6 +71,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 .alpha(0.5f))
             .children(
                 box()
+                    .width(400)
                     .style(s -> s
                         .border(Color.LIGHT_GRAY)
                         .background(Color.BLACK)
@@ -112,14 +113,14 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 text("Scrollable content line 9"),
                                 button("Far down!?")
                             ),
-                        text("You can go back to the previous screen by clicking the button below")
+                        text("You can go back to the previous screen by clicking the button below. Alternatively, you can also press the ESC key to go back.")
+                            .width(300)
                             .padding(4),
                         new Counter(),
                         button("Go back")
                             .onClick(event -> {
                                 event.screen().back();
-                            }),
-                        text("a b c d e f g h")
+                            })
                     )
             )
         );

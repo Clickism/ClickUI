@@ -49,6 +49,11 @@ public interface Layoutable<S extends Layoutable<S>>
         return self();
     }
 
+    default S minWidth(int minWidth) {
+        layout().width = layout().width.min(minWidth);
+        return self();
+    }
+
     default Sizing height() {
         return layout().height;
     }
@@ -65,6 +70,11 @@ public interface Layoutable<S extends Layoutable<S>>
 
     default S growHeight() {
         layout().height = Sizing.grow();
+        return self();
+    }
+
+    default S minHeight(int minHeight) {
+        layout().height = layout().height.min(minHeight);
         return self();
     }
 

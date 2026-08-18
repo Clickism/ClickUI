@@ -7,7 +7,8 @@ import de.clickism.clickui.util.Util;
 import net.minecraft.util.Mth;
 
 // TODO: Overflow hidden, show, scroll etc.
-
+// TODO: Fix nested scroll boxes don't work
+// TODO: Fix scroll boxes capture scroll events even when not hovered
 /**
  * A simple container element that can hold other elements
  * and provides scrolling functionality in case of

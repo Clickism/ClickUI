@@ -116,7 +116,7 @@ public class Text extends Element<Text> implements Wrappable {
     }
 
     @Override
-    public Size minSize() {
+    public Size defaultMinSize() {
         var splitter = Util.font().getSplitter();
         var scale = resolvedStyle().fontScale();
 
