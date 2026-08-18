@@ -26,7 +26,7 @@ public class Text extends Element<Text> implements Wrappable {
      * The text to displaY.
      */
     private Component text;
-    private List<FormattedText> lines = List.of();
+    private List<FormattedText> lines;
     /**
      * The alignment of the text within.
      */
@@ -39,6 +39,7 @@ public class Text extends Element<Text> implements Wrappable {
      */
     public Text(Component text) {
         this.text = text;
+        this.lines = List.of(text);
     }
 
     /**
@@ -49,6 +50,7 @@ public class Text extends Element<Text> implements Wrappable {
      */
     public Text text(Component text) {
         this.text = text;
+        this.lines = List.of(text); // Reset lines to the new text
         this.invalidate();
         return this;
     }
