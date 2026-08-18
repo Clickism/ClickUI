@@ -79,8 +79,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .childGap(8)
                     .alignCenter()
                     .children(
-                        text("This is a new screen"),
-                        new Box()
+                        h1("New Screen!"),
+                        text("There are some important info here!"),
+                        h3("For example:"),
+                        box()
                             .width(300)
                             .padding(16)
                             .height(100)

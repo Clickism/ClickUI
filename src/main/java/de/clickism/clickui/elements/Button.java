@@ -12,9 +12,20 @@ import java.awt.*;
 
 import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 
+/**
+ * A simple UI element that can be clicked and displays a label.
+ */
 public class Button extends Element<Button> {
+    /**
+     * The label to display on the button.
+     */
     private Component label;
 
+    /**
+     * Creates a new Button element with the specified label.
+     *
+     * @param label the label to display on the button
+     */
     public Button(Component label) {
         this.label = label;
         // Adjust default padding
@@ -27,6 +38,20 @@ public class Button extends Element<Button> {
         this.onClick(event -> Util.playDownSound());
     }
 
+    /**
+     * Creates a new Button element with the specified label as a String.
+     *
+     * @param label the label to display on the button
+     */
+    public Button(String label) {
+        this(Component.literal(label));
+    }
+
+    /**
+     * Sets the label of the button.
+     *
+     * @param label the label to set
+     */
     public void label(Component label) {
         this.label = label;
         this.invalidate();
@@ -34,6 +59,7 @@ public class Button extends Element<Button> {
 
     @Override
     public Size intrinsicSize() {
+        // TODO: Consider font size
         return new Size(Util.font().width(label), Util.font().lineHeight + 3);
     }
 
@@ -77,9 +103,6 @@ public class Button extends Element<Button> {
         int textureY = 46;
         if (!state().disabled()) {
             textureY += 20;
-//            if (state().hovered()) {
-//                textureY += 20;
-//            }
         }
         return textureY;
     }

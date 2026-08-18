@@ -13,13 +13,19 @@ import net.minecraft.network.chat.Component;
  * A simple UI element used for displaying text.
  */
 public class Text extends Element<Text> {
+    /**
+     * The text to displaY.
+     */
     private Component text;
+    /**
+     * The alignment of the text within.
+     */
     private Align align = Align.LEFT;
 
     /**
      * Creates a new Text element with the specified text.
      *
-     * @param text The text to display in the Text element.
+     * @param text The text to display.
      */
     public Text(Component text) {
         this.text = text;
@@ -28,7 +34,7 @@ public class Text extends Element<Text> {
     /**
      * Sets the text of the Text element.
      *
-     * @param text The text to display in the Text element.
+     * @param text The text to display.
      * @return The current Text element instance.
      */
     public Text text(Component text) {
@@ -40,7 +46,7 @@ public class Text extends Element<Text> {
     /**
      * Sets the text of the Text element using a String.
      *
-     * @param text The text to display in the Text element.
+     * @param text The text to display.
      * @return The current Text element instance.
      */
     public Text text(String text) {
