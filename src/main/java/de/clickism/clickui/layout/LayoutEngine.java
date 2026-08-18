@@ -1,6 +1,7 @@
 package de.clickism.clickui.layout;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.util.Util;
 
 import java.util.function.Predicate;
@@ -36,6 +37,9 @@ public class LayoutEngine {
         measureSizes(root);
         // Grow elements with GROW sizing
         growAll(root);
+        // Wrap elements that implement Wrappable
+        wrapElements(root);
+        // TODO: Measure heights after wrapping
         // Calculate positions
         calculatePositions(root, 0, 0);
     }
@@ -117,22 +121,32 @@ public class LayoutEngine {
      * @param parent the element whose children will be grown
      */
     private void growChildElements(Element<?> parent) {
-        int remainingAxis = calculateRemainingAxisSpace(parent);
-        int remainingCross = calculateRemainingCrossSpace(parent);
-
         // Distribute remaining space to children with GROW sizing
-        distributeAxisSpace(parent, remainingAxis);
-        distributeCrossSpace(parent, remainingCross);
+        distributeAxisSpace(parent);
+        distributeCrossSpace(parent);
     }
 
     /**
-     * Distributes the remaining axis space to the children of the given element that have a GROW sizing in the axis direction.
+     * Distributes the remaining axis space to the children of the given element
+     * that have a GROW sizing in the axis direction.
      *
-     * @param parent        the parent element whose children will receive the remaining axis space
-     * @param remainingAxis the remaining axis space to distribute
+     * @param parent the parent element whose children will receive the remaining axis space
      */
-    private void distributeAxisSpace(Element<?> parent, int remainingAxis) {
+    private void distributeAxisSpace(Element<?> parent) {
         boolean horizontal = parent.axis().isHorizontal();
+
+        // Calculate remaining axis space
+        int remainingAxis = horizontal
+                            ? parent.bounds().width()
+                            : parent.bounds().height();
+        remainingAxis -= horizontal
+                         ? parent.padding().left() + parent.padding().right()
+                         : parent.padding().top() + parent.padding().bottom();
+        remainingAxis -= Util.totalChildGap(parent);
+        remainingAxis -= parent.children().stream()
+            .mapToInt(axisGetter(parent.axis()))
+            .sum();
+
         // Distribute remaining axis space to children
         Predicate<Element<?>> mapper = horizontal
                                        ? child -> child.width().type() == Sizing.Type.GROW
@@ -187,14 +201,23 @@ public class LayoutEngine {
     }
 
     /**
-     * Distributes the remaining cross space to the children of the given element that have a GROW sizing in the cross axis.
+     * Distributes the remaining cross space to the children of the given element
+     * that have a GROW sizing in the cross axis.
      *
-     * @param parent         the parent element whose children will receive the remaining cross space
-     * @param remainingCross the remaining cross space to distribute
+     * @param parent the parent element whose children will receive the remaining cross space
      */
-    private void distributeCrossSpace(Element<?> parent, int remainingCross) {
-        // Distribute remaining cross space to children
+    private void distributeCrossSpace(Element<?> parent) {
         boolean horizontal = parent.axis().isHorizontal();
+
+        // Calculate remaining cross space
+        int remainingCross = horizontal
+                             ? parent.bounds().height()
+                             : parent.bounds().width();
+        remainingCross -= horizontal
+                          ? parent.padding().top() + parent.padding().bottom()
+                          : parent.padding().left() + parent.padding().right();
+
+        // Distribute remaining cross space to children
         for (var child : parent.children()) {
             boolean growCross = horizontal
                                 ? child.height().type() == Sizing.Type.GROW
@@ -209,44 +232,6 @@ public class LayoutEngine {
                 child.bounds(child.bounds().withWidth(width));
             }
         }
-    }
-
-    /**
-     * Calculates the remaining soace in the axis of the element
-     *
-     * @param element the element to use
-     * @return remaining space in axis
-     */
-    private int calculateRemainingAxisSpace(Element<?> element) {
-        boolean horizontal = element.axis().isHorizontal();
-        int remainingAxis = horizontal
-                            ? element.bounds().width()
-                            : element.bounds().height();
-        remainingAxis -= horizontal
-                         ? element.padding().left() + element.padding().right()
-                         : element.padding().top() + element.padding().bottom();
-        remainingAxis -= Util.totalChildGap(element);
-        remainingAxis -= element.children().stream()
-            .mapToInt(axisGetter(element.axis()))
-            .sum();
-        return remainingAxis;
-    }
-
-    /**
-     * Calculates th remaining cross space in the element
-     *
-     * @param element the elment to use
-     * @return remaining cross space
-     */
-    private int calculateRemainingCrossSpace(Element<?> element) {
-        boolean horizontal = element.axis().isHorizontal();
-        int remainingHeight = horizontal
-                              ? element.bounds().height()
-                              : element.bounds().width();
-        remainingHeight -= horizontal
-                           ? element.padding().top() + element.padding().bottom()
-                           : element.padding().left() + element.padding().right();
-        return remainingHeight;
     }
 
     /**
@@ -373,5 +358,29 @@ public class LayoutEngine {
             case CENTER -> remaining / 2;
             case END -> remaining;
         };
+    }
+
+    /**
+     * Wraps the text of the given element if it implements the Wrappable interface
+     * and if it's overflowing its bounds.
+     * <p>
+     * This method is called recursively for all child elements.
+     *
+     * @param element the element to wrap
+     */
+    private void wrapElements(Element<?> element) {
+        if (element instanceof Wrappable wrappable) {
+            int maxWidth = element.bounds().width()
+                           - element.padding().horizontal();
+            boolean overflowing = element.intrinsicSize().width() > maxWidth;
+            if (maxWidth > 0 && overflowing) {
+                wrappable.wrap(maxWidth);
+            }
+        }
+
+        // Recursively wrap children
+        for (var child : element.children()) {
+            wrapElements(child);
+        }
     }
 }
