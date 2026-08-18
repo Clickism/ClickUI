@@ -36,20 +36,41 @@ public class Box extends Element<Box> {
      */
     private boolean scrollable = true;
 
+    private boolean draggingScrollbar = false;
+
     /**
      * Creates a new Box element with default settings.
      */
     public Box() {
         this.onScroll(event -> {
-            this.scrollY -= event.delta() * scrollRate;
-            // Clamp scrollY to be within the valid range
-            if (this.scrollY < 0) {
-                this.scrollY = 0;
-            } else if (this.scrollY > maxScrollY()) {
-                this.scrollY = maxScrollY();
-            }
+            this.scrollY(scrollY - event.delta() * scrollRate);
         });
         // Drag events for scrolling
+        this.onDragStart(event -> {
+            if (isMouseOnScrollbar(event.startX(), event.startY())) {
+                draggingScrollbar = true;
+            }
+        });
+        this.onDrag(event -> {
+            if (!draggingScrollbar) return;
+            // Scroll
+            var y = bounds().y();
+            var height = bounds().height();
+            if (event.currentY() < y) {
+                scrollY(0); // Scroll to top
+            } else {
+                if (event.currentY() > y + height) {
+                    scrollY(maxScrollY()); // Scroll to bottom
+                } else {
+                    // Scroll proportionally to mouse position
+                    double scrollRatio = Math.max(1, maxScrollY() / (height - scrollbarHeight()));
+                    this.scrollY(scrollY + event.deltaY() * scrollRatio);
+                }
+            }
+        });
+        this.onDragEnd(event -> {
+            draggingScrollbar = false;
+        });
     }
 
     /**
@@ -88,6 +109,15 @@ public class Box extends Element<Box> {
     }
 
     /**
+     * Sets the vertical scroll offset of the box, clamping it to the valid range.
+     *
+     * @param scrollY the new vertical scroll offset
+     */
+    protected void scrollY(double scrollY) {
+        this.scrollY = Mth.clamp(scrollY, 0, maxScrollY());
+    }
+
+    /**
      * The total height of the content inside this box, including the gaps between children.
      *
      * @return the total content height
@@ -107,7 +137,7 @@ public class Box extends Element<Box> {
      * @return true if the content is overflowing, false otherwise
      */
     protected boolean isOverflowing() {
-        return contentHeight() > bounds().height();
+        return maxScrollY() > 0;
     }
 
     /**
@@ -131,21 +161,12 @@ public class Box extends Element<Box> {
     }
 
     /**
-     * Checks if the scrollbar should be visible based on the content height and container height.
-     *
-     * @return true if the scrollbar should be visible, false otherwise
-     */
-    protected boolean isScrollbarVisible() {
-        return maxScrollY() > 0;
-    }
-
-    /**
      * Calculates the width of the scrollbar, which is SCROLLBAR_WIDTH or 0 if the scrollbar is not visible.
      *
      * @return the width of the scrollbar
      */
     protected int scrollbarWidth() {
-        return isScrollbarVisible()
+        return isOverflowing()
                ? SCROLLBAR_WIDTH
                : 0;
     }
@@ -158,10 +179,11 @@ public class Box extends Element<Box> {
      * @return true if the mouse is hovering over the scrollbar, false otherwise
      */
     protected boolean isMouseOnScrollbar(double mouseX, double mouseY) {
+        if (!isOverflowing()) return false;
+        if (!bounds().contains(mouseX, mouseY)) return false;
         int scrollbarX = scrollbarX();
         int scrollbarEndX = scrollbarX + SCROLLBAR_WIDTH;
-        return mouseX >= scrollbarX && mouseX <= scrollbarEndX
-               && mouseY >= bounds().y() && mouseY <= bounds().y() + bounds().height();
+        return mouseX >= scrollbarX && mouseX <= scrollbarEndX;
     }
 
     @Override
@@ -200,7 +222,7 @@ public class Box extends Element<Box> {
 
         graphics.pose().popPose();
 
-        if (scrollable && isScrollbarVisible()) {
+        if (scrollable && isOverflowing()) {
             renderScrollbar(context);
         }
 

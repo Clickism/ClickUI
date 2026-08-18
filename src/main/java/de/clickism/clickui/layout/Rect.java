@@ -7,7 +7,7 @@ public record Rect(int x, int y, int width, int height) {
         return contains(point.x(), point.y());
     }
 
-    public boolean contains(int px, int py) {
+    public boolean contains(double px, double py) {
         return px >= x && px < x + width && py >= y && py < y + height;
     }
 
