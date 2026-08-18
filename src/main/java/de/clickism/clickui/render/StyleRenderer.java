@@ -32,6 +32,9 @@ public class StyleRenderer {
         if (border != null && style.borderWidth() > 0) {
             renderBorder(border.getRGB(), style.borderWidth());
         }
+
+        // Revert alpha
+        context.graphics().setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     protected void renderBackground(int color) {

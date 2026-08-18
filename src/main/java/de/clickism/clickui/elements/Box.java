@@ -4,15 +4,24 @@ import de.clickism.clickui.Element;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
+import net.minecraft.util.Mth;
 
 // TODO: Overflow hidden, show, scroll etc.
+
 /**
  * A simple container element that can hold other elements
  * and provides scrolling functionality in case of
  * vertical overflow.
  */
 public class Box extends Element<Box> {
-    private static final double DEFAULT_SCROLL_RATE = 4.5;
+    private static final double DEFAULT_SCROLL_RATE = 9;
+
+    protected static final int SCROLLBAR_BACKGROUND = 0xFF000000;
+    protected static final int SCROLLBAR_COLOR = 0xFF808080;
+    protected static final int SCROLLBAR_SHADOW_COLOR = 0xFFC0C0C0;
+
+    protected static final int MIN_SCROLLBAR_HEIGHT = 32;
+    protected static final int SCROLLBAR_WIDTH = 6;
 
     /**
      * The current vertical scroll offset of the box.
@@ -40,6 +49,7 @@ public class Box extends Element<Box> {
                 this.scrollY = maxScrollY();
             }
         });
+        // Drag events for scrolling
     }
 
     /**
@@ -68,7 +78,12 @@ public class Box extends Element<Box> {
         return this;
     }
 
-    private double maxScrollY() {
+    /**
+     * Calculates the maximum vertical scroll offset based on the content height and the box height.
+     *
+     * @return the maximum vertical scroll offset
+     */
+    protected double maxScrollY() {
         return Math.max(0, contentHeight() - bounds().height());
     }
 
@@ -77,7 +92,7 @@ public class Box extends Element<Box> {
      *
      * @return the total content height
      */
-    private int contentHeight() {
+    protected int contentHeight() {
         int totalPadding = padding().top() + padding().bottom();
         int totalGap = Util.totalChildGap(this);
         int childrenHeight = this.children().stream()
@@ -91,8 +106,62 @@ public class Box extends Element<Box> {
      *
      * @return true if the content is overflowing, false otherwise
      */
-    private boolean isOverflowing() {
+    protected boolean isOverflowing() {
         return contentHeight() > bounds().height();
+    }
+
+    /**
+     * Calculates the x position of the scrollbar.
+     */
+    protected int scrollbarX() {
+        return this.bounds().x() + this.bounds().width() - SCROLLBAR_WIDTH;
+    }
+
+    /**
+     * Calculates the height of the scrollbar based on the ratio of the container height to the content height.
+     *
+     * @return the height of the scrollbar
+     */
+    protected int scrollbarHeight() {
+        var height = bounds().height();
+        int scrollbarHeight = ((height * height) / contentHeight());
+        // Ensure scrollbar is at least 32 pixels high
+        int maxScrollbarHeight = height - 8; // Ensure a bit of leeway
+        return Mth.clamp(scrollbarHeight, MIN_SCROLLBAR_HEIGHT, maxScrollbarHeight);
+    }
+
+    /**
+     * Checks if the scrollbar should be visible based on the content height and container height.
+     *
+     * @return true if the scrollbar should be visible, false otherwise
+     */
+    protected boolean isScrollbarVisible() {
+        return maxScrollY() > 0;
+    }
+
+    /**
+     * Calculates the width of the scrollbar, which is SCROLLBAR_WIDTH or 0 if the scrollbar is not visible.
+     *
+     * @return the width of the scrollbar
+     */
+    protected int scrollbarWidth() {
+        return isScrollbarVisible()
+               ? SCROLLBAR_WIDTH
+               : 0;
+    }
+
+    /**
+     * Checks if the mouse is currently hovering over the scrollbar.
+     *
+     * @param mouseX the x position of the mouse
+     * @param mouseY the y position of the mouse
+     * @return true if the mouse is hovering over the scrollbar, false otherwise
+     */
+    protected boolean isMouseOnScrollbar(double mouseX, double mouseY) {
+        int scrollbarX = scrollbarX();
+        int scrollbarEndX = scrollbarX + SCROLLBAR_WIDTH;
+        return mouseX >= scrollbarX && mouseX <= scrollbarEndX
+               && mouseY >= bounds().y() && mouseY <= bounds().y() + bounds().height();
     }
 
     @Override
@@ -130,6 +199,11 @@ public class Box extends Element<Box> {
         }
 
         graphics.pose().popPose();
+
+        if (scrollable && isScrollbarVisible()) {
+            renderScrollbar(context);
+        }
+
         // Disable scissor
         graphics.disableScissor();
     }
@@ -137,5 +211,29 @@ public class Box extends Element<Box> {
     @Override
     public void render(RenderContext context) {
         // Nothing to render for the box itself
+    }
+
+    /**
+     * Renders the scrollbar on the right side of the container.
+     * Mostly inspired by {@link net.minecraft.client.gui.components.AbstractSelectionList#render}
+     *
+     * @param context the render context to render with
+     */
+    protected void renderScrollbar(RenderContext context) {
+        var graphics = context.graphics();
+        int scrollbarX = scrollbarX();
+        int scrollbarEndX = scrollbarX + SCROLLBAR_WIDTH;
+        // Scrollbar background
+        var height = bounds().height();
+        var y = bounds().y();
+        graphics.fill(scrollbarX, y, scrollbarEndX, y + height, SCROLLBAR_BACKGROUND);
+        // Render scrollbar
+        int scrollbarHeight = scrollbarHeight();
+        int scrollbarY = (int) (scrollY * (height - scrollbarHeight) / maxScrollY()) + y;
+        int scrollbarEndY = scrollbarY + scrollbarHeight;
+        // Render scrollbar
+        graphics.fill(scrollbarX, scrollbarY, scrollbarEndX, scrollbarEndY, SCROLLBAR_COLOR);
+        // Render shadow
+        graphics.fill(scrollbarX, scrollbarEndY, scrollbarEndX - 1, scrollbarEndY - 1, SCROLLBAR_SHADOW_COLOR);
     }
 }
