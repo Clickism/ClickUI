@@ -6,4 +6,12 @@ public record Padding(int top, int right, int bottom, int left) {
     public static Padding uniform(int padding) {
         return new Padding(padding, padding, padding, padding);
     }
+
+    public int horizontal() {
+        return left + right;
+    }
+
+    public int vertical() {
+        return top + bottom;
+    }
 }

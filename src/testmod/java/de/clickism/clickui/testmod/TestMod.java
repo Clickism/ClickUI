@@ -78,6 +78,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .padding(8)
                     .childGap(8)
                     .alignCenter()
+                    .scrollable(false)
                     .children(
                         h1("New Screen!"),
                         text("There are some important info here!"),
@@ -117,7 +118,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         button("Go back")
                             .onClick(event -> {
                                 event.screen().back();
-                            })
+                            }),
+                        text("a b c d e f g h")
                     )
             )
         );
