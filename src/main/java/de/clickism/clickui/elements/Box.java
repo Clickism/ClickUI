@@ -179,6 +179,7 @@ public class Box extends Element<Box> {
      * @return true if the mouse is hovering over the scrollbar, false otherwise
      */
     protected boolean isMouseOnScrollbar(double mouseX, double mouseY) {
+        if (!scrollable) return false;
         if (!isOverflowing()) return false;
         if (!bounds().contains(mouseX, mouseY)) return false;
         int scrollbarX = scrollbarX();
@@ -198,7 +199,6 @@ public class Box extends Element<Box> {
             super.renderTree(context);
             return;
         }
-        // TODO: Render scroll bar if overflowing
         // Render self
         this.renderWithStyle(context);
         // Render children with scroll offset
@@ -221,13 +221,19 @@ public class Box extends Element<Box> {
         }
 
         graphics.pose().popPose();
-
-        if (scrollable && isOverflowing()) {
-            renderScrollbar(context);
-        }
-
         // Disable scissor
         graphics.disableScissor();
+
+        if (scrollable && isOverflowing()) {
+            graphics.pose().pushPose();
+            // Render scrollbar on top of children
+            graphics.pose().translate(0, 0, 100);
+
+            renderScrollbar(context);
+
+            graphics.pose().popPose();
+        }
+
     }
 
     @Override
