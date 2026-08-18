@@ -69,7 +69,10 @@ public abstract class Element<S extends Element<S>>
     private boolean hitTestable = true;
 
     /**
-     * Returns the intrinsic size of this element, which is the size that this element would like to be if it could be any size.
+     * Returns the intrinsic size of this element,
+     * which is the size that this element would like to be if it could be any size.
+     * <p>
+     * Should not take children into account, as they will be layed out separately.
      *
      * @return The intrinsic size of this element.
      */
