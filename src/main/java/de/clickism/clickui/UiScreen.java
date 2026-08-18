@@ -150,6 +150,12 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     @Override
+    public void tick() {
+        // Tick all elements in the tree
+        Util.preOrder(root, Element::tick);
+    }
+
+    @Override
     public void onClose() {
         this.back();
     }

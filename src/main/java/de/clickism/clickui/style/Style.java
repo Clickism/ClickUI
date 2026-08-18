@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+// TODO: Refactor styles to be inheritance based
 public final class Style implements Styleable<Style> {
     private final ResolvedStyle baseStyle = new ResolvedStyle();
     private final List<StyleRule> rules = new ArrayList<>();

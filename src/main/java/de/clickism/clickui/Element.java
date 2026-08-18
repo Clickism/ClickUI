@@ -355,4 +355,13 @@ public abstract class Element<S extends Element<S>>
     public void initialize() {
         // Nothing here
     }
+
+    /**
+     * This method should be called every tick to update the state of this element.
+     * By default, this method does nothing, but subclasses can override it to perform
+     * periodic updates, such as animations or state changes.
+     */
+    public void tick() {
+        // Nothing here
+    }
 }
