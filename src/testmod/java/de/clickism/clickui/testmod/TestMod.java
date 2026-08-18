@@ -88,9 +88,15 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 text("Scrollable content line 2"),
                                 text("Scrollable content line 3"),
                                 text("Scrollable content line 4"),
-                                button("Click me!")
-                                    .onClick(event -> {
-                                        event.player().sendSystemMessage(Component.literal("Button in scroll clicked!"));
+                                button("Drag me!")
+                                    .onDragStart(event -> {
+                                        event.player().sendSystemMessage(Component.literal("Drag started!"));
+                                    })
+                                    .onDragEnd(event -> {
+                                        event.player().sendSystemMessage(Component.literal("Drag ended!"));
+                                    })
+                                    .onDrag(event -> {
+                                        event.player().sendSystemMessage(Component.literal("Dragging!"));
                                     }),
                                 text("Scrollable content line 5"),
                                 text("Scrollable content line 6"),

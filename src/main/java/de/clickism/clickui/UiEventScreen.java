@@ -12,10 +12,15 @@ import org.jetbrains.annotations.Nullable;
  * and propagates them to the element tree.
  */
 public abstract class UiEventScreen extends Screen {
+    private static final int DRAG_THRESHOLD = 5;
     /**
      * Keep track of the hovered element
      */
     private @Nullable Element<?> hoveredElement = null;
+
+    private @Nullable Element<?> draggedElement = null;
+    private double dragStartX = 0;
+    private double dragStartY = 0;
 
     private final HitTester hitTester = new HitTester();
 
@@ -102,6 +107,13 @@ public abstract class UiEventScreen extends Screen {
         // Fire mouse click event to the hovered element
         var event = new MouseClickEvent(x, y, button);
         hoveredElement.events().fireEvent(event);
+
+        // Start dragging
+        draggedElement = hoveredElement;
+        dragStartX = mouseX;
+        dragStartY = mouseY;
+        var dragEvent = new DragStartEvent(x, y, button);
+        draggedElement.events().fireEvent(dragEvent);
         return true;
     }
 
@@ -116,6 +128,13 @@ public abstract class UiEventScreen extends Screen {
         // Fire mouse release event to the hovered element
         var event = new MouseReleaseEvent(x, y, button);
         hoveredElement.events().fireEvent(event);
+
+        // End dragging
+        if (draggedElement != null) {
+            var dragEndEvent = new DragEndEvent(dragStartX, dragStartY, x, y, button);
+            draggedElement.events().fireEvent(dragEndEvent);
+            draggedElement = null;
+        }
         return true;
     }
 
@@ -134,7 +153,6 @@ public abstract class UiEventScreen extends Screen {
     }
 
 
-
     @Override
     public boolean keyPressed(int code, int scanCode, int modifiers) {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
@@ -146,5 +164,18 @@ public abstract class UiEventScreen extends Screen {
         return false;
     }
 
-    // TODO: Good drag controls
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        int x = (int) mouseX;
+        int y = (int) mouseY;
+        updateState(x, y);
+        if (draggedElement == null) return false;
+        if (draggedElement.disabled()) return false;
+
+        // Fire mouse drag event to the dragged element
+        var event = new DragEvent(dragStartX, dragStartY, mouseX, mouseY, dragX, dragY, button);
+        draggedElement.events().fireEvent(event);
+
+        return true;
+    }
 }

@@ -90,4 +90,34 @@ public interface EventTarget<S extends EventTarget<S>>
     default S onMouseExit(EventListener<MouseExitEvent> listener) {
         return on(MouseExitEvent.class, listener);
     }
+
+    /**
+     * Registers a listener for drag start events.
+     *
+     * @param listener The listener to handle drag start events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onDragStart(EventListener<DragStartEvent> listener) {
+        return on(DragStartEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for drag end events.
+     *
+     * @param listener The listener to handle drag end events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onDragEnd(EventListener<DragEndEvent> listener) {
+        return on(DragEndEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for drag events.
+     *
+     * @param listener The listener to handle drag events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onDrag(EventListener<DragEvent> listener) {
+        return on(DragEvent.class, listener);
+    }
 }
