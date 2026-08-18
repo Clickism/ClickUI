@@ -34,6 +34,9 @@ public class Button extends Element<Button> {
     public void render(RenderContext context) {
         var graphics = context.graphics();
         var bounds = this.bounds();
+        if (bounds.isEmpty()) {
+            return; // Avoid division by zero or rendering issues if bounds are empty
+        }
         // Render button texture
         graphics.blitNineSliced(
             WIDGETS_LOCATION,

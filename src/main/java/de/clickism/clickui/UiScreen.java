@@ -136,6 +136,12 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        // Lay out root again if dirty
+        if (root.isDirty()) {
+            init();
+            root.clearDirty();
+        }
+        // Call event handler
         super.render(guiGraphics, mouseX, mouseY, delta);
         // Render the tree
         root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta));

@@ -11,6 +11,14 @@ public record Rect(int x, int y, int width, int height) {
         return px >= x && px < x + width && py >= y && py < y + height;
     }
 
+    public int area() {
+        return width * height;
+    }
+
+    public boolean isEmpty() {
+        return area() == 0;
+    }
+
     public Rect withSize(Size size) {
         return new Rect(x, y, size.width(), size.height());
     }

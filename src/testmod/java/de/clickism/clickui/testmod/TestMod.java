@@ -79,7 +79,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .children(
                         text("This is a new screen"),
                         new Box()
-                            .width(100)
+                            .width(300)
+                            .padding(16)
                             .height(100)
                             .childGap(10)
                             .style(s -> s.border(Color.GREEN))
@@ -108,6 +109,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             ),
                         text("You can go back to the previous screen by clicking the button below")
                             .padding(4),
+                        new Counter(),
                         button("Go back")
                             .onClick(event -> {
                                 event.screen().back();

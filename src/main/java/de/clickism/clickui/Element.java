@@ -37,6 +37,11 @@ public abstract class Element<S extends Element<S>>
     private final List<Element<?>> children = new ArrayList<>();
 
     /**
+     * Whether this element is the root of the tree and needs to be layed out again.
+     */
+    private boolean dirtyRoot = false;
+
+    /**
      * Layout information for this element,
      */
     private final Layout layout = new Layout();
@@ -102,22 +107,12 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Adds the given children to this element, and sets their parent to this element.
+     * Returns the parent of this element, or null if this element is the root element.
      *
-     * @param children the children to add
-     * @return this element
+     * @return the parent of this element, or null if this element is the root element
      */
-    public S children(@Nullable Element<?>... children) {
-        for (var child : children) {
-            // Allow null children to be passed in, but ignore them
-            if (child == null) continue;
-            this.children.add(child);
-            if (child.parent != null) {
-                child.parent.children.remove(child);
-            }
-            child.parent = this;
-        }
-        return self();
+    public @Nullable Element<?> parent() {
+        return this.parent;
     }
 
     /**
@@ -130,12 +125,61 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Returns the parent of this element, or null if this element is the root element.
+     * Adds the given children to this element, and sets their parent to this element.
      *
-     * @return the parent of this element, or null if this element is the root element
+     * @param children the children to add
+     * @return this element
      */
-    public @Nullable Element<?> parent() {
-        return this.parent;
+    public S children(@Nullable Element<?>... children) {
+        for (var child : children) {
+            this.add(child);
+        }
+        return self();
+    }
+
+    /**
+     * Adds the given child to this element, and sets its parent to this element.
+     *
+     * @param child the child to add
+     * @return this element
+     */
+    public S add(@Nullable Element<?> child) {
+        // Allow null children to be passed in, but ignore them
+        if (child == null) return self();
+        this.children.add(child);
+        if (child.parent != null) {
+            child.parent.children.remove(child);
+        }
+        child.parent = this;
+        return self();
+    }
+
+    /**
+     * Removes the given child from this element, and sets its parent to null.
+     *
+     * @param child the child to remove
+     * @return this element
+     */
+    public S remove(@Nullable Element<?> child) {
+        if (child == null) return self();
+        this.children.remove(child);
+        if (child.parent == this) {
+            child.parent = null;
+        }
+        return self();
+    }
+
+    /**
+     * Removes all children from this element, and sets their parent to null.
+     *
+     * @return this element
+     */
+    public S clear() {
+        for (var child : children) {
+            child.parent = null;
+        }
+        this.children.clear();
+        return self();
     }
 
     @Override
@@ -183,10 +227,41 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Invalidates the layout of this element and all of its children.
+     * Invalidates the layout of this element tree.
      */
     public void invalidate() {
-        // TODO: Implement
+        root().dirtyRoot = true;
+    }
+
+    /**
+     * Returns the root element of this element tree, which is the topmost ancestor of this element.
+     *
+     * @return the root element of this element tree
+     */
+    public Element<?> root() {
+        Element<?> root = this;
+        while (root.parent != null) {
+            root = root.parent;
+        }
+        return root;
+    }
+
+    /**
+     * Returns whether this element is dirty and needs to be layed out again.
+     *
+     * @return whether this element is dirty and needs to be layed out again
+     */
+    @ApiStatus.Internal
+    public boolean isDirty() {
+        return root().dirtyRoot;
+    }
+
+    /**
+     * Clears the dirty flag of this element.
+     */
+    @ApiStatus.Internal
+    public void clearDirty() {
+        root().dirtyRoot = false;
     }
 
     /**
