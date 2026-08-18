@@ -124,12 +124,16 @@ public abstract class UiEventScreen extends Screen {
         int x = (int) mouseX;
         int y = (int) mouseY;
         updateState(x, y);
+        if (hoveredElement == null) return false;
+        if (hoveredElement.disabled()) return false;
 
         // Fire mouse scroll event to all elements in the tree
         var event = new MouseScrollEvent(x, y, delta);
         eventRoot().propagateEvent(event);
         return true;
     }
+
+
 
     @Override
     public boolean keyPressed(int code, int scanCode, int modifiers) {

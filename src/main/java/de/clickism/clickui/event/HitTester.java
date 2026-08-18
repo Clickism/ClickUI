@@ -1,6 +1,7 @@
 package de.clickism.clickui.event;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.elements.Button;
 import de.clickism.clickui.layout.Point;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ public class HitTester {
         var children = element.children();
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);
-            var childMouse = child.toChildCoordinates(mouse);
+            var childMouse = element.toChildCoordinates(mouse);
             var result = hitTest(child, childMouse);
 
             if (result != null) {

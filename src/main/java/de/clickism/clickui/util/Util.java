@@ -84,4 +84,14 @@ public class Util {
         }
         return null;
     }
+
+    /**
+     * Calculates the total gap between the children of the given element based on its child gap and number of children.
+     *
+     * @param element the element to calculate the total child gap for
+     * @return the total gap between the children of the element
+     */
+    public static int totalChildGap(Element<?> element) {
+        return element.childGap() * Math.max(0, element.children().size() - 1);
+    }
 }

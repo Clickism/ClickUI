@@ -25,16 +25,6 @@ public class LayoutEngine {
     }
 
     /**
-     * Calculates the total gap between the children of the given element based on its child gap and number of children.
-     *
-     * @param element the element to calculate the total child gap for
-     * @return the total gap between the children of the element
-     */
-    private static int totalChildGap(Element<?> element) {
-        return element.childGap() * Math.max(0, element.children().size() - 1);
-    }
-
-    /**
      * Lays out the given root element and its children based on their sizing and layout axis.
      *
      * @param root the root element to layout
@@ -95,9 +85,9 @@ public class LayoutEngine {
 
         // Add child gap
         if (element.axis().isHorizontal()) {
-            width += totalChildGap(element);
+            width += Util.totalChildGap(element);
         } else {
-            height += totalChildGap(element);
+            height += Util.totalChildGap(element);
         }
 
         // Check if the element has fixed sizing and override the calculated size if so
@@ -235,7 +225,7 @@ public class LayoutEngine {
         remainingAxis -= horizontal
                          ? element.padding().left() + element.padding().right()
                          : element.padding().top() + element.padding().bottom();
-        remainingAxis -= totalChildGap(element);
+        remainingAxis -= Util.totalChildGap(element);
         remainingAxis -= element.children().stream()
             .mapToInt(axisGetter(element.axis()))
             .sum();
@@ -331,7 +321,7 @@ public class LayoutEngine {
         int childrenSize = element.children().stream()
             .mapToInt(axisGetter(element.axis()))
             .sum();
-        childrenSize += totalChildGap(element);
+        childrenSize += Util.totalChildGap(element);
 
         var horizontal = element.axis().isHorizontal();
         var padding = element.padding();
