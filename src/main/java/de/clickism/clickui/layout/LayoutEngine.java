@@ -5,7 +5,6 @@ import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.util.Util;
 
 import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 
 /**
  * The LayoutEngine class is responsible for laying out the elements in a UI hierarchy based on their sizing and
@@ -14,27 +13,15 @@ import java.util.function.ToIntFunction;
  */
 public class LayoutEngine {
     /**
-     * Returns a function that retrieves the axis size of an element based on the given layout axis.
-     *
-     * @param axis the layout axis to determine the axis size
-     * @return a function that retrieves the axis size of an element
-     */
-    private static ToIntFunction<Element<?>> axisGetter(LayoutAxis axis) {
-        return axis.isHorizontal()
-               ? child -> child.bounds().width()
-               : child -> child.bounds().height();
-    }
-
-    /**
      * Lays out the given root element and its children based on their sizing and layout axis.
      *
      * @param root the root element to layout
      */
     public void layout(Element<?> root) {
-        // Set the root element size to the given size
+        // Set the root element's position to (0, 0)
         root.bounds(root.bounds().withPosition(0, 0));
         // Measure the fit size
-        measureSizes(root);
+        measureElementSize(root);
         // Grow elements with GROW sizing
         growAll(root);
         // Wrap elements that implement Wrappable
@@ -45,21 +32,17 @@ public class LayoutEngine {
     }
 
     /**
-     * Measures the sizes of the given element and its children based on their sizing and layout axis.
-     *
-     * @param element the element to measure
-     */
-    private void measureSizes(Element<?> element) {
-        // First measure the fit size
-        Util.postOrder(element, this::measureElementSize);
-    }
-
-    /**
-     * Measures the size of a single element based on its children and layout axis.
+     * Recursively measures the sizes of the given element
+     * and its children based on their sizing and layout axis.
      *
      * @param element the element to measure
      */
     private void measureElementSize(Element<?> element) {
+        // First measure the sizes of the children
+        for (var child : element.children()) {
+            measureElementSize(child);
+        }
+
         // Fit the element size to its children and layout axis
         Size intrinsic = element.intrinsicSize();
         // Use intrinsic size of the element and add padding to it
@@ -95,11 +78,13 @@ public class LayoutEngine {
         }
 
         // Check if the element has fixed sizing and override the calculated size if so
-        if (element.width().type() == Sizing.Type.FIXED) {
-            width = element.width().value();
+        var fixedWidth = element.width().fixed();
+        if (fixedWidth != null) {
+            width = fixedWidth;
         }
-        if (element.height().type() == Sizing.Type.FIXED) {
-            height = element.height().value();
+        var fixedHeight = element.height().fixed();
+        if (fixedHeight != null) {
+            height = fixedHeight;
         }
 
         // Set the measured size to the element
@@ -144,7 +129,7 @@ public class LayoutEngine {
                          : parent.padding().top() + parent.padding().bottom();
         remainingAxis -= Util.totalChildGap(parent);
         remainingAxis -= parent.children().stream()
-            .mapToInt(axisGetter(parent.axis()))
+            .mapToInt(Util.axisGetter(parent.axis()))
             .sum();
 
         // Distribute remaining axis space to children
@@ -159,11 +144,11 @@ public class LayoutEngine {
         while (remainingAxis > 0) {
             // Find smallest axis size
             int smallest = growAxisChildren.stream()
-                .mapToInt(axisGetter(parent.axis()))
+                .mapToInt(Util.axisGetter(parent.axis()))
                 .min()
                 .orElseThrow(); // List not empty, should not throw
             // Find second-smallest axis size
-            var axisGetter = axisGetter(parent.axis());
+            var axisGetter = Util.axisGetter(parent.axis());
             Integer secondSmallest = growAxisChildren.stream().map(axisGetter::applyAsInt)
                 .filter(axis -> axis > smallest).reduce(Math::min).orElse(null);
 
@@ -304,7 +289,7 @@ public class LayoutEngine {
     private int mainOffsetToAlign(Element<?> element) {
         // Total size occupied by children in the layout axis, including gaps
         int childrenSize = element.children().stream()
-            .mapToInt(axisGetter(element.axis()))
+            .mapToInt(Util.axisGetter(element.axis()))
             .sum();
         childrenSize += Util.totalChildGap(element);
 

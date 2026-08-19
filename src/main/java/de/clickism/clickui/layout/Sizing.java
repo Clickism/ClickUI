@@ -1,13 +1,17 @@
 package de.clickism.clickui.layout;
 
+import java.util.Objects;
+
 /**
  * Represents the size of a UI element.
  *
  * @param type  The type of size (fixed, fit, or grow)
- * @param value The value of the size (only used for fixed size)
+ * @param fixed The fixed size value, or null if not fixed
+ * @param min   The minimum size value, or null to let engine decide (same as fixed for fixed type)
+ * @param max   The maximum size value, or null to let engine decide (same as fixed for fixed type)
  */
 // TODO: Configurable min and max in sizing
-public record Sizing(Type type, int value, Integer min, Integer max) {
+public record Sizing(Type type, Integer fixed, Integer min, Integer max) {
     /**
      * Creates a new Sizing instance with type FIXED and the specified value.
      *
@@ -24,7 +28,7 @@ public record Sizing(Type type, int value, Integer min, Integer max) {
      * @return A new Sizing instance with type FIT.
      */
     public static Sizing fit() {
-        return new Sizing(Type.FIT, 0, null, null);
+        return new Sizing(Type.FIT, null, null, null);
     }
 
     /**
@@ -33,7 +37,7 @@ public record Sizing(Type type, int value, Integer min, Integer max) {
      * @return A new Sizing instance with type GROW.
      */
     public static Sizing grow() {
-        return new Sizing(Type.GROW, 0, null, null);
+        return new Sizing(Type.GROW, null, null, null);
     }
 
     /**
@@ -46,7 +50,7 @@ public record Sizing(Type type, int value, Integer min, Integer max) {
         if (type == Type.FIXED) {
             throw new IllegalStateException("Cannot set min size for FIXED sizing");
         }
-        return new Sizing(type, value, min, max);
+        return new Sizing(type, fixed, min, max);
     }
 
     /**
@@ -59,7 +63,7 @@ public record Sizing(Type type, int value, Integer min, Integer max) {
         if (type == Type.FIXED) {
             throw new IllegalStateException("Cannot set max size for FIXED sizing");
         }
-        return new Sizing(type, value, min, max);
+        return new Sizing(type, fixed, min, max);
     }
 
     /**
@@ -75,16 +79,11 @@ public record Sizing(Type type, int value, Integer min, Integer max) {
         return this;
     }
 
-    /**
-     * Returns the value of the size if it is fixed, otherwise returns 0.
-     *
-     * @return The value of the size if it is fixed, otherwise 0.
-     */
     @Override
-    public int value() {
+    public Integer fixed() {
         return type == Type.FIXED
-               ? value
-               : 0;
+               ? Objects.requireNonNull(fixed)
+               : null;
     }
 
     /**
