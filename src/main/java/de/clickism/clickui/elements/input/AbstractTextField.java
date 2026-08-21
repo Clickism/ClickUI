@@ -18,6 +18,7 @@ import java.util.function.Consumer;
  *
  * @param <S> the type of the subclass extending this abstract class
  */
+// TODO: Suggestions
 public abstract class AbstractTextField<S extends AbstractTextField<S>>
     extends Element<S> {
 
