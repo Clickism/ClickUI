@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import java.awt.*;
 
 public class TextField extends AbstractTextField<TextField> {
-    private static final Padding DEFAULT_PADDING = Padding.create(4);
+    private static final Padding DEFAULT_PADDING = Padding.create(5);
     private static final int DEFAULT_WIDTH = 100;
     private static final int DEFAULT_HEIGHT = 20;
 
@@ -42,14 +42,26 @@ public class TextField extends AbstractTextField<TextField> {
     @Override
     protected void renderText(RenderContext context) {
         var graphics = context.graphics();
-        var x = bounds().x();
-        var y = bounds().y();
+
+        var bounds = bounds();
+        var x = bounds.x();
+        var y = bounds.y();
         var padding = padding();
         // Align
         var textHeight = Util.font().lineHeight;
-        y += (bounds().height() - textHeight) / 2;
+        y += (bounds.height() - textHeight) / 2;
         y += 1; // Better visual alignment
+        // Enable scissor
+        graphics.enableScissor(
+            bounds.x(),
+            bounds.y(),
+            bounds.x() + bounds.width(),
+            bounds.y() + bounds.height()
+        );
+        // Render texts
         graphics.drawString(Util.font(), value(), x + padding.left(), y, 0xFFFFFFFF);
+        // Disable scissor
+        graphics.disableScissor();
     }
 
     @Override
@@ -68,6 +80,7 @@ public class TextField extends AbstractTextField<TextField> {
 
     @Override
     protected void renderHighlight(RenderContext context) {
+        // TODO: Replicate default rendering
         if (highlightPos == cursorPos) return;
         var graphics = context.graphics();
 
