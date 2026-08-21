@@ -62,6 +62,16 @@ public interface EventTarget<S extends EventTarget<S>>
     }
 
     /**
+     * Registers a listener for key type events.
+     *
+     * @param listener The listener to handle key type events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onCharTyped(EventListener<CharTypeEvent> listener) {
+        return on(CharTypeEvent.class, listener);
+    }
+
+    /**
      * Registers a listener for mouse scroll events.
      *
      * @param listener The listener to handle mouse scroll events.

@@ -20,7 +20,7 @@ public record Padding(int top, int right, int bottom, int left) {
      * @param padding the padding value for all sides
      * @return a new Padding instance with uniform values
      */
-    public static Padding uniform(int padding) {
+    public static Padding create(int padding) {
         return new Padding(padding, padding, padding, padding);
     }
 
@@ -35,6 +35,17 @@ public record Padding(int top, int right, int bottom, int left) {
      */
     public static Padding create(int top, int right, int bottom, int left) {
         return new Padding(top, right, bottom, left);
+    }
+
+    /**
+     * Creates a new Padding instance with the specified vertical and horizontal values.
+     *
+     * @param vertical   the vertical padding (top and bottom)
+     * @param horizontal the horizontal padding (left and right)
+     * @return a new Padding instance with the specified vertical and horizontal values
+     */
+    public static Padding create(int vertical, int horizontal) {
+        return new Padding(vertical, horizontal, vertical, horizontal);
     }
 
     /**

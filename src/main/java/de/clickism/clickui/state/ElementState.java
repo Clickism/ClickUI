@@ -2,6 +2,7 @@ package de.clickism.clickui.state;
 
 public class ElementState implements ElementStateHolder<ElementState> {
     boolean hovered = false;
+    boolean focused = false;
     boolean disabled = false;
 
     @Override

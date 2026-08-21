@@ -2,9 +2,9 @@ package de.clickism.clickui.event.events;
 
 import de.clickism.clickui.event.Event;
 
-public record KeyPressEvent(
-    int code,
-    int scanCode,
+// TODO: Rename to make more sense
+public record CharTypeEvent(
+    char character,
     int modifiers
 ) implements Event {
 }

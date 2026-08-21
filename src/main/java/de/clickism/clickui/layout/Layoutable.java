@@ -126,7 +126,7 @@ public interface Layoutable<S extends Layoutable<S>>
     }
 
     default S padding(int padding) {
-        layout().padding = Padding.uniform(padding);
+        layout().padding = Padding.create(padding);
         return self();
     }
 

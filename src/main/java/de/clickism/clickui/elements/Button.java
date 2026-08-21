@@ -1,6 +1,7 @@
 package de.clickism.clickui.elements;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
@@ -16,6 +17,9 @@ import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATIO
  * A simple UI element that can be clicked and displays a label.
  */
 public class Button extends Element<Button> {
+    private static final int DEFAULT_HEIGHT = 20;
+    private static final Padding DEFAULT_PADDING = Padding.create(4, 8);
+
     /**
      * The label to display on the button.
      */
@@ -29,7 +33,8 @@ public class Button extends Element<Button> {
     public Button(Component label) {
         this.label = label;
         // Adjust default padding
-        this.padding(4, 8);
+        // TODO: Fix default pading? why these values
+        this.padding(DEFAULT_PADDING);
         this.style(s -> s
             .hovered(h -> h
                 .border(Color.WHITE)
@@ -60,7 +65,9 @@ public class Button extends Element<Button> {
     @Override
     public Size intrinsicSize() {
         // TODO: Consider font size
-        return new Size(Util.font().width(label), Util.font().lineHeight + 3);
+        var height = DEFAULT_HEIGHT - DEFAULT_PADDING.vertical();
+        var width = Util.font().width(label);
+        return new Size(width, height);
     }
 
     @Override

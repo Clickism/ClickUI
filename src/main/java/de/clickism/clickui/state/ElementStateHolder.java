@@ -29,4 +29,13 @@ public interface ElementStateHolder<S extends ElementStateHolder<S>>
         state().disabled = disabled;
         return self();
     }
+
+    default boolean focused() {
+        return state().focused;
+    }
+
+    default S focused(boolean focused) {
+        state().focused = focused;
+        return self();
+    }
 }

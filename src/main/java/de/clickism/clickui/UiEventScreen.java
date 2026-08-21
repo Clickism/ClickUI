@@ -167,6 +167,17 @@ public abstract class UiEventScreen extends Screen {
     }
 
     @Override
+    public boolean charTyped(char character, int modifiers) {
+        if (super.charTyped(character, modifiers)) return true;
+        // TODO: Focus manager
+        // Fire key type event to all elements in the tree
+        var event = new CharTypeEvent(character, modifiers);
+        eventRoot().propagateEvent(event);
+
+        return false;
+    }
+
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         int x = (int) mouseX;
         int y = (int) mouseY;

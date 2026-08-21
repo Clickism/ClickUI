@@ -2,6 +2,7 @@ package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiScreen;
+import de.clickism.clickui.elements.input.TextField;
 import de.clickism.clickui.util.Util;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -116,6 +117,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .alignTextCenter()
                             .padding(4),
                         new Counter(),
+                        new TextField(),
                         button("Go back")
                             .onClick(event -> {
                                 event.ui().back();
