@@ -66,19 +66,6 @@ public record Sizing(Type type, Integer fixed, Integer min, Integer max) {
         return new Sizing(type, fixed, min, max);
     }
 
-    /**
-     * Sets the minimum size for this Sizing instance if it is not already set.
-     *
-     * @param defaultMin The default minimum size to set if min is not already set.
-     * @return A new Sizing instance with the specified minimum size if min was not already set, otherwise returns the current instance.
-     */
-    public Sizing orDefaultMin(int defaultMin) {
-        if (min == null) {
-            return min(defaultMin);
-        }
-        return this;
-    }
-
     @Override
     public Integer fixed() {
         return type == Type.FIXED

@@ -81,13 +81,49 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Returns the minimum size of this element,
-     * which is the smallest size that this element can be without breaking its layout.
+     * Returns the default minimum size of this element, which is the smallest size that this element can be
+     * without breaking its layout or appearance.
+     * <p>
+     * This can be overriden via {@link Layout#minWidth(int)} and {@link Layout#minHeight(int)}.
      *
      * @return The minimum size of this element.
      */
     public Size defaultMinSize() {
         return Size.ZERO;
+    }
+
+    /**
+     * Returns the effective minimum size of this element, which is the smallest size that this element can be
+     * without breaking its layout or appearance, taking into account any overrides set.
+     *
+     * @return The effective minimum size of this element.
+     */
+    @ApiStatus.Internal
+    public final Size effectiveMinSize() {
+        var minWidth = width().min() != null
+                       ? width().min()
+                       : defaultMinSize().width();
+        var minHeight = height().min() != null
+                        ? height().min()
+                        : defaultMinSize().height();
+        return new Size(minWidth, minHeight);
+    }
+
+    /**
+     * Returns the effective maximum size of this element, which is the largest size that this element can be
+     * without breaking its layout or appearance, taking into account any overrides set.
+     *
+     * @return The effective maximum size of this element.
+     */
+    @ApiStatus.Internal
+    public final Size effectiveMaxSize() {
+        var maxWidth = width().max() != null
+                       ? width().max()
+                       : Integer.MAX_VALUE;
+        var maxHeight = height().max() != null
+                        ? height().max()
+                        : Integer.MAX_VALUE;
+        return new Size(maxWidth, maxHeight);
     }
 
     /**
