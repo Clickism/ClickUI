@@ -23,7 +23,7 @@ public interface Event {
      *
      * @return The currently active UiScreen.
      */
-    default UiScreen screen() {
+    default UiScreen ui() {
         var screen = Util.currentUiScreen();
         if (screen == null) {
             throw new IllegalStateException("No UiScreen is currently active.");

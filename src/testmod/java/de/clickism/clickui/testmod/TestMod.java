@@ -118,7 +118,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         new Counter(),
                         button("Go back")
                             .onClick(event -> {
-                                event.screen().back();
+                                event.ui().back();
                             })
                     )
             )
