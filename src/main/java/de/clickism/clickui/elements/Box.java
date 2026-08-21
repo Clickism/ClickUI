@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 // TODO: Overflow hidden, show, scroll etc.
 // TODO: Fix nested scroll boxes don't work
 // TODO: Fix scroll boxes capture scroll events even when not hovered
-
+// TODO: Fix some elements cut off if content is too large or alignment is not correct
 /**
  * A simple container element that can hold other elements
  * and provides scrolling functionality in case of
