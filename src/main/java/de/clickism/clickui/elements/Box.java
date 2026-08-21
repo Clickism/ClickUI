@@ -1,7 +1,7 @@
 package de.clickism.clickui.elements;
 
 import de.clickism.clickui.Element;
-import de.clickism.clickui.layout.LayoutAxis;
+import de.clickism.clickui.layout.Axis;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import net.minecraft.util.Mth;
@@ -154,7 +154,7 @@ public class Box extends Element<Box> {
     }
 
     @Override
-    public boolean shrinkChildrenIfOverflowing(LayoutAxis axis) {
+    public boolean shrinkChildrenIfOverflowing(Axis axis) {
         // If the box is scrollable, we don't shrink children vertically
         if (scrollable && !axis.isHorizontal()) {
             return false;

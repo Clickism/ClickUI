@@ -20,7 +20,7 @@ public record Rect(int x, int y, int width, int height) {
      * @param axis the layout axis
      * @return the main size
      */
-    public int mainSize(LayoutAxis axis) {
+    public int mainSize(Axis axis) {
         return axis.isHorizontal()
             ? width
             : height;
@@ -42,7 +42,7 @@ public record Rect(int x, int y, int width, int height) {
      * @param axis the layout axis
      * @return the cross size
      */
-    public int crossSize(LayoutAxis axis) {
+    public int crossSize(Axis axis) {
         return axis.isHorizontal()
             ? height
             : width;

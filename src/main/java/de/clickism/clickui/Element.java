@@ -132,7 +132,7 @@ public abstract class Element<S extends Element<S>>
      * @param axis the axis to check for overflow
      * @return Whether this element should shrink its children.
      */
-    public boolean shrinkChildrenIfOverflowing(LayoutAxis axis) {
+    public boolean shrinkChildrenIfOverflowing(Axis axis) {
         return true;
     }
 

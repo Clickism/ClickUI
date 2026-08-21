@@ -559,7 +559,7 @@ public class LayoutEngine {
          * @return list extremes
          * @throws IllegalArgumentException if the list of elements is empty
          */
-        static ListExtremes ofElements(List<Element<?>> elements, LayoutAxis axis) {
+        static ListExtremes ofElements(List<Element<?>> elements, Axis axis) {
             var sizes = elements.stream()
                 .mapToInt(element -> element.bounds().mainSize(axis))
                 .boxed()

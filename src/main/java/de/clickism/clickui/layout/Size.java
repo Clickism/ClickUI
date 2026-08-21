@@ -18,7 +18,7 @@ public record Size(int width, int height) {
      * @param axis the layout axis
      * @return the main size (width for horizontal, height for vertical)
      */
-    public int mainSize(LayoutAxis axis) {
+    public int mainSize(Axis axis) {
         return axis.isHorizontal()
             ? width
             : height;
@@ -30,7 +30,7 @@ public record Size(int width, int height) {
      * @param axis the layout axis
      * @return the cross size (height for horizontal, width for vertical)
      */
-    public int crossSize(LayoutAxis axis) {
+    public int crossSize(Axis axis) {
         return axis.isHorizontal()
             ? height
             : width;

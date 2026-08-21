@@ -11,22 +11,22 @@ public interface Layoutable<S extends Layoutable<S>>
      */
     Layout layout();
 
-    default LayoutAxis axis() {
+    default Axis axis() {
         return layout().axis;
     }
 
-    default S axis(LayoutAxis axis) {
+    default S axis(Axis axis) {
         layout().axis = axis;
         return self();
     }
 
     default S vertical() {
-        layout().axis = LayoutAxis.VERTICAL;
+        layout().axis = Axis.VERTICAL;
         return self();
     }
 
     default S horizontal() {
-        layout().axis = LayoutAxis.HORIZONTAL;
+        layout().axis = Axis.HORIZONTAL;
         return self();
     }
 

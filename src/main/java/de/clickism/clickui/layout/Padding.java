@@ -61,7 +61,7 @@ public record Padding(int top, int right, int bottom, int left) {
      * @param axis the layout axis
      * @return the main padding value (horizontal or vertical)
      */
-    public int mainPadding(LayoutAxis axis) {
+    public int mainPadding(Axis axis) {
         return axis.isHorizontal()
             ? horizontal()
             : vertical();
@@ -73,7 +73,7 @@ public record Padding(int top, int right, int bottom, int left) {
      * @param axis the layout axis
      * @return the cross padding value (vertical or horizontal)
      */
-    public int crossPadding(LayoutAxis axis) {
+    public int crossPadding(Axis axis) {
         return axis.isHorizontal()
             ? vertical()
             : horizontal();

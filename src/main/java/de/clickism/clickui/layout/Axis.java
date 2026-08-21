@@ -1,10 +1,10 @@
 package de.clickism.clickui.layout;
 
-public enum LayoutAxis {
+public enum Axis {
     HORIZONTAL,
     VERTICAL;
 
-    public LayoutAxis opposite() {
+    public Axis opposite() {
         return isHorizontal()
                ? VERTICAL
                : HORIZONTAL;
