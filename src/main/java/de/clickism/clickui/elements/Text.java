@@ -38,8 +38,7 @@ public class Text extends Element<Text> implements Wrappable {
      * @param text The text to display.
      */
     public Text(Component text) {
-        this.text = text;
-        this.lines = List.of(text);
+        this.text(text);
     }
 
     /**
@@ -50,7 +49,9 @@ public class Text extends Element<Text> implements Wrappable {
      */
     public Text text(Component text) {
         this.text = text;
-        this.lines = List.of(text); // Reset lines to the new text
+        this.lines = Util.font()
+            .getSplitter()
+            .splitLines(text, Integer.MAX_VALUE, Style.EMPTY);
         this.invalidate();
         return this;
     }
@@ -110,7 +111,7 @@ public class Text extends Element<Text> implements Wrappable {
         // TODO: Font size, multiline, etc.
         var fontScale = this.resolvedStyle().fontScale();
         var width = Util.font().width(text) * fontScale;
-        var height = Util.font().lineHeight * fontScale;
+        var height = Util.font().lineHeight * fontScale * lines.size();
         // Ceil the size to ensure it fits within the bounds
         return new Size((int) Math.ceil(width), (int) Math.ceil(height));
     }
