@@ -5,7 +5,6 @@ import de.clickism.clickui.layout.Align;
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.layout.Sizing;
-import de.clickism.clickui.style.Style;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -28,116 +27,51 @@ class LayoutEngineTest implements UiBuilder {
                     .children(
                         box()
                             .width(30)
-                            .height(30)
-                            .style(Style.empty()
-                                .background(Color.GREEN)
-                                .alpha(0.5f)
-                                .hovered(style -> style
-                                    .background(Color.RED))
-                            ),
+                            .height(30),
+                        box()
+                            .growWidth()
+                            .growHeight(),
 
                         box()
-                            .
-
-                            width(Sizing.grow())
-                                .
-
-                            height(Sizing.grow()),
-
-                        box()
-                            .
-
-                            width(Sizing.grow())
-                                .
-
-                            height(Sizing.grow())
+                            .growWidth()
+                            .growHeight()
                     ),
 
                 box()
-                    .
+                    .horizontal()
+                    .padding(10)
+                    .childGap(10)
+                    .growWidth()
+                    .mainAlign(Align.CENTER)
+                    .crossAlign(Align.CENTER)
+                    .children(
+                        box()
+                            .width(100)
+                            .height(150),
 
-                    horizontal()
-                        .
+                        box()
+                            .width(100)
+                            .height(100),
 
-                    padding(10)
-                        .
-
-                    childGap(10)
-                        .
-
-                    width(Sizing.grow())
-                        .
-
-                    mainAlign(Align.CENTER)
-                        .
-
-                    crossAlign(Align.CENTER)
-                        .
-
-                    children(
-                        new Box()
-                            .
-
-                            width(100)
-                                .
-
-                            height(150),
-
-                        new
-
-                            Box()
-                            .
-
-                            width(100)
-                                .
-
-                            height(100),
-
-                        new
-
-                            Box()
-                            .
-
-                            width(20)
-                                .
-
-                            height(Sizing.grow())
-                                .
-
-                            children(
+                        box()
+                            .width(20)
+                            .height(Sizing.grow())
+                            .children(
                                 box()
-                                    .
-
-                                    absolute(600, 400)
-                                        .
-
-                                    height(20)
-                                        .
-
-                                    width(20),
+                                    .absolute(600, 400)
+                                    .height(20)
+                                    .width(20),
 
                                 box()
-                                    .
-
-                                    relative(-20, 0)
-                                        .
-
-                                    height(20)
-                                        .
-
-                                    width(20)
+                                    .relative(-20, 0)
+                                    .height(20)
+                                    .width(20)
                             )
                     ),
 
-                new
-
-                    Box()
-                    .
-
-                    width(300)
-                        .
-
-                    height(40)
+                box()
+                    .width(300)
+                    .height(40)
             )
         );
     }
