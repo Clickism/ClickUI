@@ -129,10 +129,10 @@ public abstract class Element<S extends Element<S>>
     /**
      * Returns whether this element should shrink its children if they are overflowing the bounds of this element.
      *
-     * @param horizontal whether to check for horizontal overflow
-     * @return Whether this element should shrink its children if they are overflowing the bounds of this element.
+     * @param axis the axis to check for overflow
+     * @return Whether this element should shrink its children.
      */
-    public boolean shrinkChildrenIfOverflowing(boolean horizontal) {
+    public boolean shrinkChildrenIfOverflowing(LayoutAxis axis) {
         return true;
     }
 
@@ -358,6 +358,15 @@ public abstract class Element<S extends Element<S>>
     public S ref(Ref<S> ref) {
         ref.set(self());
         return self();
+    }
+
+    /**
+     * Returns the total gap between all children of this element.
+     *
+     * @return the total gap between all children of this element
+     */
+    public int totalChildGap() {
+        return childGap() * Math.max(0, children.size() - 1);
     }
 
     /**

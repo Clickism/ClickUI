@@ -1,15 +1,16 @@
 package de.clickism.clickui.elements;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.layout.LayoutAxis;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
-import de.clickism.clickui.util.Util;
 import net.minecraft.util.Mth;
 
 // TODO: Overflow hidden, show, scroll etc.
 // TODO: Fix nested scroll boxes don't work
 // TODO: Fix scroll boxes capture scroll events even when not hovered
 // TODO: Fix some elements cut off if content is too large or alignment is not correct
+
 /**
  * A simple container element that can hold other elements
  * and provides scrolling functionality in case of
@@ -136,7 +137,7 @@ public class Box extends Element<Box> {
      */
     protected int contentHeight() {
         int totalPadding = padding().top() + padding().bottom();
-        int totalGap = Util.totalChildGap(this);
+        int totalGap = totalChildGap();
         int childrenHeight = this.children().stream()
             .mapToInt(child -> child.bounds().height())
             .sum();
@@ -153,12 +154,12 @@ public class Box extends Element<Box> {
     }
 
     @Override
-    public boolean shrinkChildrenIfOverflowing(boolean horizontal) {
+    public boolean shrinkChildrenIfOverflowing(LayoutAxis axis) {
         // If the box is scrollable, we don't shrink children vertically
-        if (scrollable && !horizontal) {
+        if (scrollable && !axis.isHorizontal()) {
             return false;
         }
-        return super.shrinkChildrenIfOverflowing(horizontal);
+        return super.shrinkChildrenIfOverflowing(axis);
     }
 
     /**
@@ -188,8 +189,8 @@ public class Box extends Element<Box> {
      */
     protected int scrollbarWidth() {
         return isOverflowing()
-               ? SCROLLBAR_WIDTH
-               : 0;
+            ? SCROLLBAR_WIDTH
+            : 0;
     }
 
     /**

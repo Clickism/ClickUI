@@ -2,7 +2,6 @@ package de.clickism.clickui.util;
 
 import de.clickism.clickui.Element;
 import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.layout.LayoutAxis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
-import java.util.function.ToIntFunction;
 
 /**
  * Utility class for common UI operations.
@@ -85,27 +83,5 @@ public class Util {
             return uiScreen;
         }
         return null;
-    }
-
-    /**
-     * Calculates the total gap between the children of the given element based on its child gap and number of children.
-     *
-     * @param element the element to calculate the total child gap for
-     * @return the total gap between the children of the element
-     */
-    public static int totalChildGap(Element<?> element) {
-        return element.childGap() * Math.max(0, element.children().size() - 1);
-    }
-
-    /**
-     * Returns a function that retrieves the axis size of an element based on the given layout axis.
-     *
-     * @param axis the layout axis to determine the axis size
-     * @return a function that retrieves the axis size of an element
-     */
-    public static ToIntFunction<Element<?>> axisGetter(LayoutAxis axis) {
-        return axis.isHorizontal()
-               ? child -> child.bounds().width()
-               : child -> child.bounds().height();
     }
 }

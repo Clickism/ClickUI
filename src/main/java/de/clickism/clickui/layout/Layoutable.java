@@ -88,6 +88,18 @@ public interface Layoutable<S extends Layoutable<S>>
         return self();
     }
 
+    default Sizing mainSizing() {
+        return layout().axis.isHorizontal()
+            ? layout().width
+            : layout().height;
+    }
+
+    default Sizing crossSizing() {
+        return layout().axis.isHorizontal()
+            ? layout().height
+            : layout().width;
+    }
+
     default S grow() {
         layout().width = Sizing.grow();
         layout().height = Sizing.grow();

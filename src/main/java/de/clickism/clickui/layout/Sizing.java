@@ -69,8 +69,17 @@ public record Sizing(Type type, Integer fixed, Integer min, Integer max) {
     @Override
     public Integer fixed() {
         return type == Type.FIXED
-               ? Objects.requireNonNull(fixed)
-               : null;
+            ? Objects.requireNonNull(fixed)
+            : null;
+    }
+
+    /**
+     * Checks if the sizing type is GROW.
+     *
+     * @return true if the sizing type is GROW, false otherwise.
+     */
+    public boolean isGrow() {
+        return type == Type.GROW;
     }
 
     /**
