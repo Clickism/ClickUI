@@ -138,6 +138,7 @@ public abstract class UiEventScreen extends Screen {
         return true;
     }
 
+    // TODO: Event consuming, send scroll events to all elements starting from hoveredElement, and stop when an element consumes the event
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int x = (int) mouseX;
@@ -146,9 +147,10 @@ public abstract class UiEventScreen extends Screen {
         if (hoveredElement == null) return false;
         if (hoveredElement.disabled()) return false;
 
-        // Fire mouse scroll event to all elements in the tree
+        // Fire mouse scroll event to the hovered element
         var event = new MouseScrollEvent(x, y, delta);
-        eventRoot().propagateEvent(event);
+        hoveredElement.events().fireEvent(event);
+
         return true;
     }
 

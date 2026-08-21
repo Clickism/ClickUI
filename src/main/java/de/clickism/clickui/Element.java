@@ -382,12 +382,33 @@ public abstract class Element<S extends Element<S>>
         new StyleRenderer(this, context).renderElement();
         // Render debug information if debug mode is enabled
         if (context.debug()) {
-            context.graphics().renderOutline(
+            renderDebugInfo(context);
+        }
+    }
+
+    /**
+     * Renders debug information for this element, such as its bounds and layout information.
+     *
+     * @param context the render context to render with
+     */
+    public void renderDebugInfo(RenderContext context) {
+        // Render the bounds of this element as a red outline
+        context.graphics().renderOutline(
+            bounds().x(),
+            bounds().y(),
+            bounds().width(),
+            bounds().height(),
+            0xffff0000
+        );
+
+        // Render overlay if hovered
+        if (state().hovered()) {
+            context.graphics().fill(
                 bounds().x(),
                 bounds().y(),
-                bounds().width(),
-                bounds().height(),
-                0xffff0000
+                bounds().x() + bounds().width(),
+                bounds().y() + bounds().height(),
+                0x40ff0000
             );
         }
     }
