@@ -82,6 +82,7 @@ public class Box extends Element<Box> {
         this.onDragEnd(event -> {
             draggingScrollbar = false;
         });
+        // TODO: Add touch support for scrolling
     }
 
     /**
@@ -149,6 +150,15 @@ public class Box extends Element<Box> {
      */
     protected boolean isOverflowing() {
         return maxScrollY() > 0;
+    }
+
+    @Override
+    public boolean shrinkChildrenIfOverflowing(boolean horizontal) {
+        // If the box is scrollable, we don't shrink children vertically
+        if (scrollable && !horizontal) {
+            return false;
+        }
+        return super.shrinkChildrenIfOverflowing(horizontal);
     }
 
     /**

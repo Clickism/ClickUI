@@ -101,11 +101,11 @@ public abstract class Element<S extends Element<S>>
     @ApiStatus.Internal
     public final Size effectiveMinSize() {
         var minWidth = width().min() != null
-                       ? width().min()
-                       : defaultMinSize().width();
+            ? width().min()
+            : defaultMinSize().width();
         var minHeight = height().min() != null
-                        ? height().min()
-                        : defaultMinSize().height();
+            ? height().min()
+            : defaultMinSize().height();
         return new Size(minWidth, minHeight);
     }
 
@@ -118,12 +118,22 @@ public abstract class Element<S extends Element<S>>
     @ApiStatus.Internal
     public final Size effectiveMaxSize() {
         var maxWidth = width().max() != null
-                       ? width().max()
-                       : Integer.MAX_VALUE;
+            ? width().max()
+            : Integer.MAX_VALUE;
         var maxHeight = height().max() != null
-                        ? height().max()
-                        : Integer.MAX_VALUE;
+            ? height().max()
+            : Integer.MAX_VALUE;
         return new Size(maxWidth, maxHeight);
+    }
+
+    /**
+     * Returns whether this element should shrink its children if they are overflowing the bounds of this element.
+     *
+     * @param horizontal whether to check for horizontal overflow
+     * @return Whether this element should shrink its children if they are overflowing the bounds of this element.
+     */
+    public boolean shrinkChildrenIfOverflowing(boolean horizontal) {
+        return true;
     }
 
     /**
@@ -358,13 +368,13 @@ public abstract class Element<S extends Element<S>>
     public void renderTree(RenderContext context) {
         this.renderWithStyle(context);
         // TODO: Remove debug rendering
-//        context.graphics().renderOutline(
-//            bounds().x(),
-//            bounds().y(),
-//            bounds().width(),
-//            bounds().height(),
-//            0xffff0000
-//        );
+        context.graphics().renderOutline(
+            bounds().x(),
+            bounds().y(),
+            bounds().width(),
+            bounds().height(),
+            0xffff0000
+        );
         // Render children
         for (var child : children) {
             child.renderTree(context);
