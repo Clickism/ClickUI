@@ -367,14 +367,6 @@ public abstract class Element<S extends Element<S>>
      */
     public void renderTree(RenderContext context) {
         this.renderWithStyle(context);
-        // TODO: Remove debug rendering
-        context.graphics().renderOutline(
-            bounds().x(),
-            bounds().y(),
-            bounds().width(),
-            bounds().height(),
-            0xffff0000
-        );
         // Render children
         for (var child : children) {
             child.renderTree(context);
@@ -388,6 +380,16 @@ public abstract class Element<S extends Element<S>>
      */
     public void renderWithStyle(RenderContext context) {
         new StyleRenderer(this, context).renderElement();
+        // Render debug information if debug mode is enabled
+        if (context.debug()) {
+            context.graphics().renderOutline(
+                bounds().x(),
+                bounds().y(),
+                bounds().width(),
+                bounds().height(),
+                0xffff0000
+            );
+        }
     }
 
     /**

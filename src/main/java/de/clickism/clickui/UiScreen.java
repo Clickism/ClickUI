@@ -25,6 +25,12 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     private @Nullable UiScreen parent;
 
     /**
+     * Indicates whether debug mode is enabled for this UiScreen.
+     * When enabled, additional debug information may be rendered.
+     */
+    private boolean debug = false;
+
+    /**
      * Creates a new UiScreen with the specified title component.
      *
      * @param component the title component of the screen
@@ -117,6 +123,15 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
+     * Enables or disables debug mode for this UiScreen.
+     *
+     * @param debug true to enable debug mode, false to disable it
+     */
+    public void debug(boolean debug) {
+        this.debug = debug;
+    }
+
+    /**
      * Builds the root element of the UI tree.
      * This method should be implemented by subclasses to define the structure of the UI.
      * <p>
@@ -146,7 +161,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         // Call event handler
         super.render(guiGraphics, mouseX, mouseY, delta);
         // Render the tree
-        root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta));
+        root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta, debug));
     }
 
     @Override

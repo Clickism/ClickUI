@@ -9,11 +9,13 @@ import net.minecraft.client.gui.GuiGraphics;
  * @param mouseX
  * @param mouseY
  * @param delta
+ * @param debug
  */
 public record RenderContext(
     GuiGraphics graphics,
     int mouseX,
     int mouseY,
-    float delta
+    float delta,
+    boolean debug
 ) {
 }

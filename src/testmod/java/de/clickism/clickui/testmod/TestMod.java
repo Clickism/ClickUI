@@ -112,7 +112,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 text("Scrollable content line 9"),
                                 button("Far down!?")
                             ),
-                        text("You can go back to the previous screen by clicking the button below. Alternatively, you can also press the ESC key to go back.")
+                        text("You can go back to the previous screen by clicking the button below.\n\nAlternatively, you can also press the §lESC §rkey to go back.")
                             .alignTextCenter()
                             .padding(4),
                         new Counter(),
@@ -123,6 +123,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     )
             )
         );
+
+//        newScreen.debug(true);
 
         Util.openScreen(newScreen);
     }
