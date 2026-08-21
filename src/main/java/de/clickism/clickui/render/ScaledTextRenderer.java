@@ -57,6 +57,10 @@ public record ScaledTextRenderer(
         return Util.font().width(text) * scale;
     }
 
+    public float measureWidth(FormattedCharSequence text, float scale) {
+        return Util.font().width(text) * scale;
+    }
+
     public float measureHeight(float scale) {
         return Util.font().lineHeight * scale;
     }

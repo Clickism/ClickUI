@@ -73,7 +73,7 @@ public class Text extends Element<Text> implements Wrappable {
      * @param align The alignment to set for the text.
      * @return The current Text element instance.
      */
-    public Text textAlign(Align align) {
+    public Text alignText(Align align) {
         this.align = align;
         this.invalidate();
         return this;
@@ -84,8 +84,8 @@ public class Text extends Element<Text> implements Wrappable {
      *
      * @return The current Text element instance.
      */
-    public Text textAlignLeft() {
-        return textAlign(Align.LEFT);
+    public Text alignTextLeft() {
+        return alignText(Align.LEFT);
     }
 
     /**
@@ -93,8 +93,8 @@ public class Text extends Element<Text> implements Wrappable {
      *
      * @return The current Text element instance.
      */
-    public Text textAlignCenter() {
-        return textAlign(Align.CENTER);
+    public Text alignTextCenter() {
+        return alignText(Align.CENTER);
     }
 
     /**
@@ -102,8 +102,8 @@ public class Text extends Element<Text> implements Wrappable {
      *
      * @return The current Text element instance.
      */
-    public Text textAlignRight() {
-        return textAlign(Align.RIGHT);
+    public Text alignTextRight() {
+        return alignText(Align.RIGHT);
     }
 
     @Override
@@ -184,16 +184,26 @@ public class Text extends Element<Text> implements Wrappable {
         var style = this.resolvedStyle();
 
         // TODO: Cascading text color?
-        // TODO: Render alignment
         // TODO: Text color?
         var charLines = Language.getInstance().getVisualOrder(lines);
 
         // Render each line
         for (var line : charLines) {
-            renderer.render(line, x, y, style.fontScale(), 0xFFFFFFFF);
+            // Align text based on the specified alignment
+            var width = renderer.measureWidth(line, style.fontScale());
+            var space = this.bounds().width() - this.padding().horizontal() - width;
+            var lineX = x;
+            switch (align) {
+                case CENTER -> lineX = (int) (x + space / 2);
+                case RIGHT -> lineX = (int) (x + space);
+                case LEFT -> {
+                    // No adjustment needed for left alignment
+                }
+            }
+            // Render text
+            renderer.render(line, lineX, y, style.fontScale(), 0xFFFFFFFF);
             y += (int) renderer.measureHeight(style.fontScale());
         }
-
     }
 
     /**

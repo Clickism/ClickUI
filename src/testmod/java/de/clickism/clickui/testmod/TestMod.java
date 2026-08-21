@@ -2,7 +2,6 @@ package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.elements.Box;
 import de.clickism.clickui.util.Util;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -114,6 +113,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 button("Far down!?")
                             ),
                         text("You can go back to the previous screen by clicking the button below. Alternatively, you can also press the ESC key to go back.")
+                            .alignTextCenter()
                             .padding(4),
                         new Counter(),
                         button("Go back")
