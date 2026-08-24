@@ -33,6 +33,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     protected int displayPos;
     // TODO: Max length, filter, etc.
 
+    protected int blinkInterval = 300; // Blink every 300 ms
+
     protected List<Consumer<String>> listeners = new ArrayList<>();
 
     /*+
@@ -73,10 +75,43 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         return this.value;
     }
 
+    /**
+     * Triggers the value changed event, notifying all registered listeners of the current value.
+     */
     protected void triggerValueChanged() {
         for (var listener : listeners) {
             listener.accept(value);
         }
+    }
+
+    /**
+     * Sets the cursor position to a valid position and clamps if needed.
+     *
+     * @param pos the position to set the cursor to
+     */
+    private void setValidCursor(int pos) {
+        this.cursorPos = Mth.clamp(pos, 0, value.length());
+    }
+
+    /**
+     * Whether the text box is currently focused, editable and listening for input.
+     *
+     * @return true if the text box is focused and editable, false otherwise
+     */
+    public boolean listening() {
+        // TODO: Check if visible
+        return !this.disabled() && this.focused();
+    }
+
+    /**
+     * Filters the input string before inserting it into the text box.
+     *
+     * @param input the input string to filter
+     * @return the filtered string
+     */
+    protected String filterInput(String input) {
+        // TODO: Make this customizable
+        return SharedConstants.filterText(input);
     }
 
     /**
@@ -100,35 +135,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         setValidCursor(cursorPos + string.length());
         highlightPos = cursorPos;
         triggerValueChanged();
-    }
-
-    /**
-     * Gets the highlighted section of the text
-     *
-     * @return the highlighted text
-     */
-    public String highlightedText() {
-        int start = Math.min(cursorPos, highlightPos);
-        int end = Math.max(cursorPos, highlightPos);
-        return value.substring(start, end);
-    }
-
-    /**
-     * Gets the start index of the highlighted section of the text
-     *
-     * @return the start index of the highlighted text
-     */
-    private int highlightStart() {
-        return Math.min(cursorPos, highlightPos);
-    }
-
-    /**
-     * Gets the end index of the highlighted section of the text
-     *
-     * @return the end index of the highlighted text
-     */
-    private int highlightEnd() {
-        return Math.max(cursorPos, highlightPos);
     }
 
     /**
@@ -167,7 +173,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @param direction the direction to move in, positive or negative
      * @return the position of the next word in the given direction
      */
-    private int wordPosition(int direction) {
+    protected int wordPosition(int direction) {
         int pos = cursorPos;
         if (direction > 0) {
             // Skip current word
@@ -208,48 +214,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         if (!Screen.hasShiftDown()) {
             highlightPos = cursorPos;
         }
-    }
-
-    /**
-     * Sets the cursor position to a valid position and clamps if needed.
-     *
-     * @param pos the position to set the cursor to
-     */
-    private void setValidCursor(int pos) {
-        this.cursorPos = Mth.clamp(pos, 0, value.length());
-    }
-
-    /**
-     * Whether the text box is currently focused, editable and listening for input.
-     *
-     * @return true if the text box is focused and editable, false otherwise
-     */
-    public boolean listening() {
-        // TODO: Check if visible
-        return !this.disabled() && this.focused();
-    }
-
-    /**
-     * Filters the input string before inserting it into the text box.
-     *
-     * @param input the input string to filter
-     * @return the filtered string
-     */
-    protected String filterInput(String input) {
-        // TODO: Make this customizable
-        return SharedConstants.filterText(input);
-    }
-
-    /**
-     * Returns the text to be displayed in the text box,
-     * either the current value or the placeholder if the value is empty.
-     *
-     * @return the text to be displayed in the text box
-     */
-    protected String textToShow() {
-        return value.isEmpty()
-            ? placeholder
-            : value;
     }
 
     /**
@@ -312,21 +276,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         }
     }
 
-    protected boolean isPlaceholderVisible() {
-        return value.isEmpty() && !placeholder.isEmpty() && !listening();
-    }
-
-    protected boolean isCursorVisible() {
-        // Blink every 6 ticks
-        var time = System.currentTimeMillis();
-        var blinking = time / 300 % 2 == 0; // Blink every 300 ms
-        return listening() && !blinking;
-    }
-
-    protected boolean isHighlightVisible() {
-        return highlightPos != cursorPos;
-    }
-
     /**
      * Calculates the position where the text should be rendered within the text box.
      *
@@ -346,12 +295,92 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         return new Point(x, y);
     }
 
+    /**
+     * Returns the text to be displayed in the text box,
+     * either the current value or the placeholder if the value is empty.
+     *
+     * @return the text to be displayed in the text box
+     */
+    protected String textToShow() {
+        return value.isEmpty()
+            ? placeholder
+            : value;
+    }
+
+    /**
+     * Gets the highlighted section of the text
+     *
+     * @return the highlighted text
+     */
+    protected String highlightedText() {
+        int start = Math.min(cursorPos, highlightPos);
+        int end = Math.max(cursorPos, highlightPos);
+        return value.substring(start, end);
+    }
+
+    /**
+     * Gets the start index of the highlighted section of the text
+     *
+     * @return the start index of the highlighted text
+     */
+    protected int highlightStart() {
+        return Math.min(cursorPos, highlightPos);
+    }
+
+    /**
+     * Gets the end index of the highlighted section of the text
+     *
+     * @return the end index of the highlighted text
+     */
+    protected int highlightEnd() {
+        return Math.max(cursorPos, highlightPos);
+    }
+
+    /**
+     * Whether the placeholder text should be visible
+     *
+     * @return true if the placeholder text should be visible, false otherwise
+     */
+    protected boolean isPlaceholderVisible() {
+        return value.isEmpty() && !placeholder.isEmpty() && !listening();
+    }
+
+    /**
+     * Whether the cursor should be visible (blinking)
+     *
+     * @return true if the cursor should be visible, false otherwise
+     */
+    protected boolean isCursorVisible() {
+        // Blink every 6 ticks
+        var time = System.currentTimeMillis();
+        var blinking = time / blinkInterval % 2 == 0;
+        return listening() && !blinking;
+    }
+
+    /**
+     * Whether the highlight should be visible (if there is a selection)
+     *
+     * @return true if the highlight should be visible, false otherwise
+     */
+    protected boolean isHighlightVisible() {
+        return highlightPos != cursorPos;
+    }
+
     @Override
     public void render(RenderContext context) {
+        // Render with scissor enabled
+        renderWithScissor(context, () -> renderTextField(context));
+    }
+
+    /**
+     * Renders the text field, including the text, cursor, and highlight.
+     *
+     * @param context the render context
+     */
+    private void renderTextField(RenderContext context) {
         // TODO: Refactor
         var textPos = textPosition();
         var text = textToShow();
-
         // Render text
         {
             var x = textPos.x();
@@ -387,6 +416,37 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         }
     }
 
+    /**
+     * Renders the given content with scisorr enabled.
+     *
+     * @param context the render context
+     * @param render  the rendering logic
+     */
+    protected void renderWithScissor(RenderContext context, Runnable render) {
+        var graphics = context.graphics();
+        // Enable scissor
+        var bounds = bounds();
+        graphics.enableScissor(
+            bounds.x(),
+            bounds.y(),
+            bounds.x() + bounds.width(),
+            bounds.y() + bounds.height()
+        );
+        // Render
+        render.run();
+        // Disable scissor
+        graphics.disableScissor();
+    }
+
+    /**
+     * Renders the text within the text field.
+     *
+     * @param context     the render context
+     * @param text        the text to render
+     * @param x           the x-coordinate for rendering
+     * @param y           the y-coordinate for rendering
+     * @param placeholder whether the text is a placeholder
+     */
     protected abstract void renderText(
         RenderContext context,
         String text,
@@ -395,6 +455,14 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         boolean placeholder
     );
 
+    /**
+     * Renders the cursor at the specified position.
+     *
+     * @param context the render context
+     * @param x       the x-coordinate for rendering the cursor
+     * @param y       the y-coordinate for rendering the cursor
+     * @param inline  whether the cursor is inline or not (whether it is within the text or at the end)
+     */
     protected abstract void renderCursor(
         RenderContext context,
         int x,
@@ -402,6 +470,14 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         boolean inline
     );
 
+    /**
+     * Renders the highlight for the selected text.
+     *
+     * @param context the render context
+     * @param x       the x-coordinate for rendering the highlight
+     * @param y       the y-coordinate for rendering the highlight
+     * @param width   the width of the highlight
+     */
     protected abstract void renderHighlight(
         RenderContext context,
         int x,
