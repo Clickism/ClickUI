@@ -20,7 +20,8 @@ import java.util.function.Consumer;
  *
  * @param <S> the type of the subclass extending this abstract class
  */
-// TODO: Suggestions
+// TODO: Suggestiony
+// TODO: Make some methods private
 public abstract class AbstractTextField<S extends AbstractTextField<S>>
     extends Element<S> {
 
@@ -63,8 +64,9 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      */
     public void value(String value) {
         this.value = value;
-        setValidCursor(value.length());
-        highlightPos = cursorPos;
+        this.cursorPos = value.length();
+        this.highlightPos = cursorPos;
+        this.calculateDisplayPos();
     }
 
     /**
@@ -83,16 +85,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         for (var listener : listeners) {
             listener.accept(value);
         }
-    }
-
-    /**
-     * Sets the cursor position to a valid position and clamps if needed.
-     *
-     * @param pos the position to set the cursor to
-     */
-    private void setValidCursor(int pos) {
-        this.cursorPos = Mth.clamp(pos, 0, value.length());
-        calculateDisplayPos();
     }
 
     /**
@@ -174,9 +166,10 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         }
         // Insert text
         value = value.substring(0, cursorPos) + string + value.substring(cursorPos);
-        setValidCursor(cursorPos + string.length());
+        cursorPos = Mth.clamp(cursorPos + string.length(), 0, value.length());
         highlightPos = cursorPos;
         triggerValueChanged();
+        calculateDisplayPos();
     }
 
     /**
@@ -207,6 +200,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             highlightPos = cursorPos;
         }
         triggerValueChanged();
+        calculateDisplayPos();
     }
 
     /**
@@ -253,9 +247,18 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             // Move by one character
             cursorPos = Mth.clamp(cursorPos + direction, 0, value.length());
         }
+        if (highlightPos != cursorPos) {
+            // If highlight is active, move to highlight start or end
+            if (direction > 0) {
+                cursorPos = highlightEnd();
+            } else {
+                cursorPos = highlightStart();
+            }
+        }
         if (!Screen.hasShiftDown()) {
             highlightPos = cursorPos;
         }
+        calculateDisplayPos();
     }
 
     /**
@@ -268,6 +271,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             // Move cursor to the end
             cursorPos = value.length();
             highlightPos = 0; // Highlight from start to end
+            calculateDisplayPos();
             return;
         }
         if (Screen.isCopy(code)) {
@@ -316,6 +320,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
                 }
             }
         }
+        // Calculate display pos after cursor movement
+        calculateDisplayPos();
     }
 
     /**
