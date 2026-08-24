@@ -26,7 +26,9 @@ public class TextField extends AbstractTextField<TextField> {
             .background(Color.BLACK)
             .border(new Color(0xFFA0A0A0))
             .borderPosition(BorderPosition.INSIDE)
-            .hovered(h -> h
+            .ifHovered(h -> h
+                .border(Color.WHITE))
+            .ifFocused(f -> f
                 .border(Color.WHITE))
         );
     }

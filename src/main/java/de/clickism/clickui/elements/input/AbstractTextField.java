@@ -33,8 +33,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     protected int displayPos;
     // TODO: Max length, filter, etc.
 
-    protected int tick = 0;
-
     protected List<Consumer<String>> listeners = new ArrayList<>();
 
     /*+
@@ -75,18 +73,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         return this.value;
     }
 
-    /**
-     * Gets the current text or the placeholder if the text is empty.
-     * Should be used for diplaying the text
-     *
-     * @return the current text or the placeholder if the text is empty
-     */
-    public String valueOrPlaceholder() {
-        return this.value.isEmpty()
-            ? this.placeholder
-            : this.value;
-    }
-
     protected void triggerValueChanged() {
         for (var listener : listeners) {
             listener.accept(value);
@@ -103,8 +89,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         string = filterInput(string);
         if (highlightPos != cursorPos) {
             // Remove highlighted text before inserting
-            int start = selectionStart();
-            int end = selectionEnd();
+            int start = highlightStart();
+            int end = highlightEnd();
             value = value.substring(0, start) + value.substring(end);
             cursorPos = start;
             highlightPos = cursorPos;
@@ -132,7 +118,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return the start index of the highlighted text
      */
-    private int selectionStart() {
+    private int highlightStart() {
         return Math.min(cursorPos, highlightPos);
     }
 
@@ -141,7 +127,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return the end index of the highlighted text
      */
-    private int selectionEnd() {
+    private int highlightEnd() {
         return Math.max(cursorPos, highlightPos);
     }
 
@@ -239,9 +225,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @return true if the text box is focused and editable, false otherwise
      */
     public boolean listening() {
-        return !this.disabled();
-        // TODO: Add focus check when focus is implemented
-//        return this.visible && this.isFocused() && this.editable;
+        // TODO: Check if visible
+        return !this.disabled() && this.focused();
     }
 
     /**
@@ -255,6 +240,12 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         return SharedConstants.filterText(input);
     }
 
+    /**
+     * Returns the text to be displayed in the text box,
+     * either the current value or the placeholder if the value is empty.
+     *
+     * @return the text to be displayed in the text box
+     */
     protected String textToShow() {
         return value.isEmpty()
             ? placeholder
@@ -356,12 +347,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        tick++;
-    }
-
-    @Override
     public void render(RenderContext context) {
         // TODO: Refactor
         var textPos = textPosition();
@@ -390,11 +375,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         // Highlight
         if (isHighlightVisible()) {
             // Calculate highlight start and end positions
-            int highlightStart = Math.min(cursorPos, highlightPos);
-            int highlightEnd = Math.max(cursorPos, highlightPos);
-
-            String before = text.substring(0, highlightStart);
-            String highlighted = text.substring(highlightStart, highlightEnd);
+            String before = text.substring(0, highlightStart());
+            String highlighted = text.substring(highlightStart(), highlightEnd());
 
             var font = Util.font();
 

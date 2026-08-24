@@ -17,6 +17,10 @@ public abstract class UiEventScreen extends Screen {
      * Keep track of the hovered element
      */
     private @Nullable Element<?> hoveredElement = null;
+    /**
+     * Keep track of the focused element
+     */
+    private @Nullable Element<?> focusedElement = null;
 
     private @Nullable Element<?> draggedElement = null;
     private double dragStartX = 0;
@@ -61,12 +65,12 @@ public abstract class UiEventScreen extends Screen {
     }
 
     /**
-     * Updates the state of the elements based on the current mouse position.
+     * Updates the hovered state of the elements based on the current mouse position.
      *
      * @param mouseX the x-coordinate of the mouse
      * @param mouseY the y-coordinate of the mouse
      */
-    protected void updateState(int mouseX, int mouseY) {
+    protected void updateHoverState(int mouseX, int mouseY) {
         var hit = hitTester.hitTest(eventRoot(), mouseX, mouseY);
         if (hit == null) {
             // Clear hovered state if no element is hit
@@ -89,20 +93,37 @@ public abstract class UiEventScreen extends Screen {
         hoveredElement(target);
     }
 
+    /**
+     * Updates the focused state of the elements based on the currently focused element.
+     *
+     * @param element the element that is currently focused, or null if no element is focused
+     */
+    protected void updateFocusState(@Nullable Element<?> element) {
+        if (focusedElement != null && focusedElement != element) {
+            focusedElement.state().focused(false);
+        }
+        focusedElement = element;
+        if (focusedElement != null) {
+            focusedElement.state().focused(true);
+        }
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         super.render(guiGraphics, mouseX, mouseY, delta);
         // Update element states first
-        updateState(mouseX, mouseY);
+        updateHoverState(mouseX, mouseY);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateState(x, y);
+        updateHoverState(x, y);
+        updateFocusState(hoveredElement);
         if (hoveredElement == null) return false;
         if (hoveredElement.disabled()) return false;
+
 
         // Fire mouse click event to the hovered element
         var event = new MouseClickEvent(x, y, button);
@@ -121,7 +142,7 @@ public abstract class UiEventScreen extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateState(x, y);
+        updateHoverState(x, y);
         if (hoveredElement == null) return false;
         if (hoveredElement.disabled()) return false;
 
@@ -143,7 +164,7 @@ public abstract class UiEventScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateState(x, y);
+        updateHoverState(x, y);
         if (hoveredElement == null) return false;
         if (hoveredElement.disabled()) return false;
 
@@ -181,7 +202,7 @@ public abstract class UiEventScreen extends Screen {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateState(x, y);
+        updateHoverState(x, y);
         if (draggedElement == null) return false;
         if (draggedElement.disabled()) return false;
 
