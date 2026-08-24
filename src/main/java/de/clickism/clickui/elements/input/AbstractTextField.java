@@ -30,6 +30,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     protected int cursorPos = 0;
     protected int highlightPos = 0;
 
+    protected boolean scrolling = true;
     protected int displayPos;
     // TODO: Max length, filter, etc.
 
@@ -49,10 +50,10 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         // Register character typed event handler
         this.onCharTyped(event -> {
             if (!listening()) return;
-            if (!SharedConstants.isAllowedChatCharacter(event.character())) return;
             // Insert text
             insertText(Character.toString(event.character()));
         });
+        // TODO: Click to move to cursor
     }
 
     /**
@@ -91,6 +92,47 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      */
     private void setValidCursor(int pos) {
         this.cursorPos = Mth.clamp(pos, 0, value.length());
+        calculateDisplayPos();
+    }
+
+    /**
+     * Calculates the display position of the text box based on the cursor position and the width of the text box.
+     * <p>
+     * It ensures that the cursor is always visible within the text box by adjusting the display position.
+     */
+    private void calculateDisplayPos() {
+        int width = bounds().width() - padding().horizontal();
+        width -= 4; // Padding for cursor
+
+        // Cursor is left of the visible text
+        if (cursorPos <= displayPos) {
+            // Move cursor by half the width of the text box to the left
+            var half = Util.font().plainSubstrByWidth(
+                value.substring(0, cursorPos),
+                width / 2
+            );
+            // Set displayPos to the start of the visible text
+            displayPos = cursorPos - half.length();
+            if (displayPos < 0) {
+                displayPos = 0;
+            }
+            return;
+        }
+
+        // Get the visible text starting from displayPos
+        String visible = Util.font().plainSubstrByWidth(
+            value.substring(displayPos),
+            width
+        );
+        int visibleEnd = displayPos + visible.length();
+
+        // Cursor is right of the visible text
+        if (cursorPos > visibleEnd) {
+            displayPos += cursorPos - visibleEnd;
+        }
+
+        // Clamp displayPos to valid range
+        displayPos = Mth.clamp(displayPos, 0, value.length());
     }
 
     /**
@@ -378,42 +420,60 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @param context the render context
      */
     private void renderTextField(RenderContext context) {
+        calculateDisplayPos();
         // TODO: Refactor
-        var textPos = textPosition();
+        var graphics = context.graphics();
         var text = textToShow();
-        // Render text
-        {
-            var x = textPos.x();
-            var y = textPos.y();
-            var placeholder = isPlaceholderVisible();
 
-            renderText(context, text, x, y, placeholder);
+        if (scrolling) {
+            // Transform by display pos
+            int offset = context.font().width(text.substring(0, displayPos));
+            graphics.pose().pushPose();
+            graphics.pose().translate(-offset, 0, 0);
         }
 
-        // Cursor
-        if (isCursorVisible()) {
-            boolean inline = cursorPos < text.length();
-            var leftOfCursor = text.substring(0, cursorPos);
+        try {
+            var textPos = textPosition();
+            // Render text
+            {
+                var x = textPos.x();
+                var y = textPos.y();
+                var placeholder = isPlaceholderVisible();
 
-            var font = context.font();
-            var x = textPos.x() + font.width(leftOfCursor);
-            var y = textPos.y();
-            renderCursor(context, x, y, inline);
+                renderText(context, text, x, y, placeholder);
+            }
+
+            // Cursor
+            if (isCursorVisible()) {
+                boolean inline = cursorPos < text.length();
+                var leftOfCursor = text.substring(0, cursorPos);
+
+                var font = context.font();
+                var x = textPos.x() + font.width(leftOfCursor);
+                var y = textPos.y();
+                renderCursor(context, x, y, inline);
+            }
+
+            // Highlight
+            if (isHighlightVisible()) {
+                // Calculate highlight start and end positions
+                String before = text.substring(0, highlightStart());
+                String highlighted = text.substring(highlightStart(), highlightEnd());
+
+                var font = Util.font();
+
+                var x = textPos.x() + font.width(before);
+                var y = textPos.y();
+                var width = font.width(highlighted);
+                renderHighlight(context, x, y, width);
+            }
+        } finally {
+            // Undo transform
+            if (scrolling) {
+                graphics.pose().popPose();
+            }
         }
 
-        // Highlight
-        if (isHighlightVisible()) {
-            // Calculate highlight start and end positions
-            String before = text.substring(0, highlightStart());
-            String highlighted = text.substring(highlightStart(), highlightEnd());
-
-            var font = Util.font();
-
-            var x = textPos.x() + font.width(before);
-            var y = textPos.y();
-            var width = font.width(highlighted);
-            renderHighlight(context, x, y, width);
-        }
     }
 
     /**
