@@ -1,7 +1,9 @@
 package de.clickism.clickui.elements.input;
 
 import de.clickism.clickui.Element;
+import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.util.Util;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -254,7 +256,9 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     protected String textToShow() {
-        return value.isEmpty() ? placeholder : value;
+        return value.isEmpty()
+            ? placeholder
+            : value;
     }
 
     /**
@@ -323,8 +327,32 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
 
     protected boolean isCursorVisible() {
         // Blink every 6 ticks
-        var blinking = tick / 6 % 2 == 0;
+        var time = System.currentTimeMillis();
+        var blinking = time / 300 % 2 == 0; // Blink every 300 ms
         return listening() && !blinking;
+    }
+
+    protected boolean isHighlightVisible() {
+        return highlightPos != cursorPos;
+    }
+
+    /**
+     * Calculates the position where the text should be rendered within the text box.
+     *
+     * @return the position of the text within the text box
+     */
+    protected Point textPosition() {
+        var bounds = bounds();
+        var x = bounds.x();
+        var y = bounds.y();
+        var padding = padding();
+        // Align
+        var textHeight = Util.font().lineHeight;
+        y += (bounds.height() - textHeight) / 2;
+        y += 1; // Better visual alignment
+        // Add padding
+        x += padding.left();
+        return new Point(x, y);
     }
 
     @Override
@@ -335,25 +363,67 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
 
     @Override
     public void render(RenderContext context) {
-        renderBackground(context);
-        if (isPlaceholderVisible()) {
-            renderPlaceholder(context);
-        } else {
-            renderText(context);
+        // TODO: Refactor
+        var textPos = textPosition();
+        var text = textToShow();
+
+        // Render text
+        {
+            var x = textPos.x();
+            var y = textPos.y();
+            var placeholder = isPlaceholderVisible();
+
+            renderText(context, text, x, y, placeholder);
         }
+
+        // Cursor
         if (isCursorVisible()) {
-            renderCursor(context);
+            boolean inline = cursorPos < text.length();
+            var leftOfCursor = text.substring(0, cursorPos);
+
+            var font = context.font();
+            var x = textPos.x() + font.width(leftOfCursor);
+            var y = textPos.y();
+            renderCursor(context, x, y, inline);
         }
-        renderHighlight(context);
+
+        // Highlight
+        if (isHighlightVisible()) {
+            // Calculate highlight start and end positions
+            int highlightStart = Math.min(cursorPos, highlightPos);
+            int highlightEnd = Math.max(cursorPos, highlightPos);
+
+            String before = text.substring(0, highlightStart);
+            String highlighted = text.substring(highlightStart, highlightEnd);
+
+            var font = Util.font();
+
+            var x = textPos.x() + font.width(before);
+            var y = textPos.y();
+            var width = font.width(highlighted);
+            renderHighlight(context, x, y, width);
+        }
     }
 
-    protected abstract void renderBackground(RenderContext context);
+    protected abstract void renderText(
+        RenderContext context,
+        String text,
+        int x,
+        int y,
+        boolean placeholder
+    );
 
-    protected abstract void renderText(RenderContext context);
+    protected abstract void renderCursor(
+        RenderContext context,
+        int x,
+        int y,
+        boolean inline
+    );
 
-    protected abstract void renderPlaceholder(RenderContext context);
-
-    protected abstract void renderCursor(RenderContext context);
-
-    protected abstract void renderHighlight(RenderContext context);
+    protected abstract void renderHighlight(
+        RenderContext context,
+        int x,
+        int y,
+        int width
+    );
 }

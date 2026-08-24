@@ -1,5 +1,7 @@
 package de.clickism.clickui.render;
 
+import de.clickism.clickui.util.Util;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
@@ -18,4 +20,12 @@ public record RenderContext(
     float delta,
     boolean debug
 ) {
+    /**
+     * Returns the font renderer used for rendering text.
+     *
+     * @return The font renderer.
+     */
+    public Font font() {
+        return Util.font();
+    }
 }

@@ -1,19 +1,21 @@
 package de.clickism.clickui.elements.input;
 
 import de.clickism.clickui.layout.Padding;
-import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.BorderPosition;
-import de.clickism.clickui.util.Util;
 import net.minecraft.client.renderer.RenderType;
 
 import java.awt.*;
 
+/**
+ * A simple text field that allows users to input and edit text.
+ */
 public class TextField extends AbstractTextField<TextField> {
     private static final Padding DEFAULT_PADDING = Padding.create(5);
     private static final int DEFAULT_WIDTH = 100;
     private static final int DEFAULT_HEIGHT = 20;
+    private static final int CURSOR_COLOR = Color.WHITE.getRGB();
 
     public TextField() {
         // Set default props
@@ -36,28 +38,8 @@ public class TextField extends AbstractTextField<TextField> {
     }
 
     @Override
-    protected void renderBackground(RenderContext context) {
-        // Rendered via style
-    }
-
-    private Point textPosition() {
-        var bounds = bounds();
-        var x = bounds.x();
-        var y = bounds.y();
-        var padding = padding();
-        // Align
-        var textHeight = Util.font().lineHeight;
-        y += (bounds.height() - textHeight) / 2;
-        y += 1; // Better visual alignment
-        // Add padding
-        x += padding.left();
-        return new Point(x, y);
-    }
-
-    @Override
-    protected void renderText(RenderContext context) {
+    protected void renderText(RenderContext context, String text, int x, int y, boolean placeholder) {
         var graphics = context.graphics();
-
         // Enable scissor
         var bounds = bounds();
         graphics.enableScissor(
@@ -66,46 +48,34 @@ public class TextField extends AbstractTextField<TextField> {
             bounds.x() + bounds.width(),
             bounds.y() + bounds.height()
         );
-        var textPos = textPosition();
         // Render texts
-        graphics.drawString(Util.font(), value(), textPos.x(), textPos.y(), 0xFFFFFFFF);
+        graphics.drawString(context.font(), text, x, y, Color.WHITE.getRGB());
         // Disable scissor
         graphics.disableScissor();
     }
 
     @Override
-    protected void renderPlaceholder(RenderContext context) {
-
+    protected void renderCursor(RenderContext context, int x, int y, boolean inline) {
+        if (inline) {
+            // Inline cursor as line
+            var width = 1;
+            var height = context.font().lineHeight;
+            context.graphics().fill(RenderType.guiOverlay(), x, y, x + width, y + height, CURSOR_COLOR);
+        } else {
+            // Underscore cursor
+            context.graphics().drawString(context.font(), "_", x, y, CURSOR_COLOR, false);
+        }
     }
 
     @Override
-    protected void renderCursor(RenderContext context) {
-
-    }
-
-    @Override
-    protected void renderHighlight(RenderContext context) {
-        if (highlightPos == cursorPos) return;
-        var graphics = context.graphics();
-
-        int highlightStart = Math.min(cursorPos, highlightPos);
-        int highlightEnd = Math.max(cursorPos, highlightPos);
-
-        var textPos = textPosition();
-        var x = textPos.x();
-        var y = textPos.y();
-
-        var font = Util.font();
-        int highlightX = x + font.width(textToShow().substring(0, highlightStart));
-        int highlightWidth = font.width(textToShow().substring(highlightStart, highlightEnd));
-
+    protected void renderHighlight(RenderContext context, int x, int y, int width) {
         // Render highlight rectangle
-        graphics.fill(
+        context.graphics().fill(
             RenderType.guiTextHighlight(),
-            highlightX - 1,
+            x - 1,
             y - 1,
-            highlightX + highlightWidth,
-            y + font.lineHeight + 1,
+            x + width,
+            y + context.font().lineHeight + 1,
             0xFF0000FF
         );
     }
