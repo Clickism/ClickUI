@@ -68,22 +68,12 @@ public class TextField extends AbstractTextField<TextField> {
         String sugestion
     ) {
         var graphics = context.graphics();
-        // Enable scissor
-        var bounds = bounds();
-        graphics.enableScissor(
-            bounds.x(),
-            bounds.y(),
-            bounds.x() + bounds.width(),
-            bounds.y() + bounds.height()
-        );
         // Render text
         var color = textColor(placeholder);
         graphics.drawString(context.font(), text, x, y, color);
         // Render suggestion
         x += context.font().width(text);
         graphics.drawString(context.font(), sugestion, x, y, Color.GRAY.getRGB());
-        // Disable scissor
-        graphics.disableScissor();
     }
 
     @Override
