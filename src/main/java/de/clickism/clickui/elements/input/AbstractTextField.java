@@ -21,7 +21,7 @@ import java.util.function.Function;
  *
  * @param <S> the type of the subclass extending this abstract class
  */
-// TODO: Suggestions
+// TODO: Invalid color
 public abstract class AbstractTextField<S extends AbstractTextField<S>>
     extends Element<S> {
 
@@ -41,6 +41,9 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     private Function<String, String> inputFilter = Function.identity();
 
     private final List<Consumer<String>> listeners = new ArrayList<>();
+
+    private Function<String, String> suggestionProvider = s -> "";
+    private String currentSuggestion = "";
 
     /*+
      * Constructs a new AbstractTextField instance.
@@ -78,7 +81,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         this.value = value;
         this.cursorPos = value.length();
         this.highlightPos = cursorPos;
-        this.calculateDisplayPos();
+        this.handleCursorMove();
         return self();
     }
 
@@ -126,6 +129,49 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     public S scrolling(boolean scrolling) {
         this.scrolling = scrolling;
         return self();
+    }
+
+    /**
+     * Sets a custom suggestion provider for the text box.
+     * <p>
+     * Suggestions are shown as the user types in the text box.
+     *
+     * @param provider the suggestion provider function to set
+     * @return the current instance of the text box
+     */
+    public S suggest(Function<String, String> provider) {
+        this.suggestionProvider = provider;
+        return self();
+    }
+
+    /**
+     * Suggests a list of strings based on the current input in the text box.
+     * <p>
+     * The first suggestion that starts with the current input will be shown.
+     *
+     * @param suggestions the list of suggestions to use
+     * @return the current instance of the text box
+     */
+    public S suggest(List<String> suggestions) {
+        return suggest(input -> {
+            if (input.isEmpty()) return "";
+            for (String suggestion : suggestions) {
+                if (suggestion.startsWith(input)) {
+                    return suggestion.substring(input.length());
+                }
+            }
+            return "";
+        });
+    }
+
+    /**
+     * Suggests a list of strings based on the current input in the text box.
+     *
+     * @param suggestions the list of suggestions to use
+     * @return the current instance of the text box
+     */
+    public S suggest(String... suggestions) {
+        return suggest(List.of(suggestions));
     }
 
     /**
@@ -177,12 +223,23 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         return !this.disabled() && this.focused();
     }
 
+
+    /**
+     * Handles cursor movement and updates the display position and suggestion accordingly.
+     * <p>
+     * Should be called whenever the cursor position changes.
+     */
+    private void handleCursorMove() {
+        updateDisplayPos();
+        updateSuggestion();
+    }
+
     /**
      * Calculates the display position of the text box based on the cursor position and the width of the text box.
      * <p>
      * It ensures that the cursor is always visible within the text box by adjusting the display position.
      */
-    private void calculateDisplayPos() {
+    private void updateDisplayPos() {
         int width = bounds().width() - padding().horizontal();
         width -= 4; // Padding for cursor
 
@@ -218,6 +275,18 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
+     * Updates the current suggestion based on the current value of the text box.
+     */
+    private void updateSuggestion() {
+        if (!listening()) {
+            currentSuggestion = "";
+            return;
+        }
+        // Update suggestion based on current value
+        currentSuggestion = suggestionProvider.apply(value);
+    }
+
+    /**
      * Insert text at the current cursor position.
      *
      * @param string the text to insert
@@ -238,7 +307,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         cursorPos = Mth.clamp(cursorPos + string.length(), 0, value.length());
         highlightPos = cursorPos;
         triggerValueChanged();
-        calculateDisplayPos();
+        handleCursorMove();
     }
 
     /**
@@ -269,7 +338,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             highlightPos = cursorPos;
         }
         triggerValueChanged();
-        calculateDisplayPos();
+        handleCursorMove();
     }
 
     /**
@@ -327,7 +396,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         if (!Screen.hasShiftDown()) {
             highlightPos = cursorPos;
         }
-        calculateDisplayPos();
+        handleCursorMove();
     }
 
     /**
@@ -340,7 +409,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             // Move cursor to the end
             cursorPos = value.length();
             highlightPos = 0; // Highlight from start to end
-            calculateDisplayPos();
+            handleCursorMove();
             return;
         }
         if (Screen.isCopy(code)) {
@@ -388,9 +457,15 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
                     highlightPos = cursorPos;
                 }
             }
+            case GLFW.GLFW_KEY_TAB -> {
+                // Apply suggestion
+                if (!currentSuggestion.isEmpty()) {
+                    insertText(currentSuggestion);
+                }
+            }
         }
         // Calculate display pos after cursor movement
-        calculateDisplayPos();
+        handleCursorMove();
     }
 
     /**
@@ -419,7 +494,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @return the text to be displayed in the text box
      */
     protected String textToShow() {
-        return value.isEmpty()
+        return value.isEmpty() && !listening()
             ? placeholder
             : value;
     }
@@ -513,7 +588,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
                 var y = textPos.y();
                 var placeholder = isPlaceholderVisible();
 
-                renderText(context, text, x, y, placeholder);
+                renderText(context, text, x, y, placeholder, currentSuggestion);
             }
 
             // Cursor
@@ -579,13 +654,15 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @param x           the x-coordinate for rendering
      * @param y           the y-coordinate for rendering
      * @param placeholder whether the text is a placeholder
+     * @param suggestion  the current suggestion to render (or empty)
      */
     protected abstract void renderText(
         RenderContext context,
         String text,
         int x,
         int y,
-        boolean placeholder
+        boolean placeholder,
+        String suggestion
     );
 
     /**

@@ -40,7 +40,14 @@ public class TextField extends AbstractTextField<TextField> {
     }
 
     @Override
-    protected void renderText(RenderContext context, String text, int x, int y, boolean placeholder) {
+    protected void renderText(
+        RenderContext context,
+        String text,
+        int x,
+        int y,
+        boolean placeholder,
+        String sugestion
+    ) {
         var graphics = context.graphics();
         // Enable scissor
         var bounds = bounds();
@@ -50,8 +57,12 @@ public class TextField extends AbstractTextField<TextField> {
             bounds.x() + bounds.width(),
             bounds.y() + bounds.height()
         );
-        // Render texts
-        graphics.drawString(context.font(), text, x, y, Color.WHITE.getRGB());
+        // Render text
+        var color = placeholder ? Color.GRAY.getRGB() : Color.WHITE.getRGB();
+        graphics.drawString(context.font(), text, x, y, color);
+        // Render suggestion
+        x += context.font().width(text);
+        graphics.drawString(context.font(), sugestion, x, y, Color.GRAY.getRGB());
         // Disable scissor
         graphics.disableScissor();
     }
