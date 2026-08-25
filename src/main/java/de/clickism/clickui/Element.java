@@ -179,6 +179,18 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
+     * Returns a list of the children of this element that are layoutable,
+     * i.e. that have a positioning of {@link Positioning#layout()}.
+     *
+     * @return a list of the children of this element that are layoutable
+     */
+    public List<Element<?>> layoutChildren() {
+        return this.children.stream()
+            .filter(child -> child.positioning().isLayout())
+            .toList();
+    }
+
+    /**
      * Adds the given children to this element, and sets their parent to this element.
      *
      * @param children the children to add
@@ -405,7 +417,7 @@ public abstract class Element<S extends Element<S>>
      * @return the total gap between all children of this element
      */
     public int totalChildGap() {
-        return childGap() * Math.max(0, children.size() - 1);
+        return childGap() * Math.max(0, layoutChildren().size() - 1);
     }
 
     /**

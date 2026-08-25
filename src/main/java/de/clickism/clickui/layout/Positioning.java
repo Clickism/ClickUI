@@ -27,7 +27,16 @@ public record Positioning(
         /**
          * The element is positioned relative to its parent container.
          */
-        RELATIVE
+        RELATIVE,
+    }
+
+    /**
+     * Checks if the positioning type is LAYOUT.
+     *
+     * @return true if the positioning type is LAYOUT, false otherwise.
+     */
+    public boolean isLayout() {
+        return type == Type.LAYOUT;
     }
 
     /**

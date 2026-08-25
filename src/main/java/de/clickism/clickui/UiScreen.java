@@ -17,7 +17,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     /**
      * The root element of the UI tree.
      */
-    private final Element<?> root;
+    private Element<?> root;
 
     /**
      * The parent screen of this UiScreen, if any.
@@ -32,21 +32,17 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     private boolean debug = false;
 
     /**
+     * Whether the background of the screen should be rendered.
+     */
+    private boolean background = true;
+
+    /**
      * Creates a new UiScreen with the specified title component.
      *
      * @param component the title component of the screen
      */
     public UiScreen(Component component) {
         super(component);
-        var root = build();
-        if (root != null) {
-            this.root = root;
-        } else {
-            // Empty fallback element
-            this.root = box();
-        }
-        // Initialize all elements
-        Util.preOrder(this.root, Element::initialize);
     }
 
     /**
@@ -103,11 +99,20 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
+     * Sets whether the background of the screen should be rendered.
+     *
+     * @param background true to render the background, false to not render it
+     */
+    public void background(boolean background) {
+        this.background = background;
+    }
+
+    /**
      * Opens the specified UiScreen, setting this screen as its parent.
      *
      * @param screen the UiScreen to open
      */
-    public void open(UiScreen screen) {
+    public void forwardTo(UiScreen screen) {
         screen.parent(this);
         Util.openScreen(screen);
     }
@@ -155,8 +160,28 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      */
     public abstract Element<?> build();
 
+    /**
+     * Initializes the UI tree by calling the build method and setting up the root element.
+     */
+    private void initialize() {
+        if (this.root != null) {
+            // Already initialize
+            return;
+        }
+        var root = build();
+        if (root != null) {
+            this.root = root;
+        } else {
+            // Empty fallback element
+            this.root = box();
+        }
+        // Initialize all elements
+        Util.preOrder(this.root, Element::initialize);
+    }
+
     @Override
     protected void init() {
+        initialize();
         var screen = box()
             .width(this.width)
             .height(this.height);
@@ -167,6 +192,10 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        // Render background if enabled
+        if (background) {
+            this.renderBackground(guiGraphics);
+        }
         // Lay out root again if dirty
         if (root.isDirty()) {
             init();
@@ -176,6 +205,11 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         super.render(guiGraphics, mouseX, mouseY, delta);
         // Render the tree
         root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta, debug));
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics graphics) {
+        graphics.fillGradient(0, 0, this.width, this.height, -0x4FEFEFF0, -0x3FEFEFF0);
     }
 
     @Override

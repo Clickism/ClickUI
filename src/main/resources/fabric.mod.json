@@ -1,0 +1,22 @@
+{
+	"schemaVersion": 1,
+	"id": "click-ui",
+	"version": "${version}",
+	"name": "Click UI",
+	"description": "A beautiful UI library",
+	"authors": [
+		"Clickism"
+	],
+	"contact": {
+		"homepage": "https://clickism.de/",
+		"sources": "https://github.com/Clickism/ClickUI"
+	},
+	"license": "ARR",
+	"environment": "*",
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": "*",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}

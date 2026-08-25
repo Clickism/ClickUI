@@ -1,12 +1,10 @@
 package de.clickism.clickui;
 
-import de.clickism.clickui.elements.Box;
-import de.clickism.clickui.elements.Button;
-import de.clickism.clickui.elements.Header;
-import de.clickism.clickui.elements.Text;
+import de.clickism.clickui.elements.*;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.elements.input.TextField;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public interface UiBuilder {
     default <T> Ref<T> ref() {
@@ -89,5 +87,9 @@ public interface UiBuilder {
     default NumberField numberField(String placeholder) {
         return new NumberField()
             .placeholder(placeholder);
+    }
+
+    default Image image(ResourceLocation location, int width, int height) {
+        return new Image(location, width, height);
     }
 }

@@ -50,6 +50,7 @@ public abstract class Component<S extends Component<S>> extends Element<S>
     public void initialize() {
         // Build for the first time here, to avoid calling build() in the constructor
         // which can lead to issues with subclass initialization.
+        clear();
         build();
     }
 

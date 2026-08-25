@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
  * layout axis. It calculates the sizes and positions of each element and its children, taking into account padding,
  * child gaps, and sizing types (fixed, fit, or grow).
  */
+// TODO: Don't count relative and absolute positioned elements in the layout calculations
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -74,7 +75,7 @@ public class LayoutEngine {
         int width = intrinsic.width();
         int height = intrinsic.height();
 
-        for (Element<?> child : element.children()) {
+        for (Element<?> child : element.layoutChildren()) {
             // Use calculated size of children
             var bounds = child.bounds();
             int childWidth = bounds.width();
@@ -402,9 +403,12 @@ public class LayoutEngine {
             y = element.positioning().y();
         }
         if (element.positioning().type() == Positioning.Type.RELATIVE) {
-            // Relative positioning, offset from the current position
-            x += element.positioning().x();
-            y += element.positioning().y();
+            // Relative positioning, offset from the parent's position
+            var parent = element.parent();
+            if (parent != null) {
+                x = parent.bounds().x() + element.positioning().x();
+                y = parent.bounds().y() + element.positioning().y();
+            }
         }
         // Set the position of the element
         element.bounds(element.bounds().withPosition(x, y));
