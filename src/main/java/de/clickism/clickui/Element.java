@@ -11,6 +11,7 @@ import de.clickism.clickui.state.ElementStateHolder;
 import de.clickism.clickui.style.ResolvedStyle;
 import de.clickism.clickui.style.Style;
 import de.clickism.clickui.style.StyleContext;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,9 @@ public abstract class Element<S extends Element<S>>
      * The event manager for this element, used for handling events.
      */
     private final EventManager events = new EventManager();
+
+    private @Nullable Component tooltip = null;
+    private int tooltipDelay = 500;
 
     /**
      * Calculated bounds of the element.
@@ -326,6 +330,41 @@ public abstract class Element<S extends Element<S>>
      */
     public Point toChildCoordinates(Point point) {
         return point;
+    }
+
+    /**
+     * Sets the tooltip of this element, which is a text that is displayed when the user hovers over this element.
+     *
+     * @param tooltip the tooltip to set, or null to clear the tooltip
+     * @return this element
+     */
+    public S tooltip(@Nullable Component tooltip) {
+        this.tooltip = tooltip;
+        return self();
+    }
+
+    /**
+     * Sets the tooltip of this element, which is a text that is displayed when the user hovers over this element.
+     *
+     * @param tooltip the tooltip to set, or null to clear the tooltip
+     * @return this element
+     */
+    public S tooltip(@Nullable String tooltip) {
+        this.tooltip = tooltip != null
+            ? Component.literal(tooltip)
+            : null;
+        return self();
+    }
+
+    /**
+     * Sets the delay in milliseconds before the tooltip is shown when the user hovers over this element.
+     *
+     * @param delay the delay in milliseconds
+     * @return this element
+     */
+    public S tooltipDelay(int delay) {
+        this.tooltipDelay = delay;
+        return self();
     }
 
     /**
