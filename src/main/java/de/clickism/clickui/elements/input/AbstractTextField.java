@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * An abstract class representing a text field UI element.
@@ -20,24 +21,26 @@ import java.util.function.Consumer;
  *
  * @param <S> the type of the subclass extending this abstract class
  */
-// TODO: Suggestiony
-// TODO: Make some methods private
+// TODO: Suggestions
 public abstract class AbstractTextField<S extends AbstractTextField<S>>
     extends Element<S> {
 
-    protected String value = "";
-    protected String placeholder = "";
+    private String value = "";
+    private String placeholder = "";
 
-    protected int cursorPos = 0;
-    protected int highlightPos = 0;
+    private int cursorPos = 0;
+    private int highlightPos = 0;
+    private int displayPos = 0;
 
-    protected boolean scrolling = true;
-    protected int displayPos;
-    // TODO: Max length, filter, etc.
+    private boolean scrolling = true;
 
-    protected int blinkInterval = 300; // Blink every 300 ms
+    private int maxLength = Integer.MAX_VALUE;
 
-    protected List<Consumer<String>> listeners = new ArrayList<>();
+    private int blinkInterval = 300; // Blink every 300 ms
+
+    private Function<String, String> inputFilter = Function.identity();
+
+    private final List<Consumer<String>> listeners = new ArrayList<>();
 
     /*+
      * Constructs a new AbstractTextField instance.
@@ -58,18 +61,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
-     * Set the text value of the text box.
-     *
-     * @param value the text value to set
-     */
-    public void value(String value) {
-        this.value = value;
-        this.cursorPos = value.length();
-        this.highlightPos = cursorPos;
-        this.calculateDisplayPos();
-    }
-
-    /**
      * Get the current text value of the text box.
      *
      * @return the current text value of the text box
@@ -79,12 +70,111 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
+     * Set the text value of the text box.
+     *
+     * @param value the text value to set
+     */
+    public S value(String value) {
+        this.value = value;
+        this.cursorPos = value.length();
+        this.highlightPos = cursorPos;
+        this.calculateDisplayPos();
+        return self();
+    }
+
+    /**
+     * Sets the placeholder text for the text box.
+     *
+     * @param placeholder the placeholder text to set
+     * @return the current instance of the text box
+     */
+    public S placeholder(String placeholder) {
+        this.placeholder = placeholder;
+        return self();
+    }
+
+    /**
+     * Sets the maximum length of the text that can be entered into the text box.
+     *
+     * @param maxLength the maximum length of the text
+     * @return the current instance of the text box
+     */
+    public S maxLength(int maxLength) {
+        this.maxLength = maxLength;
+        return self();
+    }
+
+    /**
+     * Sets the blink interval for the cursor in milliseconds.
+     *
+     * @param ms the blink interval in milliseconds
+     * @return the current instance of the text box
+     */
+    public S blinkInterval(int ms) {
+        this.blinkInterval = ms;
+        return self();
+    }
+
+    /**
+     * Sets whether the text box should scroll when the text exceeds the visible area.
+     * <p>
+     * If disabled, the text will be clipped.
+     *
+     * @param scrolling true to enable scrolling, false to disable
+     * @return the current instance of the text box
+     */
+    public S scrolling(boolean scrolling) {
+        this.scrolling = scrolling;
+        return self();
+    }
+
+    /**
+     * Sets a custom input filter for the text box.
+     *
+     * @param filter the input filter function to set
+     * @return the current instance of the text box
+     */
+    public S filterInput(Function<String, String> filter) {
+        this.inputFilter = filter;
+        return self();
+    }
+
+    /**
+     * Filters the input string before inserting it into the text box.
+     *
+     * @param input the input string to filter
+     * @return the filtered string
+     */
+    protected String applyFilter(String input) {
+        // Remove invalid characters
+        input = SharedConstants.filterText(input);
+        // Apply custom input filter
+        input = inputFilter.apply(input);
+        // Limit to max length
+        int currentLength = value.length();
+        if (currentLength + input.length() > maxLength) {
+            input = input.substring(0, maxLength - currentLength);
+        }
+        return input;
+    }
+
+    /**
      * Triggers the value changed event, notifying all registered listeners of the current value.
      */
-    protected void triggerValueChanged() {
+    private void triggerValueChanged() {
         for (var listener : listeners) {
             listener.accept(value);
         }
+    }
+
+    /**
+     * Whether the text box is currently focused, editable and listening for input.
+     *
+     * @return true if the text box is focused and editable, false otherwise
+     */
+    private boolean listening() {
+        // TODO: Check if visible
+        return !this.disabled() && this.focused();
     }
 
     /**
@@ -128,34 +218,13 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
-     * Whether the text box is currently focused, editable and listening for input.
-     *
-     * @return true if the text box is focused and editable, false otherwise
-     */
-    public boolean listening() {
-        // TODO: Check if visible
-        return !this.disabled() && this.focused();
-    }
-
-    /**
-     * Filters the input string before inserting it into the text box.
-     *
-     * @param input the input string to filter
-     * @return the filtered string
-     */
-    protected String filterInput(String input) {
-        // TODO: Make this customizable
-        return SharedConstants.filterText(input);
-    }
-
-    /**
      * Insert text at the current cursor position.
      *
      * @param string the text to insert
      */
-    public void insertText(String string) {
+    private void insertText(String string) {
         if (!listening()) return;
-        string = filterInput(string);
+        string = applyFilter(string);
         if (highlightPos != cursorPos) {
             // Remove highlighted text before inserting
             int start = highlightStart();
@@ -178,7 +247,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @param direction the direction to delete in, positive or negative
      */
-    public void deleteText(int direction) {
+    private void deleteText(int direction) {
         if (!listening()) return;
         if (direction == 0) return;
         // If text is highlighted, remove it instead
@@ -216,7 +285,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             while (pos < value.length() && !Character.isWhitespace(value.charAt(pos))) {
                 pos++;
             }
-            // skip spaces
+            // Skip spaces
             while (pos < value.length() && Character.isWhitespace(value.charAt(pos))) {
                 pos++;
             }
@@ -360,7 +429,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return the highlighted text
      */
-    protected String highlightedText() {
+    private String highlightedText() {
         int start = Math.min(cursorPos, highlightPos);
         int end = Math.max(cursorPos, highlightPos);
         return value.substring(start, end);
@@ -371,7 +440,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return the start index of the highlighted text
      */
-    protected int highlightStart() {
+    private int highlightStart() {
         return Math.min(cursorPos, highlightPos);
     }
 
@@ -380,7 +449,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return the end index of the highlighted text
      */
-    protected int highlightEnd() {
+    private int highlightEnd() {
         return Math.max(cursorPos, highlightPos);
     }
 
@@ -389,7 +458,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return true if the placeholder text should be visible, false otherwise
      */
-    protected boolean isPlaceholderVisible() {
+    private boolean isPlaceholderVisible() {
         return value.isEmpty() && !placeholder.isEmpty() && !listening();
     }
 
@@ -398,7 +467,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return true if the cursor should be visible, false otherwise
      */
-    protected boolean isCursorVisible() {
+    private boolean isCursorVisible() {
         // Blink every 6 ticks
         var time = System.currentTimeMillis();
         var blinking = time / blinkInterval % 2 == 0;
@@ -410,7 +479,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      *
      * @return true if the highlight should be visible, false otherwise
      */
-    protected boolean isHighlightVisible() {
+    private boolean isHighlightVisible() {
         return highlightPos != cursorPos;
     }
 
@@ -426,8 +495,6 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      * @param context the render context
      */
     private void renderTextField(RenderContext context) {
-        calculateDisplayPos();
-        // TODO: Refactor
         var graphics = context.graphics();
         var text = textToShow();
 

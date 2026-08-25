@@ -3,6 +3,7 @@ package de.clickism.clickui;
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
@@ -68,6 +69,19 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
                 return content;
             }
         };
+    }
+
+    /**
+     * Returns the current UiScreen if the current screen is an instance of UiScreen, otherwise returns null.
+     *
+     * @return the current UiScreen or null if the current screen is not a UiScreen
+     */
+    public static @Nullable UiScreen current() {
+        var screen = Minecraft.getInstance().screen;
+        if (screen instanceof UiScreen uiScreen) {
+            return uiScreen;
+        }
+        return null;
     }
 
     /**

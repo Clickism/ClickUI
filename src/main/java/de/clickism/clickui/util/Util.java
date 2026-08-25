@@ -1,7 +1,6 @@
 package de.clickism.clickui.util;
 
 import de.clickism.clickui.Element;
-import de.clickism.clickui.UiScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -72,16 +71,4 @@ public class Util {
         minecraft.execute(() -> minecraft.setScreen(screen));
     }
 
-    /**
-     * Returns the current UiScreen if the current screen is an instance of UiScreen, otherwise returns null.
-     *
-     * @return the current UiScreen or null if the current screen is not a UiScreen
-     */
-    public static @Nullable UiScreen currentUiScreen() {
-        var screen = Minecraft.getInstance().screen;
-        if (screen instanceof UiScreen uiScreen) {
-            return uiScreen;
-        }
-        return null;
-    }
 }

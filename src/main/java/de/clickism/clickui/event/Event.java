@@ -1,7 +1,6 @@
 package de.clickism.clickui.event;
 
 import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
@@ -24,7 +23,7 @@ public interface Event {
      * @return The currently active UiScreen.
      */
     default UiScreen ui() {
-        var screen = Util.currentUiScreen();
+        var screen = UiScreen.current();
         if (screen == null) {
             throw new IllegalStateException("No UiScreen is currently active.");
         }
