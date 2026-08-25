@@ -36,7 +36,7 @@ public class Button extends Element<Button> {
         // TODO: Fix default pading? why these values
         this.padding(DEFAULT_PADDING);
         this.style(s -> s
-            .ifHovered(h -> h
+            .whenHovered(h -> h
                 .border(Color.WHITE)
                 .borderPosition(BorderPosition.CENTER)));
         // Play down sound on click

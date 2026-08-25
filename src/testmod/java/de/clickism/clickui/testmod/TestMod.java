@@ -117,7 +117,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .alignTextCenter()
                             .padding(4),
                         new Counter(),
-                        new TextField(),
+                        textField()
+                            .maxLength(32)
+                            .placeholder("Type something...")
+                            .suggest("hello", "bye", "heat"),
                         button("Go back")
                             .onClick(event -> {
                                 event.ui().back();

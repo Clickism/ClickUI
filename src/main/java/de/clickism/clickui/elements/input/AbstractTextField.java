@@ -45,6 +45,8 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     private Function<String, String> suggestionProvider = s -> "";
     private String currentSuggestion = "";
 
+    private boolean invalid = false;
+
     /*+
      * Constructs a new AbstractTextField instance.
      */
@@ -175,6 +177,16 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
+     * Whether there has been a recent invalid input in the text box.
+     * (i.E: too long, invalid characters, etc.)
+     *
+     * @return true if there has been a recent invalid input, false otherwise
+     */
+    public boolean invalid() {
+        return invalid;
+    }
+
+    /**
      * Sets a custom input filter for the text box.
      *
      * @param filter the input filter function to set
@@ -199,7 +211,11 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         // Limit to max length
         int currentLength = value.length();
         if (currentLength + input.length() > maxLength) {
-            input = input.substring(0, maxLength - currentLength);
+            var allowed = maxLength - currentLength;
+            if (allowed <= 0) {
+                return "";
+            }
+            input = input.substring(0, allowed);
         }
         return input;
     }
@@ -293,7 +309,12 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
      */
     private void insertText(String string) {
         if (!listening()) return;
-        string = applyFilter(string);
+        var filtered = applyFilter(string);
+        // Update invalid state
+        invalid = !string.equals(filtered);
+        // Use filtered string
+        string = filtered;
+
         if (highlightPos != cursorPos) {
             // Remove highlighted text before inserting
             int start = highlightStart();
@@ -337,6 +358,9 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             cursorPos = start;
             highlightPos = cursorPos;
         }
+        // Update invalid state
+        invalid = value.length() > maxLength;
+
         triggerValueChanged();
         handleCursorMove();
     }
@@ -635,9 +659,9 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         // Enable scissor
         var bounds = bounds();
         graphics.enableScissor(
-            bounds.x(),
+            bounds.x() + 1, // For inline border
             bounds.y(),
-            bounds.x() + bounds.width(),
+            bounds.x() + bounds.width() - 1, // For inline border
             bounds.y() + bounds.height()
         );
         // Render

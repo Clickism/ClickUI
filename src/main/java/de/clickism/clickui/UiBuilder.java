@@ -4,6 +4,7 @@ import de.clickism.clickui.elements.Box;
 import de.clickism.clickui.elements.Button;
 import de.clickism.clickui.elements.Header;
 import de.clickism.clickui.elements.Text;
+import de.clickism.clickui.elements.input.TextField;
 import net.minecraft.network.chat.Component;
 
 public interface UiBuilder {
@@ -65,5 +66,9 @@ public interface UiBuilder {
 
     default Header h5(Component title) {
         return new Header(title, 5);
+    }
+
+    default TextField textField() {
+        return new TextField();
     }
 }

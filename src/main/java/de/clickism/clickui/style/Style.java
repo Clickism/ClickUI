@@ -14,12 +14,12 @@ public final class Style implements Styleable<Style> {
         return baseStyle;
     }
 
-    public Style ifHovered(StyleConfig config) {
+    public Style whenHovered(StyleConfig config) {
         when(StyleContext::hovered, config);
         return this;
     }
 
-    public Style ifFocused(StyleConfig config) {
+    public Style whenFocused(StyleConfig config) {
         when(StyleContext::focused, config);
         return this;
     }
