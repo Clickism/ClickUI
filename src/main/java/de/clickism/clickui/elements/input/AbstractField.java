@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * An abstract class representing a text field UI element.
@@ -22,7 +23,7 @@ import java.util.function.Function;
  * @param <S> the type of the subclass extending this abstract class
  */
 // TODO: Invalid color
-public abstract class AbstractTextField<S extends AbstractTextField<S>>
+public abstract class AbstractField<S extends AbstractField<S>>
     extends Element<S> {
 
     private String value = "";
@@ -39,18 +40,19 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     private int blinkInterval = 300; // Blink every 300 ms
 
     private Function<String, String> inputFilter = Function.identity();
+    private Predicate<String> validator = s -> true;
 
     private final List<Consumer<String>> listeners = new ArrayList<>();
 
     private Function<String, String> suggestionProvider = s -> "";
     private String currentSuggestion = "";
 
-    private boolean invalid = false;
+    private boolean invalidInput = false;
 
     /*+
      * Constructs a new AbstractTextField instance.
      */
-    public AbstractTextField() {
+    public AbstractField() {
         // Register key press event handler
         this.onKeyPress(event -> {
             if (!listening()) return;
@@ -177,13 +179,26 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
     }
 
     /**
+     * Sets a custom validator for the text box.
+     * <p>
+     * The validator is used to determine whether the current input is valid or not.
+     *
+     * @param validator the validator function to set
+     * @return the current instance of the text box
+     */
+    public S validator(Predicate<String> validator) {
+        this.validator = validator;
+        return self();
+    }
+
+    /**
      * Whether there has been a recent invalid input in the text box.
      * (i.E: too long, invalid characters, etc.)
      *
      * @return true if there has been a recent invalid input, false otherwise
      */
     public boolean invalid() {
-        return invalid;
+        return invalidInput || !validator.test(value);
     }
 
     /**
@@ -311,7 +326,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
         if (!listening()) return;
         var filtered = applyFilter(string);
         // Update invalid state
-        invalid = !string.equals(filtered);
+        invalidInput = !string.equals(filtered);
         // Use filtered string
         string = filtered;
 
@@ -359,7 +374,7 @@ public abstract class AbstractTextField<S extends AbstractTextField<S>>
             highlightPos = cursorPos;
         }
         // Update invalid state
-        invalid = value.length() > maxLength;
+        invalidInput = value.length() > maxLength;
 
         triggerValueChanged();
         handleCursorMove();

@@ -4,10 +4,15 @@ import de.clickism.clickui.elements.Box;
 import de.clickism.clickui.elements.Button;
 import de.clickism.clickui.elements.Header;
 import de.clickism.clickui.elements.Text;
+import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.elements.input.TextField;
 import net.minecraft.network.chat.Component;
 
 public interface UiBuilder {
+    default <T> Ref<T> ref() {
+        return new Ref<>();
+    }
+
     default Box box() {
         return new Box();
     }
@@ -70,5 +75,19 @@ public interface UiBuilder {
 
     default TextField textField() {
         return new TextField();
+    }
+
+    default TextField textField(String placeholder) {
+        return new TextField()
+            .placeholder(placeholder);
+    }
+
+    default NumberField numberField() {
+        return new NumberField();
+    }
+
+    default NumberField numberField(String placeholder) {
+        return new NumberField()
+            .placeholder(placeholder);
     }
 }
