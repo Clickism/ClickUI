@@ -50,7 +50,7 @@ public abstract class Element<S extends Element<S>>
     /**
      * Style information for this element.
      */
-    private final Style style = new Style();
+    private Style style = new Style();
     /**
      * The state of this element, used for rendering.
      */
@@ -273,12 +273,33 @@ public abstract class Element<S extends Element<S>>
         return this.state;
     }
 
+    /**
+     * Returns the style of this element, which is used for rendering.
+     *
+     * @return the style of this element
+     */
     public Style style() {
         return this.style;
     }
 
+    /**
+     * Returns the resolved style of this element.
+     *
+     * @return the resolved style of this element
+     */
     public ResolvedStyle resolvedStyle() {
         return this.style.resolve(new StyleContext(this, this.state));
+    }
+
+    /**
+     * Overrides the style of this element with the given style, replacing any existing style.
+     *
+     * @param style the style to override with
+     * @return this element
+     */
+    public S overrideStyle(Style style) {
+        this.style = style;
+        return self();
     }
 
     @Override
@@ -305,6 +326,13 @@ public abstract class Element<S extends Element<S>>
     }
 
     // TODO: Make style api nicer
+
+    /**
+     * Applies the given style consumer to this element's style, allowing for fluent style configuration.
+     *
+     * @param styleConsumer the style consumer to apply to this element's style
+     * @return this element
+     */
     public S style(Consumer<Style> styleConsumer) {
         styleConsumer.accept(this.style);
         return self();

@@ -83,7 +83,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     public S value(String value) {
         this.value = value;
-        this.cursorPos = value.length();
+        // Make sure cursor is valid still
+        this.cursorPos = Mth.clamp(cursorPos, 0, value.length());
         this.highlightPos = cursorPos;
         this.handleCursorMove();
         return self();
@@ -97,6 +98,17 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     public S placeholder(String placeholder) {
         this.placeholder = placeholder;
+        return self();
+    }
+
+    /**
+     * Registers a listener that will be called whenever the value of the text box changes.
+     *
+     * @param listener the listener to register
+     * @return the current instance of the text box
+     */
+    public S onValueChanged(Consumer<String> listener) {
+        this.listeners.add(listener);
         return self();
     }
 
@@ -249,7 +261,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @return true if the text box is focused and editable, false otherwise
      */
-    private boolean listening() {
+    public boolean listening() {
         // TODO: Check if visible
         return !this.disabled() && this.focused();
     }
@@ -518,11 +530,15 @@ public abstract class AbstractField<S extends AbstractField<S>>
         var y = bounds.y();
         var padding = padding();
         // Align
-        var textHeight = Util.font().lineHeight;
-        y += (bounds.height() - textHeight) / 2;
-        y += 1; // Better visual alignment
+        float textHeight = Util.font().lineHeight;
+        float availableHeight = bounds.height() - padding.vertical();
+        if (availableHeight > textHeight) {
+            // Center vertically
+            y += Mth.ceil((availableHeight - textHeight) / 2f);
+        }
         // Add padding
         x += padding.left();
+        y += padding.top();
         return new Point(x, y);
     }
 
@@ -600,7 +616,11 @@ public abstract class AbstractField<S extends AbstractField<S>>
     @Override
     public void render(RenderContext context) {
         // Render with scissor enabled
-        renderWithScissor(context, () -> renderTextField(context));
+        if (scrolling) {
+            renderWithScissor(context, () -> renderTextField(context));
+        } else {
+            renderTextField(context);
+        }
     }
 
     /**

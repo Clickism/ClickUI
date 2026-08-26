@@ -4,6 +4,7 @@ import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.BorderPosition;
+import de.clickism.clickui.util.Util;
 import net.minecraft.client.renderer.RenderType;
 
 import java.awt.*;
@@ -12,9 +13,8 @@ import java.awt.*;
  * A simple implementation of a text field with default styling and behavior.
  */
 public abstract class Field<S extends Field<S>> extends AbstractField<S> {
-    private static final Padding DEFAULT_PADDING = Padding.create(5);
+    private static final Padding DEFAULT_PADDING = Padding.create(6, 5, 5, 5);
     private static final int DEFAULT_WIDTH = 100;
-    private static final int DEFAULT_HEIGHT = 20;
 
     // TODO: Move into custom style props
     private static final Color TEXT_COLOR = new Color(0xFFE0E0E0, true);
@@ -42,7 +42,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
      * @param placeholder Indicates whether the text being rendered is a placeholder.
      * @return The RGB color value for the text.
      */
-    private int textColor(boolean placeholder) {
+    protected int textColor(boolean placeholder) {
         if (invalid()) {
             return INVALID_COLOR.getRGB();
         }
@@ -54,7 +54,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
 
     @Override
     public Size intrinsicSize() {
-        var height = DEFAULT_HEIGHT - DEFAULT_PADDING.vertical();
+        var height = Util.font().lineHeight;
         return new Size(DEFAULT_WIDTH, height);
     }
 

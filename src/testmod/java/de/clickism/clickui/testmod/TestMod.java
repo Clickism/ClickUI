@@ -124,6 +124,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .maxLength(32)
                             .suggest("hello", "bye", "heat"),
                         numberField("Type a number...")
+                            .padding(0)
                             .ref(numberRef),
                         button("Print Number")
                             .onClick(event -> {
