@@ -260,7 +260,8 @@ public class LayoutEngine {
     private List<Element<?>> getGrowableChildren(Element<?> parent) {
         return parent.children()
             .stream()
-            .filter(child -> child.mainSizing().isGrow())
+            .filter(child -> child.mainSizing().isGrow()
+                             && child.positioning().isLayout())
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -342,7 +343,8 @@ public class LayoutEngine {
         var axis = parent.axis();
         return parent.children()
             .stream()
-            .filter(child -> child.effectiveMinSize().mainSize(axis) < child.bounds().mainSize(axis))
+            .filter(child -> child.effectiveMinSize().mainSize(axis) < child.bounds().mainSize(axis)
+                             && child.positioning().isLayout())
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -359,7 +361,7 @@ public class LayoutEngine {
         int totalCross = parent.bounds().crossSize(axis) - parent.padding().crossPadding(axis);
 
         // Grow or shrink all children
-        for (var child : parent.children()) {
+        for (var child : parent.layoutChildren()) {
             var max = child.effectiveMaxSize();
             var min = child.effectiveMinSize();
 
@@ -441,14 +443,20 @@ public class LayoutEngine {
                     currentX,
                     currentY + crossOffset
                 );
-                currentX += child.bounds().width() + element.childGap();
+                if (child.positioning().isLayout()) {
+                    // Only increment the current position if the child is positioned by the layout engine
+                    currentX += child.bounds().width() + element.childGap();
+                }
             } else {
                 calculatePositions(
                     child,
                     currentX + crossOffset,
                     currentY
                 );
-                currentY += child.bounds().height() + element.childGap();
+                if (child.positioning().isLayout()) {
+                    // Only increment the current position if the child is positioned by the layout engine
+                    currentY += child.bounds().height() + element.childGap();
+                }
             }
         }
     }
@@ -619,7 +627,7 @@ public class LayoutEngine {
      */
     private static int totalChildrenMainSize(Element<?> parent) {
         var axis = parent.axis();
-        return parent.children().stream()
+        return parent.layoutChildren().stream()
             .mapToInt(child -> child.bounds().mainSize(axis))
             .sum();
     }

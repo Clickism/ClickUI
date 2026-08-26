@@ -15,6 +15,10 @@ public interface UiBuilder {
         return new Box();
     }
 
+    default Grid grid(int columns) {
+        return new Grid(columns);
+    }
+
     default Button button(Component label) {
         return new Button(label);
     }

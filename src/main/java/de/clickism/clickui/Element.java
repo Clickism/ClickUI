@@ -16,6 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,7 +25,7 @@ import java.util.function.Consumer;
  * An element in the UI hierarchy.
  */
 public abstract class Element<S extends Element<S>>
-    implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S> {
+    implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S>, UiBuilder {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
     // TODO: Tooltip support
@@ -197,6 +198,20 @@ public abstract class Element<S extends Element<S>>
      * @return this element
      */
     public S children(@Nullable Element<?>... children) {
+        for (var child : children) {
+            this.add(child);
+        }
+        return self();
+    }
+
+    /**
+     * Adds the given children to this element, and sets their parent to this element.
+     *
+     * @param children the children to add
+     * @return this element
+     */
+    public S children(Collection<Element<?>> children) {
+        if (children == null) return self();
         for (var child : children) {
             this.add(child);
         }

@@ -1,5 +1,6 @@
 package de.clickism.clickui.elements;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.Element;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
@@ -77,12 +78,17 @@ public class Button extends Element<Button> {
         if (bounds.isEmpty()) {
             return; // Avoid division by zero or rendering issues if bounds are empty
         }
+        // Override render to enable blending for semi-transparent textures
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         // Render button texture
         graphics.blitNineSliced(
             WIDGETS_LOCATION,
             bounds.x(), bounds.y(), bounds.width(), bounds.height(),
             20, 4, 200, 20, 0, textureY()
         );
+        // Revert blending
+        RenderSystem.disableBlend();
         // Render label
         // TODO: Move outline into real border logic
         // TODO: Scrolling text if it doesn't fit in the button

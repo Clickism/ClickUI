@@ -54,8 +54,9 @@ class LayoutEngineTest implements UiBuilder {
                             .height(100),
 
                         box()
-                            .width(20)
                             .height(Sizing.grow())
+                            .childGap(4)
+                            .padding(4)
                             .children(
                                 box()
                                     .absolute(600, 400)
@@ -63,9 +64,17 @@ class LayoutEngineTest implements UiBuilder {
                                     .width(20),
 
                                 box()
-                                    .relative(-20, 0)
+                                    .relative(30, -30)
                                     .height(20)
+                                    .width(20),
+
+                                box()
                                     .width(20)
+                                    .height(20),
+
+                                box()
+                                    .width(20)
+                                    .height(40)
                             )
                     ),
 
@@ -107,6 +116,42 @@ class LayoutEngineTest implements UiBuilder {
                     .height(Sizing.grow())
             )
         );
+    }
+
+    @Test
+    void renderSimpleGrid() {
+        int size = 50;
+        renderScreen(grid(3)
+            .childGap(20)
+            .children(
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size),
+                box()
+                    .width(size)
+                    .height(size)
+            ));
     }
 
     private void renderScreen(Element<?> root) {

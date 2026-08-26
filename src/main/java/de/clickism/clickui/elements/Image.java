@@ -57,7 +57,7 @@ public class Image extends Element<Image> {
         if (texture == null) return;
         var graphics = context.graphics();
         var bounds = bounds();
-        // Override render to enable blending for semi-transparent textures (i.E: for arrows)
+        // Override render to enable blending for semi-transparent textures
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         // Render image
