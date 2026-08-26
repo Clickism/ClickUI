@@ -97,15 +97,21 @@ public abstract class UiEventScreen extends Screen {
     /**
      * Updates the focused state of the elements based on the currently focused element.
      *
+     * @param x       the x-coordinate of the mouse
+     * @param y       the y-coordinate of the mouse
      * @param element the element that is currently focused, or null if no element is focused
      */
-    protected void updateFocusState(@Nullable Element<?> element) {
+    protected void updateFocusState(@Nullable Element<?> element, int x, int y) {
         if (focusedElement != null && focusedElement != element) {
             focusedElement.state().focused(false);
+            // Send event
+            focusedElement.events().fireEvent(new FocusExitEvent(x, y, new EventState()));
         }
         focusedElement = element;
         if (focusedElement != null) {
             focusedElement.state().focused(true);
+            // Send event
+            focusedElement.events().fireEvent(new FocusEnterEvent(x, y, new EventState()));
         }
     }
 
@@ -121,10 +127,9 @@ public abstract class UiEventScreen extends Screen {
         int x = (int) mouseX;
         int y = (int) mouseY;
         updateHoverState(x, y);
-        updateFocusState(hoveredElement);
+        updateFocusState(hoveredElement, x, y);
         if (hoveredElement == null) return false;
         if (hoveredElement.disabled()) return false;
-
 
         // Fire mouse click event to the hovered element
         var event = new MouseClickEvent(x, y, button, new EventState());

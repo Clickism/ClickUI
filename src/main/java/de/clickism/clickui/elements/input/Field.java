@@ -81,8 +81,9 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         var color = textColor(false);
         if (inline) {
             // Inline cursor as line
+            y -= 1; // Render slightly above the text for better visibility
             var width = 1;
-            var height = context.font().lineHeight;
+            var height = context.font().lineHeight + 1;
             context.graphics().fill(RenderType.guiOverlay(), x, y, x + width, y + height, color);
         } else {
             // Underscore cursor

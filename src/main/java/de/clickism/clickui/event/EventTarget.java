@@ -130,4 +130,24 @@ public interface EventTarget<S extends EventTarget<S>>
     default S onDrag(EventListener<DragEvent> listener) {
         return on(DragEvent.class, listener);
     }
+
+    /**
+     * Registers a listener for focus enter events.
+     *
+     * @param listener The listener to handle focus enter events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onFocusEnter(EventListener<FocusEnterEvent> listener) {
+        return on(FocusEnterEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for focus exit events.
+     *
+     * @param listener The listener to handle focus exit events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onFocusExit(EventListener<FocusExitEvent> listener) {
+        return on(FocusExitEvent.class, listener);
+    }
 }
