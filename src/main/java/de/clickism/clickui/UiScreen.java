@@ -175,13 +175,14 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
             // Empty fallback element
             this.root = box();
         }
-        // Initialize all elements
-        Util.preOrder(this.root, Element::initialize);
     }
 
     @Override
     protected void init() {
         initialize();
+        // Initialize all elements anyways
+        Util.preOrder(this.root, Element::initialize);
+        // Layout the root element
         var screen = box()
             .width(this.width)
             .height(this.height);
@@ -199,6 +200,8 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         // Lay out root again if dirty
         if (root.isDirty()) {
             init();
+            // Validate all elements
+            // Clear dirty state
             root.clearDirty();
         }
         // Call event handler

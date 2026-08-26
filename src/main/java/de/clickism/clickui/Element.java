@@ -528,8 +528,9 @@ public abstract class Element<S extends Element<S>>
 
     /**
      * Initializes this element.
-     * This method is guaranteed to be called once after the element
-     * is added to the UI tree, and before it is rendered for the first time.
+     * <p>
+     * This method is guaranteed to be called before the first render
+     * after an element is first created or invalidated.
      */
     public void initialize() {
         // Nothing here
