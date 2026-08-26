@@ -520,6 +520,15 @@ public abstract class AbstractField<S extends AbstractField<S>>
     }
 
     /**
+     * Returns the height of the text to be rendered in the text box.
+     *
+     * @return the height of the text in pixels
+     */
+    protected float textHeight() {
+        return Util.font().lineHeight;
+    }
+
+    /**
      * Calculates the position where the text should be rendered within the text box.
      *
      * @return the position of the text within the text box
@@ -530,7 +539,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
         var y = bounds.y();
         var padding = padding();
         // Align
-        float textHeight = Util.font().lineHeight;
+        float textHeight = textHeight();
         float availableHeight = bounds.height() - padding.vertical();
         if (availableHeight > textHeight) {
             // Center vertically

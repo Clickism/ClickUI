@@ -54,7 +54,7 @@ public abstract class Element<S extends Element<S>>
     /**
      * The state of this element, used for rendering.
      */
-    private final ElementState state = new ElementState();
+    private final ElementState state = new ElementState(this);
     /**
      * The event manager for this element, used for handling events.
      */
