@@ -1,5 +1,6 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.event.EventState;
 import de.clickism.clickui.event.HitTester;
 import de.clickism.clickui.event.events.*;
 import net.minecraft.client.gui.GuiGraphics;
@@ -83,10 +84,10 @@ public abstract class UiEventScreen extends Screen {
         if (hoveredElement != target) {
             // Mouse exit event
             if (hoveredElement != null) {
-                hoveredElement.events().fireEvent(new MouseExitEvent(mouseX, mouseY));
+                hoveredElement.events().fireEvent(new MouseExitEvent(mouseX, mouseY, new EventState()));
             }
             // Mouse enter event
-            target.events().fireEvent(new MouseEnterEvent(mouseX, mouseY));
+            target.events().fireEvent(new MouseEnterEvent(mouseX, mouseY, new EventState()));
         }
 
         // Update hovered state
@@ -126,14 +127,14 @@ public abstract class UiEventScreen extends Screen {
 
 
         // Fire mouse click event to the hovered element
-        var event = new MouseClickEvent(x, y, button);
+        var event = new MouseClickEvent(x, y, button, new EventState());
         hoveredElement.events().fireEvent(event);
 
         // Start dragging
         draggedElement = hoveredElement;
         dragStartX = mouseX;
         dragStartY = mouseY;
-        var dragEvent = new DragStartEvent(x, y, button);
+        var dragEvent = new DragStartEvent(x, y, button, new EventState());
         draggedElement.events().fireEvent(dragEvent);
         return true;
     }
@@ -147,30 +148,26 @@ public abstract class UiEventScreen extends Screen {
         if (hoveredElement.disabled()) return false;
 
         // Fire mouse release event to the hovered element
-        var event = new MouseReleaseEvent(x, y, button);
+        var event = new MouseReleaseEvent(x, y, button, new EventState());
         hoveredElement.events().fireEvent(event);
 
         // End dragging
         if (draggedElement != null) {
-            var dragEndEvent = new DragEndEvent(dragStartX, dragStartY, x, y, button);
+            var dragEndEvent = new DragEndEvent(dragStartX, dragStartY, x, y, button, new EventState());
             draggedElement.events().fireEvent(dragEndEvent);
             draggedElement = null;
         }
         return true;
     }
 
-    // TODO: Event consuming, send scroll events to all elements starting from hoveredElement, and stop when an element consumes the event
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int x = (int) mouseX;
         int y = (int) mouseY;
         updateHoverState(x, y);
-        if (hoveredElement == null) return false;
-        if (hoveredElement.disabled()) return false;
-
-        // Fire mouse scroll event to the hovered element
-        var event = new MouseScrollEvent(x, y, delta);
-        hoveredElement.events().fireEvent(event);
+        // Fire to all
+        var event = new MouseScrollEvent(x, y, delta, new EventState());
+        eventRoot().propagateEvent(event);
 
         return true;
     }
@@ -179,9 +176,8 @@ public abstract class UiEventScreen extends Screen {
     @Override
     public boolean keyPressed(int code, int scanCode, int modifiers) {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
-
-        // Fire key press event to all elements in the tree
-        var event = new KeyPressEvent(code, scanCode, modifiers);
+        // Fire to all
+        var event = new KeyPressEvent(code, scanCode, modifiers, new EventState());
         eventRoot().propagateEvent(event);
 
         return false;
@@ -190,9 +186,8 @@ public abstract class UiEventScreen extends Screen {
     @Override
     public boolean charTyped(char character, int modifiers) {
         if (super.charTyped(character, modifiers)) return true;
-        // TODO: Focus manager
-        // Fire key type event to all elements in the tree
-        var event = new CharTypeEvent(character, modifiers);
+        // Fire to all
+        var event = new CharTypeEvent(character, modifiers, new EventState());
         eventRoot().propagateEvent(event);
 
         return false;
@@ -207,7 +202,7 @@ public abstract class UiEventScreen extends Screen {
         if (draggedElement.disabled()) return false;
 
         // Fire mouse drag event to the dragged element
-        var event = new DragEvent(dragStartX, dragStartY, mouseX, mouseY, dragX, dragY, button);
+        var event = new DragEvent(dragStartX, dragStartY, mouseX, mouseY, dragX, dragY, button, new EventState());
         draggedElement.events().fireEvent(event);
 
         return true;

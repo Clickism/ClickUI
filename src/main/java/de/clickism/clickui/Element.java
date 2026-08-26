@@ -295,6 +295,9 @@ public abstract class Element<S extends Element<S>>
         // Fire children first
         for (var child : children) {
             child.propagateEvent(event);
+            if (event.state().consumed()) {
+                return;
+            }
         }
 
         // Fire this element's event manager

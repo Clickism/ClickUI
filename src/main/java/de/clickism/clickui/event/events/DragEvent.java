@@ -1,6 +1,7 @@
 package de.clickism.clickui.event.events;
 
 import de.clickism.clickui.event.Event;
+import de.clickism.clickui.event.EventState;
 
 public record DragEvent(
     double startX,
@@ -9,6 +10,7 @@ public record DragEvent(
     double currentY,
     double deltaX,
     double deltaY,
-    int button
+    int button,
+    EventState state
 ) implements Event {
 }

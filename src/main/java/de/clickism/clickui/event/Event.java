@@ -9,6 +9,20 @@ import net.minecraft.client.player.LocalPlayer;
  */
 public interface Event {
     /**
+     * Returns the state of the event.
+     *
+     * @return The state of the event.
+     */
+    EventState state();
+
+    /**
+     * Consumes the event, preventing further processing by other listeners.
+     */
+    default void consume() {
+        state().consume();
+    }
+
+    /**
      * Returns the player associated with this event.
      *
      * @return The player associated with this event.

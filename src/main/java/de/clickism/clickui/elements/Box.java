@@ -55,13 +55,17 @@ public class Box extends Element<Box> {
      */
     public Box() {
         this.onScroll(event -> {
+            if (!scrollable) return;
             this.scrollY(scrollY - event.delta() * scrollRate);
+            event.consume();
         });
         // Drag events for scrolling
         this.onDragStart(event -> {
+            if (!scrollable) return;
             if (isMouseOnScrollbar(event.startX(), event.startY())) {
                 draggingScrollbar = true;
             }
+            event.consume();
         });
         this.onDrag(event -> {
             if (!draggingScrollbar) return;
@@ -79,9 +83,12 @@ public class Box extends Element<Box> {
                     this.scrollY(scrollY + event.deltaY() * scrollRatio);
                 }
             }
+            event.consume();
         });
         this.onDragEnd(event -> {
+            if (!draggingScrollbar) return;
             draggingScrollbar = false;
+            event.consume();
         });
         // TODO: Add touch support for scrolling
     }
