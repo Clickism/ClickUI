@@ -19,8 +19,6 @@ public class HitTester {
     private HitTestResult hitTest(Element<?> element, Point mouse) {
         var bounds = element.bounds();
 
-        if (!bounds.contains(mouse)) return null;
-
         // Search children in reverse order
         var children = element.children();
         for (int i = children.size() - 1; i >= 0; i--) {
@@ -32,6 +30,8 @@ public class HitTester {
                 return result;
             }
         }
+
+        if (!bounds.contains(mouse)) return null;
 
         // If no child was hit, take this element as the target.
         if (element.hitTestable()) {
