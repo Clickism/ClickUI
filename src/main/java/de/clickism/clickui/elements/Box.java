@@ -136,6 +136,14 @@ public class Box extends Element<Box> {
      * @return the total content height
      */
     protected int contentHeight() {
+        if (axis().isHorizontal()) {
+            // Horizontal axis
+            return this.children().stream()
+                .mapToInt(child -> child.bounds().height())
+                .max()
+                .orElse(0) + padding().top() + padding().bottom();
+        }
+        // Vertical axis
         int totalPadding = padding().top() + padding().bottom();
         int totalGap = totalChildGap();
         int childrenHeight = this.children().stream()
