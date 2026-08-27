@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -83,19 +82,6 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
-     * Returns the current screen in the Minecraft client.
-     *
-     * @return the current screen
-     */
-    private static @NotNull Screen currentOrThrow() {
-        var screen = Minecraft.getInstance().screen;
-        if (screen == null) {
-            throw new IllegalStateException("No screen is currently open.");
-        }
-        return screen;
-    }
-
-    /**
      * Returns the parent screen of this UiScreen, if any.
      *
      * @return the parent screen, or null if there is no parent
@@ -152,15 +138,14 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
-     * Closes the currently open screen and navigates back to the previous screen, if any.
+     * Closes this screen and navigates back to the parent screen, if any.
      */
     public void close() {
-        var screen = currentOrThrow();
-        if (screen instanceof UiScreen uiScreen) {
-            uiScreen.closeSelf();
-        } else {
+        if (parent == null) {
             Util.openScreen(null);
+            return;
         }
+        Util.openScreen(parent);
     }
 
     /**
@@ -168,17 +153,6 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      */
     public void closeAll() {
         Util.openScreen(null);
-    }
-
-    /**
-     * Closes this screen and navigates back to the parent screen, if any.
-     */
-    private void closeSelf() {
-        if (parent == null) {
-            Util.openScreen(null);
-            return;
-        }
-        Util.openScreen(parent);
     }
 
     @Override
@@ -267,6 +241,6 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
 
     @Override
     public void onClose() {
-        closeSelf();
+        this.close();
     }
 }
