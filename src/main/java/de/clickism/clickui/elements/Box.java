@@ -43,7 +43,7 @@ public class Box extends Element<Box> {
     /**
      * Whether the box is scrollable or not.
      */
-    private boolean scrollable = true;
+    private boolean scrollable = false;
 
     /**
      * Whether the scrollbar is currently being dragged by the user.

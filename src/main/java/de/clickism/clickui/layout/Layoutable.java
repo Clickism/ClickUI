@@ -88,6 +88,18 @@ public interface Layoutable<S extends Layoutable<S>>
         return self();
     }
 
+    /**
+     * Sets both the width and height of the element to a fixed size.
+     *
+     * @param size the fixed size to set for both width and height
+     * @return the current instance for method chaining
+     */
+    default S size(int size) {
+        layout().width = Sizing.fixed(size);
+        layout().height = Sizing.fixed(size);
+        return self();
+    }
+
     default Sizing mainSizing() {
         return layout().axis.isHorizontal()
             ? layout().width

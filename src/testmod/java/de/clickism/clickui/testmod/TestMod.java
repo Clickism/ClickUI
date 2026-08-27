@@ -2,6 +2,7 @@ package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.Ref;
 import de.clickism.clickui.UiBuilder;
+import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.util.Util;
@@ -30,8 +31,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .padding(20)
                     .style(s -> s
                         .fontScale(2.0f)
-                        .background(Color.BLUE)
-                        .border(Color.YELLOW)
+                        .background(UiColor.BLUE)
+                        .border(UiColor.YELLOW)
                         .borderWidth(5)),
                 text(Component.literal("Whaaat?").withStyle(ChatFormatting.BOLD)),
                 button("Click me!")
@@ -50,7 +51,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                     .height(200)
                     .vertical()
                     .style(s -> s
-                        .background(Color.GREEN)
+                        .background(UiColor.GREEN)
                         .alpha(0.5f))
                     .children(
                         text("This is a box")
@@ -70,14 +71,14 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .alignCenter()
             .grow()
             .style(s -> s
-                .background(Color.BLACK)
+                .background(UiColor.BLACK)
                 .alpha(0.5f))
             .children(
                 box()
                     .width(300)
                     .style(s -> s
-                        .border(Color.LIGHT_GRAY)
-                        .background(Color.BLACK)
+                        .border(UiColor.LIGHT_GRAY)
+                        .background(UiColor.BLACK)
                         .alpha(0.5f))
                     .padding(8)
                     .childGap(8)
@@ -92,7 +93,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .padding(16)
                             .height(100)
                             .childGap(10)
-                            .style(s -> s.border(Color.GREEN))
+                            .style(s -> s.border(UiColor.GREEN))
                             .children(
                                 text("Scrollable content line 1"),
                                 text("Scrollable content line 2"),
@@ -141,6 +142,6 @@ public class TestMod implements ClientModInitializer, UiBuilder {
 
 //        newScreen.debug(true);
 
-        Util.openScreen(newScreen);
+        Util.openScreen(new OverflowScreen());
     }
 }

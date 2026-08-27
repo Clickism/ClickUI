@@ -171,9 +171,10 @@ public abstract class UiEventScreen extends Screen {
         int x = (int) mouseX;
         int y = (int) mouseY;
         updateHoverState(x, y);
+        if (hoveredElement == null) return false;
         // Fire to all
         var event = new MouseScrollEvent(x, y, delta, new EventState());
-        eventRoot().propagateEventDown(event);
+        hoveredElement.propagateEventUp(event);
 
         return true;
     }
