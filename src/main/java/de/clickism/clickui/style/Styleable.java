@@ -1,5 +1,6 @@
 package de.clickism.clickui.style;
 
+import de.clickism.clickui.UiColor;
 import de.clickism.clickui.util.Self;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,12 +15,12 @@ public interface Styleable<S extends Styleable<S>> extends Self<S> {
      */
     ResolvedStyle style();
 
-    default S background(@Nullable Color background) {
+    default S background(@Nullable UiColor background) {
         style().background = background;
         return self();
     }
 
-    default S border(@Nullable Color border) {
+    default S border(@Nullable UiColor border) {
         style().border = border;
         return self();
     }

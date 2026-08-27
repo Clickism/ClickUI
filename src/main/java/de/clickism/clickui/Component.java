@@ -4,6 +4,10 @@ import de.clickism.clickui.reactivity.State;
 import de.clickism.clickui.render.RenderContext;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 /**
  * Components are the reactive layer of the UI.
  * They are not rendered directly, instead they are used to build the UI tree and manage state.
@@ -13,8 +17,12 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @param <S> The self type of the component
  */
+// TODO: Keep focus after rebuild?
 public abstract class Component<S extends Component<S>> extends Element<S>
     implements UiBuilder {
+
+    private int memoIndex = 0;
+    private final List<Object> memeoized = new ArrayList<>();
 
     /**
      * Builds the UI tree for this component.
@@ -32,8 +40,7 @@ public abstract class Component<S extends Component<S>> extends Element<S>
     @ApiStatus.Internal
     public final void rebuild() {
         super.invalidate();
-        clear();
-        build();
+        initialize();
     }
 
     @Override
@@ -48,6 +55,8 @@ public abstract class Component<S extends Component<S>> extends Element<S>
 
     @Override
     public void initialize() {
+        // Reset memoization index for this build cycle
+        memoIndex = 0;
         // Build for the first time here, to avoid calling build() in the constructor
         // which can lead to issues with subclass initialization.
         clear();
@@ -67,5 +76,36 @@ public abstract class Component<S extends Component<S>> extends Element<S>
         return new State<>(initialValue, this);
     }
 
-    // TODO: Memoization?
+    /**
+     * Memoizes the result of a supplier function for the current build cycle.
+     * <p>
+     * <strong>
+     * Warning! Order of memoization calls matter and should NOT differ between rebuilds.
+     * </strong>
+     *
+     * @param supplier the supplier function to memoize
+     * @param <T>      the type of the value to memoize
+     * @return the memoized value
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T memo(Supplier<T> supplier) {
+        if (memoIndex < memeoized.size()) {
+            // Return the existing value
+            return (T) memeoized.get(memoIndex++);
+        } else {
+            // Compute the value and store it
+            T value = supplier.get();
+            memeoized.add(value);
+            memoIndex++;
+            return value;
+        }
+    }
+
+    /**
+     * Clears the memoization cache for this component.
+     */
+    protected void clearMemo() {
+        memeoized.clear();
+        memoIndex = 0;
+    }
 }

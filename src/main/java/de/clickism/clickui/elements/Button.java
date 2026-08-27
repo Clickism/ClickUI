@@ -2,6 +2,7 @@ package de.clickism.clickui.elements;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.Element;
+import de.clickism.clickui.UiColor;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
@@ -38,7 +39,7 @@ public class Button extends Element<Button> {
         this.padding(DEFAULT_PADDING);
         this.style(s -> s
             .whenHovered(h -> h
-                .border(Color.WHITE)
+                .border(UiColor.WHITE)
                 .borderPosition(BorderPosition.CENTER)));
         // Play down sound on click
         this.onClick(event -> Util.playDownSound());

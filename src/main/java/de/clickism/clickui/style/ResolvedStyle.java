@@ -1,13 +1,14 @@
 package de.clickism.clickui.style;
 
+import de.clickism.clickui.UiColor;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 // TODO: Refactor style to be more flexible, and be layered with nullable props maybe
 public final class ResolvedStyle implements Styleable<ResolvedStyle> {
-    @Nullable Color background = null;
-    @Nullable Color border = null;
+    @Nullable UiColor background = null;
+    @Nullable UiColor border = null;
     // TODO: Different border styles for each side
     // TODO: Border position (inside, outside, center)
     int borderWidth = 1;
@@ -31,11 +32,11 @@ public final class ResolvedStyle implements Styleable<ResolvedStyle> {
         return copy;
     }
 
-    public @Nullable Color background() {
+    public @Nullable UiColor background() {
         return background;
     }
 
-    public @Nullable Color border() {
+    public @Nullable UiColor border() {
         return border;
     }
 

@@ -200,7 +200,6 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
         // Lay out root again if dirty
         if (root.isDirty()) {
             init();
-            // Validate all elements
             // Clear dirty state
             root.clearDirty();
         }

@@ -312,10 +312,10 @@ public abstract class Element<S extends Element<S>>
      *
      * @param event the event to propagate
      */
-    public void propagateEvent(Event event) {
+    public void propagateEventDown(Event event) {
         // Fire children first
         for (var child : children) {
-            child.propagateEvent(event);
+            child.propagateEventDown(event);
             if (event.state().consumed()) {
                 return;
             }
@@ -323,6 +323,24 @@ public abstract class Element<S extends Element<S>>
 
         // Fire this element's event manager
         this.events.fireEvent(event);
+    }
+
+    /**
+     * Propagates the given event to this element and all of its parents recursively.
+     *
+     * @param event the event to propagate
+     */
+    public void propagateEventUp(Event event) {
+        // Fire this element's event manager
+        this.events.fireEvent(event);
+        if (event.state().consumed()) {
+            return;
+        }
+
+        // Fire parent last
+        if (parent != null) {
+            parent.propagateEventUp(event);
+        }
     }
 
     // TODO: Make style api nicer

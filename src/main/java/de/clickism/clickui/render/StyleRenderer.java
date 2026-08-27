@@ -22,7 +22,7 @@ public class StyleRenderer {
         // Render background
         var background = style.background();
         if (background != null) {
-            renderBackground(background.getRGB());
+            renderBackground(background.color());
         }
 
         // Render element itself
@@ -31,7 +31,7 @@ public class StyleRenderer {
         // Render border
         var border = style.border();
         if (border != null && style.borderWidth() > 0) {
-            renderBorder(border.getRGB(), style.borderWidth(), style.borderPosition());
+            renderBorder(border.color(), style.borderWidth(), style.borderPosition());
         }
 
         // Revert alpha

@@ -1,5 +1,6 @@
 package de.clickism.clickui.elements.input;
 
+import de.clickism.clickui.UiColor;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
@@ -17,8 +18,8 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
     private static final int DEFAULT_WIDTH = 100;
 
     // TODO: Move into custom style props
-    private static final Color TEXT_COLOR = new Color(0xFFE0E0E0, true);
-    private static final Color INVALID_COLOR = new Color(0xFFFF5555, true);
+    private static final UiColor TEXT_COLOR = UiColor.rgb(0xE0E0E0);
+    private static final UiColor INVALID_COLOR = UiColor.rgb(0xFF5555);
 
     public Field() {
         // Set default props
@@ -26,13 +27,13 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         this.padding(DEFAULT_PADDING);
         // Set style
         this.style(s -> s
-            .background(Color.BLACK)
-            .border(new Color(0xFFA0A0A0))
+            .background(UiColor.BLACK)
+            .border(UiColor.rgb(0xA0A0A0))
             .borderPosition(BorderPosition.INSIDE)
             .whenHovered(h -> h
-                .border(Color.WHITE))
+                .border(UiColor.WHITE))
             .whenFocused(f -> f
-                .border(Color.WHITE))
+                .border(UiColor.WHITE))
         );
     }
 
@@ -44,12 +45,12 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
      */
     protected int textColor(boolean placeholder) {
         if (invalid()) {
-            return INVALID_COLOR.getRGB();
+            return INVALID_COLOR.color();
         }
         if (placeholder) {
-            return Color.GRAY.getRGB();
+            return UiColor.GRAY.color();
         }
-        return TEXT_COLOR.getRGB();
+        return TEXT_COLOR.color();
     }
 
     @Override
@@ -73,7 +74,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         graphics.drawString(context.font(), text, x, y, color);
         // Render suggestion
         x += context.font().width(text);
-        graphics.drawString(context.font(), sugestion, x, y, Color.GRAY.getRGB());
+        graphics.drawString(context.font(), sugestion, x, y, UiColor.GRAY.color());
     }
 
     @Override
