@@ -183,7 +183,7 @@ class LayoutEngineTest implements UiBuilder {
                 box()
                     .width(200)
                     .height(30)
-                )
+            )
         );
     }
 
@@ -242,6 +242,25 @@ class LayoutEngineTest implements UiBuilder {
                     .width(150)
                     .height(50)
             ));
+    }
+
+    @Test
+    void renderGrowHorizontal() {
+        renderScreen(box()
+            .width(600)
+            .height(400)
+            .padding(20)
+            .children(
+                box()
+                    .horizontal()
+                    .padding(10)
+                    .grow()
+                    .children(
+                        box().size(100),
+                        box().size(100)
+                    )
+            )
+        );
     }
 
     private void renderScreen(Element<?> root) {

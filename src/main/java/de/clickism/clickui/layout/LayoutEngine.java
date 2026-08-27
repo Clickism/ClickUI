@@ -16,10 +16,6 @@ import java.util.stream.Collectors;
  * layout axis. It calculates the sizes and positions of each element and its children, taking into account padding,
  * child gaps, and sizing types (fixed, fit, or grow).
  */
-// TODO: Don't count relative and absolute positioned elements in the layout calculations
-
-// TODO: Grow and shrink maybe don't work properly for horizontal layouts
-// TODO: Make sizes depend on lines too
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -281,8 +277,8 @@ public class LayoutEngine {
      */
     private List<Element<?>> getGrowableChildren(Element<?> parent) {
         Function<Element<?>, Sizing> mapper = parent.axis().isHorizontal()
-            ? Element::crossSizing
-            : Element::mainSizing;
+            ? Element::width
+            : Element::height;
         return parent.children()
             .stream()
             .filter(child -> mapper.apply(child).isGrow()
@@ -397,7 +393,7 @@ public class LayoutEngine {
 
             int cross = child.bounds().crossSize(axis);
 
-            boolean canGrow = child.crossSizing().isGrow();
+            boolean canGrow = child.crossSizing(axis).isGrow();
             boolean canShrink = child.effectiveMinSize().crossSize(axis) < child.bounds().crossSize(axis);
 
             if (cross < totalCross && !canGrow) {
