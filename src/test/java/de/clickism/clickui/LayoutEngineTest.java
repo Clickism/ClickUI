@@ -157,25 +157,65 @@ class LayoutEngineTest implements UiBuilder {
     @Test
     void renderWrappedChildren() {
         renderScreen(box()
-            .width(600)
-            .maxHeight(300)
-            .wrapChildren(true)
+            .padding(10)
+            .children(
+                box()
+                    .horizontal()
+                    .width(300)
+                    .wrapChildren(true)
+                    .childGap(10)
+                    .crossAlign(Align.CENTER)
+                    .children(
+                        box()
+                            .width(100)
+                            .height(100),
+                        box()
+                            .width(100)
+                            .height(100),
+                        box()
+                            .width(100)
+                            .height(100),
+                        box()
+                            .width(100)
+                            .height(100)
+                    ),
+
+                box()
+                    .width(200)
+                    .height(30)
+                )
+        );
+    }
+
+    @Test
+    void renderWrapped() {
+        renderScreen(box()
+            .padding(10)
+            .width(400)
+            .height(800)
             .childGap(10)
             .crossAlign(Align.CENTER)
             .children(
+                box().size(200),
+
                 box()
-                    .width(100)
-                    .height(100),
-                box()
-                    .width(100)
-                    .height(100),
-                box()
-                    .width(100)
-                    .height(100),
-                box()
-                    .width(100)
-                    .height(100)
-            ));
+                    .horizontal()
+                    .wrapChildren(true)
+                    .childGap(5)
+                    .padding(10)
+                    .alignCenter()
+                    .children(
+                        box().size(100),
+                        box().size(100),
+                        box().size(100),
+                        box().size(100),
+                        box().size(100),
+                        box().size(100),
+                        box().size(100),
+                        box().size(100)
+                    )
+            )
+        );
     }
 
     @Test

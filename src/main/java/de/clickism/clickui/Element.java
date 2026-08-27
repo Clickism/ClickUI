@@ -534,7 +534,7 @@ public abstract class Element<S extends Element<S>>
         );
 
         // Render overlay if hovered
-        if (state().hovered()) {
+        if (state().hoveredSelf()) {
             context.graphics().fill(
                 bounds().x(),
                 bounds().y(),

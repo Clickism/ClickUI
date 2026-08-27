@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
  * child gaps, and sizing types (fixed, fit, or grow).
  */
 // TODO: Don't count relative and absolute positioned elements in the layout calculations
+
+// TODO: Grow and shrink maybe don't work properly for horizontal layouts
+// TODO: Make sizes depend on lines too
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -116,6 +120,24 @@ public class LayoutEngine {
         }
         if (measureHeight) {
             element.bounds(element.bounds().withHeight(height));
+        }
+
+        // If not wrapChildren, don't check heights again
+        if (!element.wrapChildren()) return;
+
+        // Wrap elements and update height if needed
+        // If children are wrapped,then, parent's cross size might need to be increased
+        var lines = wrapChildrenIfNeeded(element);
+        var totalLineCross = totalLineCross(element, lines);
+
+        if (element.axis().isHorizontal() && measureHeight) {
+            var newHeight = intrinsic.height() + padding.vertical() + totalLineCross;
+            height = Math.max(height, newHeight);
+            element.bounds(element.bounds().withHeight(height));
+        } else if (measureWidth) {
+            var newWidth = intrinsic.width() + padding.horizontal() + totalLineCross;
+            width = Math.max(width, newWidth);
+            element.bounds(element.bounds().withHeight(width));
         }
     }
 
@@ -258,9 +280,12 @@ public class LayoutEngine {
      * @param parent the parent element whose children will be checked
      */
     private List<Element<?>> getGrowableChildren(Element<?> parent) {
+        Function<Element<?>, Sizing> mapper = parent.axis().isHorizontal()
+            ? Element::crossSizing
+            : Element::mainSizing;
         return parent.children()
             .stream()
-            .filter(child -> child.mainSizing().isGrow()
+            .filter(child -> mapper.apply(child).isGrow()
                              && child.positioning().affectsLayout())
             .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -669,6 +694,22 @@ public class LayoutEngine {
         }
 
         return lines;
+    }
+
+    private int totalLineCross(Element<?> element, List<Line> lines) {
+        int lineGaps = Math.max(0, lines.size() - 1) * element.childGap();
+        int totalLineCrossSize = lines.stream()
+            .mapToInt(line -> line.crossSize)
+            .sum();
+        totalLineCrossSize += lineGaps; // Add gaps between lines
+        return totalLineCrossSize;
+    }
+
+    private int totalLineMain(Element<?> element, List<Line> lines) {
+        return lines.stream()
+            .mapToInt(line -> line.mainSize)
+            .max()
+            .orElse(0);
     }
 
     /**
