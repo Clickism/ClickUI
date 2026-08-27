@@ -5,6 +5,7 @@ import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      * The parent screen of this UiScreen, if any.
      * This can be used to navigate back to the previous screen.
      */
-    private @Nullable UiScreen parent;
+    private @Nullable Screen parent;
 
     /**
      * Indicates whether debug mode is enabled for this UiScreen.
@@ -85,7 +86,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      *
      * @return the parent screen, or null if there is no parent
      */
-    public @Nullable UiScreen parent() {
+    public @Nullable Screen parent() {
         return parent;
     }
 
@@ -108,19 +109,31 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
-     * Opens the specified UiScreen, setting this screen as its parent.
-     *
-     * @param screen the UiScreen to open
+     * Opens this UiScreen in the Minecraft client, setting the current screen as its parent.
+     * <p>
+     * Will navigate back to the previous screen when this screen is closed.
      */
-    public void forwardTo(UiScreen screen) {
-        screen.parent(this);
-        Util.openScreen(screen);
+    public void open() {
+        open(Minecraft.getInstance().screen);
     }
 
     /**
-     * Opens this UiScreen in the Minecraft client.
+     * Opens this UiScreen in the Minecraft client, setting the specified parent screen.
+     *
+     * @param parent the parent screen to set for this UiScreen
      */
-    public void open() {
+    public void open(Screen parent) {
+        this.parent = parent;
+        Util.openScreen(this);
+    }
+
+    /**
+     * Opens this UiScreen in the Minecraft client without setting a parent screen.
+     * <p>
+     * Will close all other screens when this screen is closed.
+     */
+    public void openFresh() {
+        this.parent = null;
         Util.openScreen(this);
     }
 
@@ -133,6 +146,13 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
             return;
         }
         Util.openScreen(parent);
+    }
+
+    /**
+     * Closes all open screens.
+     */
+    public void closeAll() {
+        Util.openScreen(null);
     }
 
     @Override
