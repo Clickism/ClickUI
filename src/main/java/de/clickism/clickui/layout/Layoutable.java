@@ -194,4 +194,13 @@ public interface Layoutable<S extends Layoutable<S>>
         layout().positioning = Positioning.absolute(x, y);
         return self();
     }
+
+    default boolean wrapChildren() {
+        return layout().wrapChildren;
+    }
+
+    default S wrapChildren(boolean wrap) {
+        layout().wrapChildren = wrap;
+        return self();
+    }
 }

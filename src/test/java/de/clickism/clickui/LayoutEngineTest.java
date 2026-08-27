@@ -154,6 +154,30 @@ class LayoutEngineTest implements UiBuilder {
             ));
     }
 
+    @Test
+    void renderWrappedChildren() {
+        renderScreen(box()
+            .maxWidth(320)
+            .height(400)
+            .horizontal()
+            .wrapChildren(true)
+            .childGap(10)
+            .children(
+                box()
+                    .width(100)
+                    .height(100),
+                box()
+                    .width(100)
+                    .height(100),
+                box()
+                    .width(100)
+                    .height(100),
+                box()
+                    .width(100)
+                    .height(100)
+            ));
+    }
+
     private void renderScreen(Element<?> root) {
         LayoutEngine engine = new LayoutEngine();
 

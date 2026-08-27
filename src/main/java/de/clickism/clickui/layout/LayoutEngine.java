@@ -278,6 +278,11 @@ public class LayoutEngine {
             return;
         }
 
+        if (parent.wrapChildren()) {
+            // Don't shrink if we wrap children
+            return;
+        }
+
         var shrinkChildren = getShrinkableChildren(parent);
         // Shrink elements
         while (remainingSpace < 0 && !shrinkChildren.isEmpty()) {
@@ -415,90 +420,67 @@ public class LayoutEngine {
         // Set the position of the element
         element.bounds(element.bounds().withPosition(x, y));
 
+        // Put children into lines
+        var lines = wrapChildrenIfNeeded(element);
+
         // Calculate position of children based on layout axis and padding
         var horizontal = element.axis().isHorizontal();
-
         var padding = element.padding();
-        int currentX = x + padding.left();
-        int currentY = y + padding.top();
+        // Set up starting positions
+        int currentMain = horizontal
+            ? x + padding.left()
+            : y + padding.top();
+        int currentCross = horizontal
+            ? y + padding.top()
+            : x + padding.left();
 
-        // Adjust the starting position based on the main alignment
-        int mainOffset = mainOffsetToAlign(element);
-        if (horizontal) {
-            currentX += mainOffset;
-        } else {
-            currentY += mainOffset;
-        }
+        // Position all lines one by one
+        for (var line : lines) {
+            // Align main axis
+            int childMain = currentMain += mainOffsetToAlign(element, line);
 
-        // Calcualte available cross space for alignment
-        int availableCross = availableCrossSpace(element);
+            int gap = element.childGap();
 
-        for (var child : element.children()) {
-            // Calculate cross offset based on alignment
-            int crossOffset = crossOffsetToAlign(element, child, availableCross);
-            // Position the child based on the current position and layout axis and alignment
-            if (horizontal) {
-                calculatePositions(
-                    child,
-                    currentX,
-                    currentY + crossOffset
-                );
-                if (child.positioning().isLayout()) {
-                    // Only increment the current position if the child is positioned by the layout engine
-                    currentX += child.bounds().width() + element.childGap();
-                }
-            } else {
-                calculatePositions(
-                    child,
-                    currentX + crossOffset,
-                    currentY
-                );
-                if (child.positioning().isLayout()) {
-                    // Only increment the current position if the child is positioned by the layout engine
-                    currentY += child.bounds().height() + element.childGap();
+            for (var child : line.children) {
+                // Align cross axis
+                int childCross = currentCross + crossOffsetToAlign(element, child, line.crossSize);
+
+                // Position the child
+                if (horizontal) {
+                    calculatePositions(child, childMain, childCross);
+                    childMain += child.bounds().width() + gap;
+                } else {
+                    calculatePositions(child, childCross, childMain);
+                    childMain += child.bounds().height() + gap;
                 }
             }
+
+            // Move to next line
+            currentCross += line.crossSize + gap; // Use same gap vertically
         }
     }
 
     /**
-     * Calculates the offset needed to align the children of the given element based on its main alignment.
+     * Calculates the offset needed to align the children of an element
+     * inside the given line based on its main alignment.
      *
-     * @param element the element to calculate the offset for
-     * @return the offset needed to align the children of the element
+     * @param element the parent element
+     * @param line    the line to calculate offset for
+     * @return the offset
      */
-    private int mainOffsetToAlign(Element<?> element) {
-        // Total size occupied by children in the layout axis, including gaps
-        int childrenSize = totalChildrenMainSize(element);
-        childrenSize += element.totalChildGap();
+    private int mainOffsetToAlign(Element<?> element, Line line) {
+        int lineSize = line.mainSize;
+        int available = element.axis().isHorizontal()
+            ? element.bounds().width() - element.padding().horizontal()
+            : element.bounds().height() - element.padding().vertical();
 
-        var horizontal = element.axis().isHorizontal();
-        var padding = element.padding();
-        int available = horizontal
-            ? element.bounds().width() - padding.left() - padding.right()
-            : element.bounds().height() - padding.top() - padding.bottom();
-
-        int remaining = available - childrenSize;
+        int remaining = available - lineSize;
 
         return switch (element.mainAlign()) {
             case START -> 0;
             case CENTER -> remaining / 2;
             case END -> remaining;
         };
-    }
-
-    /**
-     * Calculates the available cross-axis space for the given element, taking into account its padding.
-     *
-     * @param element the element to calculate the available cross-axis space for
-     * @return the available cross-axis space for the element
-     */
-    private int availableCrossSpace(Element<?> element) {
-        var horizontal = element.axis().isHorizontal();
-        var padding = element.padding();
-        return horizontal
-            ? element.bounds().height() - padding.top() - padding.bottom()
-            : element.bounds().width() - padding.left() - padding.right();
     }
 
     /**
@@ -522,30 +504,6 @@ public class LayoutEngine {
             case CENTER -> remaining / 2;
             case END -> remaining;
         };
-    }
-
-    /**
-     * Wraps the text of the given element if it implements the Wrappable interface
-     * and if it's overflowing its bounds.
-     * <p>
-     * This method is called recursively for all child elements.
-     *
-     * @param element the element to wrap
-     */
-    private void wrapElements(Element<?> element) {
-        if (element instanceof Wrappable wrappable) {
-            int maxWidth = element.bounds().width()
-                           - element.padding().horizontal();
-            boolean overflowing = element.intrinsicSize().width() > maxWidth;
-            if (maxWidth > 0 && overflowing) {
-                wrappable.wrap(maxWidth);
-            }
-        }
-
-        // Recursively wrap children
-        for (var child : element.children()) {
-            wrapElements(child);
-        }
     }
 
     /**
@@ -630,5 +588,92 @@ public class LayoutEngine {
         return parent.layoutChildren().stream()
             .mapToInt(child -> child.bounds().mainSize(axis))
             .sum();
+    }
+
+    /**
+     * A class representing a line of elements in a layout, used for wrapping children.
+     */
+    private static class Line {
+        private final List<Element<?>> children = new ArrayList<>();
+        private int mainSize = 0;
+        private int crossSize = 0;
+    }
+
+    /**
+     * Wraps the children of the given parent element into lines if needed.
+     * <p>
+     * If the parent element does not have <code>wrapChildren</code> set to true,
+     * returns a single line containing all children.
+     *
+     * @param parent the parent element
+     * @return the list of lines
+     */
+    private static List<Line> wrapChildrenIfNeeded(Element<?> parent) {
+        var axis = parent.axis();
+        // Maximum main size for a line
+        int maxMainSize = parent.bounds().mainSize(axis) - parent.padding().mainPadding(axis);
+
+        List<Line> lines = new ArrayList<>();
+        Line line = new Line();
+
+        // Iterate over children and put them into a line
+        var children = parent.layoutChildren();
+        for (int i = 0; i < children.size(); i++) {
+            var child = children.get(i);
+
+            int mainSize = child.bounds().mainSize(axis);
+            int crossSize = child.bounds().crossSize(axis);
+
+            // First child has no gap before
+            var gap = i == 0
+                ? 0
+                : parent.childGap();
+
+            var newLineSize = line.mainSize + gap + mainSize;
+            // Check if we need to wrap to a new lines
+            var lineFull = newLineSize > maxMainSize && !line.children.isEmpty();
+            if (lineFull && parent.wrapChildren()) {
+                // Finalize current line
+                lines.add(line);
+                // Start a new line
+                line = new Line();
+            }
+
+            // Add the child to the current line
+            line.children.add(child);
+            line.mainSize += gap + mainSize;
+            line.crossSize = Math.max(line.crossSize, crossSize);
+        }
+
+        // Add the last line if it has children
+        if (!line.children.isEmpty()) {
+            lines.add(line);
+        }
+
+        return lines;
+    }
+
+    /**
+     * Wraps the text of the given element if it implements the Wrappable interface
+     * and if it's overflowing its bounds.
+     * <p>
+     * This method is called recursively for all child elements.
+     *
+     * @param element the element to wrap
+     */
+    private void wrapElements(Element<?> element) {
+        if (element instanceof Wrappable wrappable) {
+            int maxWidth = element.bounds().width()
+                           - element.padding().horizontal();
+            boolean overflowing = element.intrinsicSize().width() > maxWidth;
+            if (maxWidth > 0 && overflowing) {
+                wrappable.wrap(maxWidth);
+            }
+        }
+
+        // Recursively wrap children
+        for (var child : element.children()) {
+            wrapElements(child);
+        }
     }
 }

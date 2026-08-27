@@ -9,6 +9,7 @@ public class Layout implements Layoutable<Layout> {
     Sizing height = Sizing.fit();
     Padding padding = Padding.ZERO;
     int childGap = 0;
+    boolean wrapChildren = false;
     Align mainAlign = Align.START;
     Align crossAlign = Align.START;
     // TODO: Don't count elements with ABSOLUTE sizing in the gap calculation
