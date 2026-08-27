@@ -2,6 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.render.TooltipRenderer;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -211,10 +212,10 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Render background if enabled
         if (background) {
-            this.renderBackground(guiGraphics);
+            this.renderBackground(graphics);
         }
         // Lay out root again if dirty
         if (root.isDirty()) {
@@ -223,9 +224,15 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
             root.clearDirty();
         }
         // Call event handler
-        super.render(guiGraphics, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
         // Render the tree
-        root.renderTree(new RenderContext(guiGraphics, mouseX, mouseY, delta, debug));
+        var context = new RenderContext(graphics, mouseX, mouseY, delta, debug);
+        root.renderTree(context);
+        // Render tooltips
+        Util.preOrder(root, element -> {
+            if (!element.isTooltipVisible()) return;
+            new TooltipRenderer(element.tooltip(), context).render();
+        });
     }
 
     @Override

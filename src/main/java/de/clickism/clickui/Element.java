@@ -6,7 +6,6 @@ import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
-import de.clickism.clickui.render.TooltipRenderer;
 import de.clickism.clickui.state.ElementState;
 import de.clickism.clickui.state.ElementStateHolder;
 import de.clickism.clickui.style.ResolvedStyle;
@@ -408,6 +407,10 @@ public abstract class Element<S extends Element<S>>
         return point;
     }
 
+    public Element<?> tooltip() {
+        return tooltip;
+    }
+
     /**
      * Sets the tooltip of this element, which is a text that is displayed when the user hovers over this element.
      *
@@ -444,6 +447,10 @@ public abstract class Element<S extends Element<S>>
             this.tooltip.invalidate();
         }
         return self();
+    }
+
+    public boolean isTooltipVisible() {
+        return tooltip != null && state().hovered();
     }
 
     /**
@@ -501,8 +508,7 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Renders this element with its style applied, renders debug information if debug mode is enabled,
-     * and renders the tooltip if it is set and the element is hovered.
+     * Renders this element with its style applied, renders debug information if debug mode is enabled.
      *
      * @param context the render context to render with
      */
@@ -511,10 +517,6 @@ public abstract class Element<S extends Element<S>>
         // Render debug information if debug mode is enabled
         if (context.debug()) {
             renderDebugInfo(context);
-        }
-        // Render tooltip
-        if (tooltip != null && state().hovered()) {
-            new TooltipRenderer(tooltip, context).render();
         }
     }
 
