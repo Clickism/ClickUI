@@ -434,6 +434,13 @@ public class LayoutEngine {
             ? y + padding.top()
             : x + padding.left();
 
+        // Total cross size of all lines, including gaps between lines
+        int lineGaps = Math.max(0, lines.size() - 1) * element.childGap();
+        int totalLineCrossSize = lines.stream()
+            .mapToInt(line -> line.crossSize)
+            .sum();
+        totalLineCrossSize += lineGaps; // Add gaps between lines
+
         // Position all lines one by one
         for (var line : lines) {
             // Align main axis
@@ -443,7 +450,7 @@ public class LayoutEngine {
 
             for (var child : line.children) {
                 // Align cross axis
-                int childCross = currentCross + crossOffsetToAlign(element, child);
+                int childCross = currentCross + crossOffsetToAlign(element, child, totalLineCrossSize, line.crossSize);
 
                 // Position the child
                 if (horizontal) {
@@ -482,22 +489,19 @@ public class LayoutEngine {
 
         int remaining = available - lineSize;
 
-        return switch (parent.mainAlign()) {
-            case START -> 0;
-            case CENTER -> remaining / 2;
-            case END -> remaining;
-        };
+        return (int) (remaining * parent.mainAlign().factor());
     }
 
     /**
      * Calculates the offset needed to align a child element within its parent element
      * based on the parent's cross alignment and the available cross-axis space.
      *
-     * @param parent the parent element
-     * @param child  the child element to align
+     * @param parent             the parent element
+     * @param child              the child element to align
+     * @param totalLineCrossSize the total cross size of all lines in the parent element
      * @return the offset needed to align the child element within the parent element
      */
-    private int crossOffsetToAlign(Element<?> parent, Element<?> child) {
+    private int crossOffsetToAlign(Element<?> parent, Element<?> child, int totalLineCrossSize, int lineCrossSize) {
         int childSize = parent.axis().isHorizontal()
             ? child.bounds().height()
             : child.bounds().width();
@@ -506,13 +510,13 @@ public class LayoutEngine {
             ? parent.bounds().height() - parent.padding().vertical()
             : parent.bounds().width() - parent.padding().horizontal();
 
-        int remaining = available - childSize;
+        // Calculate aligned line start
+        var lineStart = (available - totalLineCrossSize) * parent.crossAlign().factor();
 
-        return switch (parent.crossAlign()) {
-            case START -> 0;
-            case CENTER -> remaining / 2;
-            case END -> remaining;
-        };
+        // Align the child within the line based on the parent's cross alignment
+        var childOffset = (lineCrossSize - childSize) * parent.crossAlign().factor();
+
+        return (int) (lineStart + childOffset);
     }
 
     /**

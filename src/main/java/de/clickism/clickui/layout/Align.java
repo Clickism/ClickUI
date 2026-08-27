@@ -15,5 +15,19 @@ public enum Align {
     /**
      * Aligns the element to the end of the axis.
      */
-    END
+    END;
+
+    /**
+     * Returns the factor corresponding to the alignment.
+     * START corresponds to 0.0, CENTER to 0.5, and END to 1.0.
+     *
+     * @return the factor for the alignment
+     */
+    public float factor() {
+        return switch (this) {
+            case START -> 0f;
+            case CENTER -> 0.5f;
+            case END -> 1f;
+        };
+    }
 }

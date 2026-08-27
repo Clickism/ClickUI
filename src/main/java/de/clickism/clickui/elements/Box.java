@@ -143,6 +143,7 @@ public class Box extends Element<Box> {
      * @return the total content height
      */
     protected int contentHeight() {
+        // TODO: Calculate via min and max XY of children
         if (axis().isHorizontal()) {
             // Horizontal axis
             return this.children().stream()

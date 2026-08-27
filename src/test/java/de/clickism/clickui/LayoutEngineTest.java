@@ -157,11 +157,11 @@ class LayoutEngineTest implements UiBuilder {
     @Test
     void renderWrappedChildren() {
         renderScreen(box()
-            .maxWidth(320)
-            .height(400)
-            .horizontal()
+            .width(600)
+            .maxHeight(300)
             .wrapChildren(true)
             .childGap(10)
+            .crossAlign(Align.CENTER)
             .children(
                 box()
                     .width(100)
@@ -175,6 +175,32 @@ class LayoutEngineTest implements UiBuilder {
                 box()
                     .width(100)
                     .height(100)
+            ));
+    }
+
+    @Test
+    void renderCrossAligned() {
+        renderScreen(box()
+            .width(600)
+            .height(300)
+            .crossAlign(Align.CENTER)
+            .childGap(10)
+            .children(
+                box()
+                    .width(100)
+                    .height(100),
+
+                box()
+                    .width(200)
+                    .height(50),
+
+                box()
+                    .width(200)
+                    .height(50),
+
+                box()
+                    .width(150)
+                    .height(50)
             ));
     }
 
