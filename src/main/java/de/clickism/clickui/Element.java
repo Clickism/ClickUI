@@ -187,7 +187,7 @@ public abstract class Element<S extends Element<S>>
      */
     public List<Element<?>> layoutChildren() {
         return this.children.stream()
-            .filter(child -> child.positioning().isLayout())
+            .filter(child -> child.positioning().affectsLayout())
             .toList();
     }
 
@@ -569,5 +569,18 @@ public abstract class Element<S extends Element<S>>
      */
     public void tick() {
         // Nothing here
+    }
+
+    @Override
+    public String toString() {
+        var root = parent == null
+            ? "<root>"
+            : "";
+        return this.getClass().getSimpleName()
+               + root
+               + "["
+               + "bounds=" + bounds + ", "
+               + "children=" + children.size()
+               + "]";
     }
 }

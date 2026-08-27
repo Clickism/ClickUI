@@ -35,7 +35,7 @@ public record Positioning(
      *
      * @return true if the positioning type is LAYOUT, false otherwise.
      */
-    public boolean isLayout() {
+    public boolean affectsLayout() {
         return type == Type.LAYOUT;
     }
 

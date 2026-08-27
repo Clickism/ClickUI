@@ -76,18 +76,23 @@ public class Button extends Element<Button> {
     public void render(RenderContext context) {
         var graphics = context.graphics();
         var bounds = this.bounds();
-        if (bounds.isEmpty()) {
+        if (bounds.width() < 2 || bounds.height() < 2) {
             return; // Avoid division by zero or rendering issues if bounds are empty
         }
         // Override render to enable blending for semi-transparent textures
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         // Render button texture
-        graphics.blitNineSliced(
-            WIDGETS_LOCATION,
-            bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-            20, 4, 200, 20, 0, textureY()
-        );
+        try {
+            graphics.blitNineSliced(
+                WIDGETS_LOCATION,
+                bounds.x(), bounds.y(), bounds.width(), bounds.height(),
+                20, 4, 200, 20, 0, textureY()
+            );
+        } catch (Exception e) {
+            // Log the error and continue rendering
+            System.err.println("Error rendering button texture: " + e.getMessage());
+        }
         // Revert blending
         RenderSystem.disableBlend();
         // Render label

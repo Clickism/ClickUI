@@ -261,7 +261,7 @@ public class LayoutEngine {
         return parent.children()
             .stream()
             .filter(child -> child.mainSizing().isGrow()
-                             && child.positioning().isLayout())
+                             && child.positioning().affectsLayout())
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -349,7 +349,7 @@ public class LayoutEngine {
         return parent.children()
             .stream()
             .filter(child -> child.effectiveMinSize().mainSize(axis) < child.bounds().mainSize(axis)
-                             && child.positioning().isLayout())
+                             && child.positioning().affectsLayout())
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -437,21 +437,27 @@ public class LayoutEngine {
         // Position all lines one by one
         for (var line : lines) {
             // Align main axis
-            int childMain = currentMain += mainOffsetToAlign(element, line);
+            int childMain = currentMain + mainOffsetToAlign(element, line);
 
             int gap = element.childGap();
 
             for (var child : line.children) {
                 // Align cross axis
-                int childCross = currentCross + crossOffsetToAlign(element, child, line.crossSize);
+                int childCross = currentCross + crossOffsetToAlign(element, child);
 
                 // Position the child
                 if (horizontal) {
                     calculatePositions(child, childMain, childCross);
-                    childMain += child.bounds().width() + gap;
+                    // Only increment the current position if the child affects layout
+                    if (child.positioning().affectsLayout()) {
+                        childMain += child.bounds().width() + gap;
+                    }
                 } else {
                     calculatePositions(child, childCross, childMain);
-                    childMain += child.bounds().height() + gap;
+                    // Only increment the current position if the child affects layout
+                    if (child.positioning().affectsLayout()) {
+                        childMain += child.bounds().height() + gap;
+                    }
                 }
             }
 
@@ -464,19 +470,19 @@ public class LayoutEngine {
      * Calculates the offset needed to align the children of an element
      * inside the given line based on its main alignment.
      *
-     * @param element the parent element
-     * @param line    the line to calculate offset for
+     * @param parent the parent element
+     * @param line   the line to calculate offset for
      * @return the offset
      */
-    private int mainOffsetToAlign(Element<?> element, Line line) {
+    private int mainOffsetToAlign(Element<?> parent, Line line) {
         int lineSize = line.mainSize;
-        int available = element.axis().isHorizontal()
-            ? element.bounds().width() - element.padding().horizontal()
-            : element.bounds().height() - element.padding().vertical();
+        int available = parent.axis().isHorizontal()
+            ? parent.bounds().width() - parent.padding().horizontal()
+            : parent.bounds().height() - parent.padding().vertical();
 
         int remaining = available - lineSize;
 
-        return switch (element.mainAlign()) {
+        return switch (parent.mainAlign()) {
             case START -> 0;
             case CENTER -> remaining / 2;
             case END -> remaining;
@@ -487,19 +493,22 @@ public class LayoutEngine {
      * Calculates the offset needed to align a child element within its parent element
      * based on the parent's cross alignment and the available cross-axis space.
      *
-     * @param element        the parent element
-     * @param child          the child element to align
-     * @param availableCross the available cross-axis space for the parent element
+     * @param parent the parent element
+     * @param child  the child element to align
      * @return the offset needed to align the child element within the parent element
      */
-    private int crossOffsetToAlign(Element<?> element, Element<?> child, int availableCross) {
-        int childSize = element.axis().isHorizontal()
+    private int crossOffsetToAlign(Element<?> parent, Element<?> child) {
+        int childSize = parent.axis().isHorizontal()
             ? child.bounds().height()
             : child.bounds().width();
 
-        int remaining = availableCross - childSize;
+        int available = parent.axis().isHorizontal()
+            ? parent.bounds().height() - parent.padding().vertical()
+            : parent.bounds().width() - parent.padding().horizontal();
 
-        return switch (element.crossAlign()) {
+        int remaining = available - childSize;
+
+        return switch (parent.crossAlign()) {
             case START -> 0;
             case CENTER -> remaining / 2;
             case END -> remaining;
@@ -617,9 +626,14 @@ public class LayoutEngine {
         Line line = new Line();
 
         // Iterate over children and put them into a line
-        var children = parent.layoutChildren();
+        var children = parent.children();
         for (int i = 0; i < children.size(); i++) {
             var child = children.get(i);
+            if (!child.positioning().affectsLayout()) {
+                // Just add so it gets layed out, but don't change size
+                line.children.add(child);
+                continue;
+            }
 
             int mainSize = child.bounds().mainSize(axis);
             int crossSize = child.bounds().crossSize(axis);
