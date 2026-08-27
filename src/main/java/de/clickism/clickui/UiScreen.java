@@ -125,10 +125,9 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     /**
-     * Navigates back to the parent screen, if any.
-     * If there is no parent screen, it closes the current screen.
+     * Closes this screen and navigates back to the parent screen, if any.
      */
-    public void back() {
+    public void close() {
         if (parent == null) {
             Util.openScreen(null);
             return;
@@ -222,6 +221,6 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
 
     @Override
     public void onClose() {
-        this.back();
+        this.close();
     }
 }

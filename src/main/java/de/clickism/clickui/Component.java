@@ -40,12 +40,11 @@ public abstract class Component<S extends Component<S>> extends Element<S>
     @ApiStatus.Internal
     public final void rebuild() {
         super.invalidate();
-        initialize();
     }
 
     @Override
     public void invalidate() {
-        throw new UnsupportedOperationException("Components cannot be invalidated directly. Use rebuild() instead.");
+        this.rebuild();
     }
 
     @Override

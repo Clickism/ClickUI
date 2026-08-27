@@ -6,6 +6,7 @@ import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.StyleRenderer;
+import de.clickism.clickui.render.TooltipRenderer;
 import de.clickism.clickui.state.ElementState;
 import de.clickism.clickui.state.ElementStateHolder;
 import de.clickism.clickui.style.ResolvedStyle;
@@ -60,8 +61,7 @@ public abstract class Element<S extends Element<S>>
      */
     private final EventManager events = new EventManager();
 
-    private @Nullable Component tooltip = null;
-    private int tooltipDelay = 500;
+    private @Nullable Element<?> tooltip = null;
 
     /**
      * Calculated bounds of the element.
@@ -415,8 +415,9 @@ public abstract class Element<S extends Element<S>>
      * @return this element
      */
     public S tooltip(@Nullable Component tooltip) {
-        this.tooltip = tooltip;
-        return self();
+        return tooltip(tooltip != null
+            ? text(tooltip)
+            : null);
     }
 
     /**
@@ -426,20 +427,22 @@ public abstract class Element<S extends Element<S>>
      * @return this element
      */
     public S tooltip(@Nullable String tooltip) {
-        this.tooltip = tooltip != null
+        return tooltip(tooltip != null
             ? Component.literal(tooltip)
-            : null;
-        return self();
+            : null);
     }
 
     /**
-     * Sets the delay in milliseconds before the tooltip is shown when the user hovers over this element.
+     * Sets the tooltip of this element, which is an element that is displayed when the user hovers over this element.
      *
-     * @param delay the delay in milliseconds
+     * @param tooltip the tooltip to set, or null to clear the tooltip
      * @return this element
      */
-    public S tooltipDelay(int delay) {
-        this.tooltipDelay = delay;
+    public S tooltip(@Nullable Element<?> tooltip) {
+        this.tooltip = tooltip;
+        if (tooltip != null) {
+            this.tooltip.invalidate();
+        }
         return self();
     }
 
@@ -490,7 +493,7 @@ public abstract class Element<S extends Element<S>>
      * @param context the render context to render to
      */
     public void renderTree(RenderContext context) {
-        this.renderWithStyle(context);
+        this.renderElement(context);
         // Render children
         for (var child : children) {
             child.renderTree(context);
@@ -498,15 +501,20 @@ public abstract class Element<S extends Element<S>>
     }
 
     /**
-     * Renders this element with its style applied, but does not render its children.
+     * Renders this element with its style applied, renders debug information if debug mode is enabled,
+     * and renders the tooltip if it is set and the element is hovered.
      *
      * @param context the render context to render with
      */
-    public void renderWithStyle(RenderContext context) {
+    public void renderElement(RenderContext context) {
         new StyleRenderer(this, context).renderElement();
         // Render debug information if debug mode is enabled
         if (context.debug()) {
             renderDebugInfo(context);
+        }
+        // Render tooltip
+        if (tooltip != null && state().hovered()) {
+            new TooltipRenderer(tooltip, context).render();
         }
     }
 

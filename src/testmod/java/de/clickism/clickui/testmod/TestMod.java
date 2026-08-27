@@ -10,8 +10,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-
-import java.awt.*;
+import net.minecraft.resources.ResourceLocation;
 
 public class TestMod implements ClientModInitializer, UiBuilder {
     @Override
@@ -89,6 +88,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         text("There are some important info here!"),
                         h3("For example:"),
                         box()
+                            .scrollable(true)
                             .width(300)
                             .padding(16)
                             .height(100)
@@ -122,19 +122,31 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .padding(4),
                         new Counter(),
                         textField("Type something...")
+                            .tooltip(box()
+                                .size(20)
+                                .style(b -> b
+                                    .background(UiColor.YELLOW)
+                                    .border(UiColor.RED)))
                             .maxLength(32)
                             .suggest("hello", "bye", "heat"),
                         numberField("Type a number...")
                             .padding(0)
+                            .tooltip(image(
+                                ResourceLocation.tryBuild("minecraft", "textures/block/stone.png"),
+                                32,
+                                32
+                            ))
                             .ref(numberRef),
                         button("Print Number")
+                            .tooltip(new Counter())
                             .onClick(event -> {
                                 var number = numberRef.get().doubleValue();
                                 event.player().sendSystemMessage(Component.literal("Number: " + number));
                             }),
                         button("Go back")
+                            .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {
-                                event.ui().back();
+                                event.ui().close();
                             })
                     )
             )
@@ -142,6 +154,6 @@ public class TestMod implements ClientModInitializer, UiBuilder {
 
 //        newScreen.debug(true);
 
-        Util.openScreen(new OverflowScreen());
+        Util.openScreen(newScreen);
     }
 }

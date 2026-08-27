@@ -237,7 +237,7 @@ public class Box extends Element<Box> {
             return;
         }
         // Render self
-        this.renderWithStyle(context);
+        this.renderElement(context);
         // Render children with scroll offset
         var graphics = context.graphics();
         // Enable scissor to clip children

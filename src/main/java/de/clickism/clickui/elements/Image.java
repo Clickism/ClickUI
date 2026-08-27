@@ -15,11 +15,9 @@ import java.util.Map;
  * A UI element that displays an image from a specified texture resource.
  */
 public class Image extends Element<Image> {
-    private static final Map<ResourceLocation, Size> SIZE_CACHE = new HashMap<>();
-
     private ResourceLocation texture;
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
     /**
      * Creates a new Image element with the specified texture.
@@ -50,6 +48,12 @@ public class Image extends Element<Image> {
             return Size.ZERO;
         }
         return new Size(width, height);
+    }
+
+    @Override
+    public Size defaultMinSize() {
+        // Don't shrink by default
+        return intrinsicSize();
     }
 
     @Override
