@@ -108,9 +108,11 @@ public class Text extends Element<Text> implements Wrappable {
 
     @Override
     public Size intrinsicSize() {
-        // TODO: Font size, multiline, etc.
         var fontScale = this.resolvedStyle().fontScale();
-        var width = Util.font().width(text) * fontScale;
+        var width = lines.stream()
+            .mapToDouble(line -> Util.font().width(line))
+            .max()
+            .orElse(0) * fontScale;
         var height = Util.font().lineHeight * fontScale * lines.size();
         // Ceil the size to ensure it fits within the bounds
         return new Size((int) Math.ceil(width), (int) Math.ceil(height));
