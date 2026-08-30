@@ -1,6 +1,6 @@
 package de.clickism.clickui.elements.input;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  */
 // TODO: Invalid color
 public abstract class AbstractField<S extends AbstractField<S>>
-    extends Element<S> {
+    extends UiElement<S> {
 
     private String value = "";
     private String placeholder = "";

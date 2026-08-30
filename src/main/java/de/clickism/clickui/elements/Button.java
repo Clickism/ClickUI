@@ -1,7 +1,7 @@
 package de.clickism.clickui.elements;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
@@ -16,7 +16,7 @@ import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATIO
 /**
  * A simple UI element that can be clicked and displays a label.
  */
-public class Button extends Element<Button> {
+public class Button extends UiElement<Button> {
     private static final int DEFAULT_HEIGHT = 20;
     private static final Padding DEFAULT_PADDING = Padding.create(4, 8);
 

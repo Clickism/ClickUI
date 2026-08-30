@@ -1,7 +1,7 @@
 package de.clickism.clickui.elements;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A simple UI element used for displaying text.
  */
-public class Text extends Element<Text> implements Wrappable {
+public class Text extends UiElement<Text> implements Wrappable {
     /**
      * The text to displaY.
      */

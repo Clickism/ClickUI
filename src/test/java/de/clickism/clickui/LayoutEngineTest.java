@@ -263,7 +263,7 @@ class LayoutEngineTest implements UiBuilder {
         );
     }
 
-    private void renderScreen(Element<?> root) {
+    private void renderScreen(UiElement<?> root) {
         LayoutEngine engine = new LayoutEngine();
 
         SwingUtilities.invokeLater(() -> {
@@ -311,7 +311,7 @@ class LayoutEngineTest implements UiBuilder {
 
     private static void renderElement(
         Graphics g,
-        Element<?> element,
+        UiElement<?> element,
         int depth
     ) {
         Rect bounds = element.bounds();

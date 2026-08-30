@@ -8,17 +8,17 @@ import de.clickism.clickui.util.Util;
 /**
  * Represents a tree of UI elements, with a root element and methods to prepare the tree for rendering.
  */
-public class ElementTree {
+public class UiElementTree {
     private static final LayoutEngine LAYOUT_ENGINE = new LayoutEngine();
 
-    private final Element<?> root;
+    private final UiElement<?> root;
 
     /**
      * Creates a new ElementTree with the specified root element.
      *
      * @param root the root element of the tree
      */
-    public ElementTree(Element<?> root) {
+    public UiElementTree(UiElement<?> root) {
         this.root = root;
     }
 
@@ -27,7 +27,7 @@ public class ElementTree {
      *
      * @return the root element
      */
-    public Element<?> root() {
+    public UiElement<?> root() {
         return root;
     }
 
@@ -39,7 +39,7 @@ public class ElementTree {
     public void prepareRender(Size screenSize) {
         // First pass: rebuild components
         Util.preOrder(root, element -> {
-            if (!(element instanceof Component<?> component)) return;
+            if (!(element instanceof UiComponent<?> component)) return;
             // Rebuild component if needed
             component.performRebuildIfNeeded();
         });

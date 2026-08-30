@@ -1,6 +1,6 @@
 package de.clickism.clickui.layout;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.util.Util;
 import net.minecraft.util.Mth;
@@ -22,7 +22,7 @@ public class LayoutEngine {
      *
      * @param root the root element to layout
      */
-    public void layout(Element<?> root) {
+    public void layout(UiElement<?> root) {
         // Set the root element's position to (0, 0)
         root.bounds(root.bounds().withPosition(0, 0));
         // Measure intrinsic widths
@@ -44,7 +44,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void measureIntrinsicWidths(Element<?> element) {
+    private void measureIntrinsicWidths(UiElement<?> element) {
         measureIntrinsicSize(element, true, false);
     }
 
@@ -53,7 +53,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void measureIntrinsicHeights(Element<?> element) {
+    private void measureIntrinsicHeights(UiElement<?> element) {
         measureIntrinsicSize(element, false, true);
     }
 
@@ -63,7 +63,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void measureIntrinsicSize(Element<?> element, boolean measureWidth, boolean measureHeight) {
+    private void measureIntrinsicSize(UiElement<?> element, boolean measureWidth, boolean measureHeight) {
         // First measure the sizes of the children
         for (var child : element.children()) {
             measureIntrinsicSize(child, measureWidth, measureHeight);
@@ -75,7 +75,7 @@ public class LayoutEngine {
         int width = intrinsic.width();
         int height = intrinsic.height();
 
-        for (Element<?> child : element.layoutChildren()) {
+        for (UiElement<?> child : element.layoutChildren()) {
             // Use calculated size of children
             var bounds = child.bounds();
             int childWidth = bounds.width();
@@ -142,7 +142,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void growOrShrinkWidths(Element<?> element) {
+    private void growOrShrinkWidths(UiElement<?> element) {
         growOrShrinkSize(element, true, false);
     }
 
@@ -151,7 +151,7 @@ public class LayoutEngine {
      *
      * @param element the element to measure
      */
-    private void growOrShrinkHeights(Element<?> element) {
+    private void growOrShrinkHeights(UiElement<?> element) {
         growOrShrinkSize(element, false, true);
     }
 
@@ -160,7 +160,7 @@ public class LayoutEngine {
      *
      * @param element the element to grow
      */
-    private void growOrShrinkSize(Element<?> element, boolean measureWidth, boolean measureHeight) {
+    private void growOrShrinkSize(UiElement<?> element, boolean measureWidth, boolean measureHeight) {
         Util.preOrder(element, parent -> {
             if (parent.axis().isHorizontal()) {
                 if (measureWidth) {
@@ -186,7 +186,7 @@ public class LayoutEngine {
      *
      * @param parent the parent element whose children will receive the remaining main space
      */
-    private void growOrShrinkMainChildren(Element<?> parent) {
+    private void growOrShrinkMainChildren(UiElement<?> parent) {
         var axis = parent.axis();
 
         // Calculate remaining axis space
@@ -208,7 +208,7 @@ public class LayoutEngine {
      * @param parent         the parent element whose children will be grown
      * @param remainingSpace the remaining main space to distribute to the children
      */
-    private void growMainChildren(Element<?> parent, int remainingSpace) {
+    private void growMainChildren(UiElement<?> parent, int remainingSpace) {
         var axis = parent.axis();
         var horizontal = axis.isHorizontal();
         // Distribute remaining axis space to children
@@ -233,7 +233,7 @@ public class LayoutEngine {
             // Don't add more than remaining space
             axisToAdd = Math.min(remainingSpace, axisToAdd);
 
-            var atMaxSize = new ArrayList<Element<?>>();
+            var atMaxSize = new ArrayList<UiElement<?>>();
 
             for (var child : growChildren) {
                 int main = child.bounds().mainSize(axis);
@@ -275,10 +275,10 @@ public class LayoutEngine {
      *
      * @param parent the parent element whose children will be checked
      */
-    private List<Element<?>> getGrowableChildren(Element<?> parent) {
-        Function<Element<?>, Sizing> mapper = parent.axis().isHorizontal()
-            ? Element::width
-            : Element::height;
+    private List<UiElement<?>> getGrowableChildren(UiElement<?> parent) {
+        Function<UiElement<?>, Sizing> mapper = parent.axis().isHorizontal()
+            ? UiElement::width
+            : UiElement::height;
         return parent.children()
             .stream()
             .filter(child -> mapper.apply(child).isGrow()
@@ -292,7 +292,7 @@ public class LayoutEngine {
      * @param parent         the parent element whose children will be shrunk
      * @param remainingSpace the remaining main space to shrink
      */
-    private void shrinkMainChildren(Element<?> parent, int remainingSpace) {
+    private void shrinkMainChildren(UiElement<?> parent, int remainingSpace) {
         var axis = parent.axis();
         if (!parent.shrinkChildrenIfOverflowing(axis)) {
             // Don't shrink children if the parent doesn't allow it
@@ -325,7 +325,7 @@ public class LayoutEngine {
             // Don't remove more than remaining space
             axisToRemove = Math.min(-remainingSpace, axisToRemove);
 
-            var atMinSize = new ArrayList<Element<?>>();
+            var atMinSize = new ArrayList<UiElement<?>>();
             for (var child : shrinkChildren) {
                 int oldMain = child.bounds().mainSize(axis);
                 if (oldMain != largest) continue;
@@ -365,7 +365,7 @@ public class LayoutEngine {
      *
      * @param parent the parent element whose children will be checked
      */
-    private List<Element<?>> getShrinkableChildren(Element<?> parent) {
+    private List<UiElement<?>> getShrinkableChildren(UiElement<?> parent) {
         var axis = parent.axis();
         return parent.children()
             .stream()
@@ -380,7 +380,7 @@ public class LayoutEngine {
      *
      * @param parent the parent element whose children will receive the remaining cross space
      */
-    private void growOrShrinkCrossChildren(Element<?> parent) {
+    private void growOrShrinkCrossChildren(UiElement<?> parent) {
         var axis = parent.axis();
 
         // Calculate remaining cross space
@@ -424,7 +424,7 @@ public class LayoutEngine {
      * @param x       the x position to start laying out the element
      * @param y       the y position to start laying out the element
      */
-    private void calculatePositions(Element<?> element, int x, int y) {
+    private void calculatePositions(UiElement<?> element, int x, int y) {
         if (element.positioning().type() == Positioning.Type.ABSOLUTE) {
             // Absolute positioning, use the specified position
             x = element.positioning().x();
@@ -502,7 +502,7 @@ public class LayoutEngine {
      * @param line   the line to calculate offset for
      * @return the offset
      */
-    private int mainOffsetToAlign(Element<?> parent, Line line) {
+    private int mainOffsetToAlign(UiElement<?> parent, Line line) {
         int lineSize = line.mainSize;
         int available = parent.axis().isHorizontal()
             ? parent.bounds().width() - parent.padding().horizontal()
@@ -522,7 +522,7 @@ public class LayoutEngine {
      * @param totalLineCrossSize the total cross size of all lines in the parent element
      * @return the offset needed to align the child element within the parent element
      */
-    private int crossOffsetToAlign(Element<?> parent, Element<?> child, int totalLineCrossSize, int lineCrossSize) {
+    private int crossOffsetToAlign(UiElement<?> parent, UiElement<?> child, int totalLineCrossSize, int lineCrossSize) {
         int childSize = parent.axis().isHorizontal()
             ? child.bounds().height()
             : child.bounds().width();
@@ -563,7 +563,7 @@ public class LayoutEngine {
          * @return list extremes
          * @throws IllegalArgumentException if the list of elements is empty
          */
-        static ListExtremes ofElements(List<Element<?>> elements, Axis axis) {
+        static ListExtremes ofElements(List<UiElement<?>> elements, Axis axis) {
             var sizes = elements.stream()
                 .mapToInt(element -> element.bounds().mainSize(axis))
                 .boxed()
@@ -617,7 +617,7 @@ public class LayoutEngine {
      * @param parent the parent element
      * @return the total main size of the children
      */
-    private static int totalChildrenMainSize(Element<?> parent) {
+    private static int totalChildrenMainSize(UiElement<?> parent) {
         var axis = parent.axis();
         return parent.layoutChildren().stream()
             .mapToInt(child -> child.bounds().mainSize(axis))
@@ -628,7 +628,7 @@ public class LayoutEngine {
      * A class representing a line of elements in a layout, used for wrapping children.
      */
     private static class Line {
-        private final List<Element<?>> children = new ArrayList<>();
+        private final List<UiElement<?>> children = new ArrayList<>();
         private int mainSize = 0;
         private int crossSize = 0;
     }
@@ -642,7 +642,7 @@ public class LayoutEngine {
      * @param parent the parent element
      * @return the list of lines
      */
-    private static List<Line> wrapChildrenIfNeeded(Element<?> parent) {
+    private static List<Line> wrapChildrenIfNeeded(UiElement<?> parent) {
         var axis = parent.axis();
         // Maximum main size for a line
         int maxMainSize = parent.bounds().mainSize(axis) - parent.padding().mainPadding(axis);
@@ -692,7 +692,7 @@ public class LayoutEngine {
         return lines;
     }
 
-    private int totalLineCross(Element<?> element, List<Line> lines) {
+    private int totalLineCross(UiElement<?> element, List<Line> lines) {
         int lineGaps = Math.max(0, lines.size() - 1) * element.childGap();
         int totalLineCrossSize = lines.stream()
             .mapToInt(line -> line.crossSize)
@@ -701,7 +701,7 @@ public class LayoutEngine {
         return totalLineCrossSize;
     }
 
-    private int totalLineMain(Element<?> element, List<Line> lines) {
+    private int totalLineMain(UiElement<?> element, List<Line> lines) {
         return lines.stream()
             .mapToInt(line -> line.mainSize)
             .max()
@@ -716,7 +716,7 @@ public class LayoutEngine {
      *
      * @param element the element to wrap
      */
-    private void wrapElements(Element<?> element) {
+    private void wrapElements(UiElement<?> element) {
         if (element instanceof Wrappable wrappable) {
             int maxWidth = element.bounds().width()
                            - element.padding().horizontal();

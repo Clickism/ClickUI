@@ -1,6 +1,6 @@
 package de.clickism.clickui.util;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,7 +24,7 @@ public class Util {
      * @param element  the root element to start the traversal from
      * @param consumer the consumer to apply to each element
      */
-    public static void postOrder(Element<?> element, Consumer<Element<?>> consumer) {
+    public static void postOrder(UiElement<?> element, Consumer<UiElement<?>> consumer) {
         for (var child : element.children()) {
             postOrder(child, consumer);
         }
@@ -37,7 +37,7 @@ public class Util {
      * @param element  the root element to start the traversal from
      * @param consumer the consumer to apply to each element
      */
-    public static void preOrder(Element<?> element, Consumer<Element<?>> consumer) {
+    public static void preOrder(UiElement<?> element, Consumer<UiElement<?>> consumer) {
         consumer.accept(element);
         for (var child : element.children()) {
             preOrder(child, consumer);

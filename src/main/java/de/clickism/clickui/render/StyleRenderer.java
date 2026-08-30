@@ -1,14 +1,14 @@
 package de.clickism.clickui.render;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.style.BorderPosition;
 import de.clickism.clickui.style.StyleContext;
 
 public class StyleRenderer {
-    private final Element<?> element;
+    private final UiElement<?> element;
     private final RenderContext context;
 
-    public StyleRenderer(Element<?> element, RenderContext context) {
+    public StyleRenderer(UiElement<?> element, RenderContext context) {
         this.element = element;
         this.context = context;
     }

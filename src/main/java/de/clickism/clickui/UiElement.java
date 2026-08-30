@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * An element in the UI hierarchy.
  */
-public abstract class Element<S extends Element<S>>
+public abstract class UiElement<S extends UiElement<S>>
     implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S>, UiBuilder {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
@@ -32,11 +32,11 @@ public abstract class Element<S extends Element<S>>
     /**
      * The parent element of this element, or null if this element is the root element.
      */
-    private @Nullable Element<?> parent;
+    private @Nullable UiElement<?> parent;
     /**
      * The children of this element.
      */
-    private final List<Element<?>> children = new ArrayList<>();
+    private final List<UiElement<?>> children = new ArrayList<>();
 
     /**
      * Whether this element is the root of the tree and needs to be layed out again.
@@ -60,7 +60,7 @@ public abstract class Element<S extends Element<S>>
      */
     private final EventManager events = new EventManager();
 
-    private @Nullable Element<?> tooltip = null;
+    private @Nullable UiElement<?> tooltip = null;
 
     /**
      * Calculated bounds of the element.
@@ -165,7 +165,7 @@ public abstract class Element<S extends Element<S>>
      *
      * @return the parent of this element, or null if this element is the root element
      */
-    public @Nullable Element<?> parent() {
+    public @Nullable UiElement<?> parent() {
         return this.parent;
     }
 
@@ -174,7 +174,7 @@ public abstract class Element<S extends Element<S>>
      *
      * @return an unmodifiable list of the children of this element
      */
-    public List<Element<?>> children() {
+    public List<UiElement<?>> children() {
         return Collections.unmodifiableList(this.children);
     }
 
@@ -184,7 +184,7 @@ public abstract class Element<S extends Element<S>>
      *
      * @return a list of the children of this element that are layoutable
      */
-    public List<Element<?>> layoutChildren() {
+    public List<UiElement<?>> layoutChildren() {
         return this.children.stream()
             .filter(child -> child.positioning().affectsLayout())
             .toList();
@@ -196,7 +196,7 @@ public abstract class Element<S extends Element<S>>
      * @param children the children to add
      * @return this element
      */
-    public S children(@Nullable Element<?>... children) {
+    public S children(@Nullable UiElement<?>... children) {
         for (var child : children) {
             this.add(child);
         }
@@ -209,7 +209,7 @@ public abstract class Element<S extends Element<S>>
      * @param children the children to add
      * @return this element
      */
-    public S children(Collection<Element<?>> children) {
+    public S children(Collection<UiElement<?>> children) {
         if (children == null) return self();
         for (var child : children) {
             this.add(child);
@@ -223,7 +223,7 @@ public abstract class Element<S extends Element<S>>
      * @param child the child to add
      * @return this element
      */
-    public S add(@Nullable Element<?> child) {
+    public S add(@Nullable UiElement<?> child) {
         // Allow null children to be passed in, but ignore them
         if (child == null) return self();
         this.children.add(child);
@@ -240,7 +240,7 @@ public abstract class Element<S extends Element<S>>
      * @param child the child to remove
      * @return this element
      */
-    public S remove(@Nullable Element<?> child) {
+    public S remove(@Nullable UiElement<?> child) {
         if (child == null) return self();
         this.children.remove(child);
         if (child.parent == this) {
@@ -367,8 +367,8 @@ public abstract class Element<S extends Element<S>>
      *
      * @return the root element of this element tree
      */
-    public Element<?> root() {
-        Element<?> root = this;
+    public UiElement<?> root() {
+        UiElement<?> root = this;
         while (root.parent != null) {
             root = root.parent;
         }
@@ -407,7 +407,7 @@ public abstract class Element<S extends Element<S>>
         return point;
     }
 
-    public Element<?> tooltip() {
+    public UiElement<?> tooltip() {
         return tooltip;
     }
 
@@ -441,7 +441,7 @@ public abstract class Element<S extends Element<S>>
      * @param tooltip the tooltip to set, or null to clear the tooltip
      * @return this element
      */
-    public S tooltip(@Nullable Element<?> tooltip) {
+    public S tooltip(@Nullable UiElement<?> tooltip) {
         this.tooltip = tooltip;
         if (tooltip != null) {
             this.tooltip.invalidateLayout();

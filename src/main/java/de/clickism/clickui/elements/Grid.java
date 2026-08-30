@@ -1,6 +1,6 @@
 package de.clickism.clickui.elements;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Axis;
 import de.clickism.clickui.render.RenderContext;
 import org.jetbrains.annotations.Nullable;
@@ -13,10 +13,10 @@ import java.util.List;
  * <p>
  * The axis can be changed to switch between horizontal and vertical layouts.
  */
-public class Grid extends Element<Grid> {
+public class Grid extends UiElement<Grid> {
     private int columns;
 
-    private final List<Element<?>> gridChildren = new ArrayList<>();
+    private final List<UiElement<?>> gridChildren = new ArrayList<>();
 
     /**
      * Creates a new grid layout with the specified number of columns.
@@ -36,7 +36,7 @@ public class Grid extends Element<Grid> {
     private void rebuildGrid() {
         clear();
 
-        var boxes = new ArrayList<Element<?>>();
+        var boxes = new ArrayList<UiElement<?>>();
 
         var axis = this.axis();
         for (int i = 0; i < this.columns; i++) {
@@ -76,7 +76,7 @@ public class Grid extends Element<Grid> {
     }
 
     @Override
-    public Grid add(@Nullable Element<?> child) {
+    public Grid add(@Nullable UiElement<?> child) {
         if (child == null) return this;
         gridChildren.add(child);
         rebuildGrid();
@@ -84,7 +84,7 @@ public class Grid extends Element<Grid> {
     }
 
     @Override
-    public Grid remove(@Nullable Element<?> child) {
+    public Grid remove(@Nullable UiElement<?> child) {
         if (child == null) return this;
         gridChildren.remove(child);
         rebuildGrid();

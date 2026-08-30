@@ -1,6 +1,6 @@
 package de.clickism.clickui.elements;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Axis;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
  * and provides scrolling functionality in case of
  * vertical overflow.
  */
-public class Box extends Element<Box> {
+public class Box extends UiElement<Box> {
     /**
      * The default scroll rate for all boxes.
      */

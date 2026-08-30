@@ -1,6 +1,6 @@
 package de.clickism.clickui.render;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.util.Util;
@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 public class TooltipRenderer {
     private static final int TOOLTIP_Z_INDEX = 1000; // Render tooltips above other elements
 
-    private final Element<?> tooltip;
+    private final UiElement<?> tooltip;
     private final RenderContext context;
 
     /**
@@ -22,7 +22,7 @@ public class TooltipRenderer {
      * @param tooltip The tooltip element to render.
      * @param context The render context.
      */
-    public TooltipRenderer(Element<?> tooltip, RenderContext context) {
+    public TooltipRenderer(UiElement<?> tooltip, RenderContext context) {
         this.tooltip = tooltip;
         this.context = context;
     }
@@ -33,7 +33,7 @@ public class TooltipRenderer {
     private void prepare() {
         if (!tooltip.dirtyLayout()) return;
         // Initialize element
-        Util.preOrder(this.tooltip, Element::initialize);
+        Util.preOrder(this.tooltip, UiElement::initialize);
         // Layout element
         new LayoutEngine().layout(tooltip);
         // Clear dirty

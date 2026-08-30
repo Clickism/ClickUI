@@ -1,7 +1,6 @@
 package de.clickism.clickui.event;
 
-import de.clickism.clickui.Element;
-import de.clickism.clickui.elements.Button;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Point;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
 public class HitTester {
 
     @Nullable
-    public HitTestResult hitTest(Element<?> element, int mouseX, int mouseY) {
+    public HitTestResult hitTest(UiElement<?> element, int mouseX, int mouseY) {
         return hitTest(element, new Point(mouseX, mouseY));
     }
 
     @Nullable
-    private HitTestResult hitTest(Element<?> element, Point mouse) {
+    private HitTestResult hitTest(UiElement<?> element, Point mouse) {
         var bounds = element.bounds();
 
         // Search children in reverse order

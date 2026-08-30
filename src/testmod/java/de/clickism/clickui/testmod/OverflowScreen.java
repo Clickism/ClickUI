@@ -1,6 +1,6 @@
 package de.clickism.clickui.testmod;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.layout.Align;
@@ -9,7 +9,7 @@ import de.clickism.clickui.style.Style;
 public class OverflowScreen extends UiScreen {
 
     @Override
-    public Element<?> build() {
+    public UiElement<?> build() {
         return box()
             .alignCenter()
             .grow()

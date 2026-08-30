@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  */
 // TODO: Keep focus after rebuild?
 // TODO: Rename to UiComponent to not confuse with text components?
-public abstract class Component<S extends Component<S>> extends Element<S>
+public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
     implements UiBuilder {
 
     private int memoIndex = 0;

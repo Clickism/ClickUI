@@ -1,14 +1,14 @@
 package de.clickism.clickui.reactivity;
 
-import de.clickism.clickui.Component;
+import de.clickism.clickui.UiComponent;
 
 import java.util.function.Function;
 
 public class State<T> {
     private T value;
-    private final Component<?> parent;
+    private final UiComponent<?> parent;
 
-    public State(T value, Component<?> parent) {
+    public State(T value, UiComponent<?> parent) {
         this.value = value;
         this.parent = parent;
     }

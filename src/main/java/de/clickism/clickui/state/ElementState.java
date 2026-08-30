@@ -1,15 +1,15 @@
 package de.clickism.clickui.state;
 
-import de.clickism.clickui.Element;
+import de.clickism.clickui.UiElement;
 
 public class ElementState implements ElementStateHolder<ElementState> {
-    final Element<?> element;
+    final UiElement<?> element;
 
     boolean hovered = false;
     boolean focused = false;
     boolean disabled = false;
 
-    public ElementState(Element<?> element) {
+    public ElementState(UiElement<?> element) {
         this.element = element;
     }
 

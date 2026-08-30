@@ -17,13 +17,13 @@ public abstract class UiEventScreen extends Screen {
     /**
      * Keep track of the hovered element
      */
-    private @Nullable Element<?> hoveredElement = null;
+    private @Nullable UiElement<?> hoveredElement = null;
     /**
      * Keep track of the focused element
      */
-    private @Nullable Element<?> focusedElement = null;
+    private @Nullable UiElement<?> focusedElement = null;
 
-    private @Nullable Element<?> draggedElement = null;
+    private @Nullable UiElement<?> draggedElement = null;
     private double dragStartX = 0;
     private double dragStartY = 0;
 
@@ -38,14 +38,14 @@ public abstract class UiEventScreen extends Screen {
      *
      * @return the root element
      */
-    protected abstract Element<?> eventRoot();
+    protected abstract UiElement<?> eventRoot();
 
     /**
      * Updates the hovered element and its state.
      *
      * @param element the element that is currently hovered, or null if no element is hovered
      */
-    private void hoveredElement(@Nullable Element<?> element) {
+    private void hoveredElement(@Nullable UiElement<?> element) {
         // Update hovered state
         if (hoveredElement != null && hoveredElement != element) {
             hoveredElement.state().hovered(false);
@@ -61,7 +61,7 @@ public abstract class UiEventScreen extends Screen {
      *
      * @return the currently hovered element, or null if no element is hovered
      */
-    protected @Nullable Element<?> hoveredElement() {
+    protected @Nullable UiElement<?> hoveredElement() {
         return hoveredElement;
     }
 
@@ -101,7 +101,7 @@ public abstract class UiEventScreen extends Screen {
      * @param y       the y-coordinate of the mouse
      * @param element the element that is currently focused, or null if no element is focused
      */
-    protected void updateFocusState(@Nullable Element<?> element, int x, int y) {
+    protected void updateFocusState(@Nullable UiElement<?> element, int x, int y) {
         if (focusedElement != null && focusedElement != element) {
             focusedElement.state().focused(false);
             // Send event

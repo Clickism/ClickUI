@@ -19,7 +19,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     /**
      * The root element of the UI tree.
      */
-    private Element<?> root;
+    private UiElement<?> root;
 
     /**
      * The parent screen of this UiScreen, if any.
@@ -60,10 +60,10 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      * @param content the root element of the UI tree
      * @return a new UiScreen instance with the specified content
      */
-    public static UiScreen create(Element<?> content) {
+    public static UiScreen create(UiElement<?> content) {
         return new UiScreen() {
             @Override
-            public Element<?> build() {
+            public UiElement<?> build() {
                 return content;
             }
         };
@@ -157,7 +157,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     }
 
     @Override
-    protected Element<?> eventRoot() {
+    protected UiElement<?> eventRoot() {
         return root; // Return the root element for event handling
     }
 
@@ -178,11 +178,11 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
      *
      * @return the root element of the UI tree
      */
-    public abstract Element<?> build();
+    public abstract UiElement<?> build();
 
     /**
      * Invalidates the layout of this screen.
-     * See {@link Element#invalidateLayout()} for more info.
+     * See {@link UiElement#invalidateLayout()} for more info.
      */
     public void invalidate() {
         initializeIfNeeded();
@@ -210,7 +210,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     protected void init() {
         initializeIfNeeded();
         // Initialize all elements anyways
-        Util.preOrder(this.root, Element::initialize);
+        Util.preOrder(this.root, UiElement::initialize);
         // Layout the root element
         var screen = box()
             .width(this.width)
@@ -252,7 +252,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     @Override
     public void tick() {
         // Tick all elements in the tree
-        Util.preOrder(root, Element::tick);
+        Util.preOrder(root, UiElement::tick);
     }
 
     @Override
