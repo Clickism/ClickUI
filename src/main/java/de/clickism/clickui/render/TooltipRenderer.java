@@ -1,9 +1,8 @@
 package de.clickism.clickui.render;
 
 import de.clickism.clickui.UiElement;
-import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.layout.LayoutEngine;
-import de.clickism.clickui.util.Util;
+import de.clickism.clickui.UiElementTree;
+import de.clickism.clickui.UiScreenHandler;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 
 /**
@@ -12,7 +11,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 public class TooltipRenderer {
     private static final int TOOLTIP_Z_INDEX = 1000; // Render tooltips above other elements
 
-    private final UiElement<?> tooltip;
+    private final UiElementTree tooltip;
     private final RenderContext context;
 
     /**
@@ -23,32 +22,20 @@ public class TooltipRenderer {
      * @param context The render context.
      */
     public TooltipRenderer(UiElement<?> tooltip, RenderContext context) {
-        this.tooltip = tooltip;
+        this.tooltip = new UiElementTree(tooltip);
         this.context = context;
-    }
-
-    /**
-     * Prepares the tooltip for rendering by initializing and laying it out if needed.
-     */
-    private void prepare() {
-        if (!tooltip.dirtyLayout()) return;
-        // Initialize element
-        Util.preOrder(this.tooltip, UiElement::initialize);
-        // Layout element
-        new LayoutEngine().layout(tooltip);
-        // Clear dirty
-        tooltip.clearDirtyLayout();
     }
 
     /**
      * Renders the tooltip at the current mouse position.
      */
     public void render() {
-        var screen = UiScreen.current();
+        var screen = UiScreenHandler.current();
         if (screen == null) return;
 
-        // Prepare render
-        prepare();
+        // Prepare the tooltip for rendering
+        tooltip.prepareRender(screen.width, screen.height);
+
         // Render at the mouse position
         var offset = TooltipRenderUtil.MOUSE_OFFSET;
         // Calculate the position of the tooltip
@@ -61,7 +48,7 @@ public class TooltipRenderer {
         graphics.pose().translate(tooltipX, tooltipY, TOOLTIP_Z_INDEX);
 
         // Render background with padding
-        var bounds = tooltip.bounds();
+        var bounds = tooltip.root().bounds();
         TooltipRenderUtil.renderTooltipBackground(
             context.graphics(),
             bounds.x(),
@@ -71,7 +58,7 @@ public class TooltipRenderer {
             -1 // Render behind actual tooltip
         );
         // Render tooltip content
-        tooltip.renderTree(context);
+        tooltip.render(context);
         graphics.pose().popPose();
     }
 }

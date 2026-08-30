@@ -5,6 +5,7 @@ import de.clickism.clickui.event.EventManager;
 import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.render.ScaledTextRenderer;
 import de.clickism.clickui.render.StyleRenderer;
 import de.clickism.clickui.state.ElementState;
 import de.clickism.clickui.state.ElementStateHolder;
@@ -71,6 +72,14 @@ public abstract class UiElement<S extends UiElement<S>>
      * Whether this element can be hit by a mouse click event.
      */
     private boolean hitTestable = true;
+
+    /**
+     * Indicates whether debug mode is enabled for this element.
+     * When enabled, additional debug information may be rendered.
+     * <p>
+     * If not specified, the debug mode will be inherited from the parent element.
+     */
+    private @Nullable Boolean debug = null;
 
     /**
      * Returns the intrinsic size of this element,
@@ -474,6 +483,20 @@ public abstract class UiElement<S extends UiElement<S>>
     }
 
     /**
+     * Sets whether debug mode is enabled for this element.
+     * When enabled, additional debug information may be rendered.
+     * <p>
+     * If not specified, the debug mode will be inherited from the parent element.
+     *
+     * @param debug whether debug mode is enabled for this element
+     * @return this element
+     */
+    public S debug(@Nullable Boolean debug) {
+        this.debug = debug;
+        return self();
+    }
+
+    /**
      * Sets the given ref to this element, allowing external code to hold a reference to this element.
      *
      * @param ref the ref to set
@@ -500,11 +523,26 @@ public abstract class UiElement<S extends UiElement<S>>
      * @param context the render context to render to
      */
     public void renderTree(RenderContext context) {
-        this.renderElement(context);
+        var contextToUse = renderContextToUse(context);
+        this.renderElement(contextToUse);
         // Render children
         for (var child : children) {
-            child.renderTree(context);
+            child.renderTree(contextToUse);
         }
+    }
+
+    /**
+     * Returns the render context to use for rendering this element, taking into account the debug mode.
+     *
+     * @param context the original render context
+     * @return the render context to use for rendering this element
+     */
+    protected RenderContext renderContextToUse(RenderContext context) {
+        if (debug != null) {
+            // Override specified mode if enabled for this element
+            return context.withDebug(debug);
+        }
+        return context;
     }
 
     /**
@@ -527,7 +565,8 @@ public abstract class UiElement<S extends UiElement<S>>
      */
     public void renderDebugInfo(RenderContext context) {
         // Render the bounds of this element as a red outline
-        context.graphics().renderOutline(
+        var graphics = context.graphics();
+        graphics.renderOutline(
             bounds().x(),
             bounds().y(),
             bounds().width(),
@@ -537,7 +576,7 @@ public abstract class UiElement<S extends UiElement<S>>
 
         // Render overlay if hovered
         if (state().hoveredSelf()) {
-            context.graphics().fill(
+            graphics.fill(
                 bounds().x(),
                 bounds().y(),
                 bounds().x() + bounds().width(),
@@ -545,6 +584,26 @@ public abstract class UiElement<S extends UiElement<S>>
                 0x40ff0000
             );
         }
+
+        // Render class name above bounds
+        var renderer = new ScaledTextRenderer(context);
+        var scale = 0.5f;
+        var height = (int) (context.font().lineHeight * scale);
+
+        var renderInside = padding().top() >= height;
+        var offsetY = renderInside
+            ? 2
+            : - height - 1;
+        var offsetX = renderInside
+            ? 2
+            : 0;
+        renderer.render(
+            Component.literal(this.getClass().getSimpleName()),
+            bounds().x()  + offsetX,
+            bounds().y() + offsetY,
+            scale,
+            UiColor.RED.color()
+        );
     }
 
     /**
@@ -554,16 +613,6 @@ public abstract class UiElement<S extends UiElement<S>>
      */
     // TODO: Render hook system via style, so that custom rendering is possible
     public abstract void render(RenderContext context);
-
-    /**
-     * Initializes this element.
-     * <p>
-     * This method is guaranteed to be called before the first render
-     * after an element is first created or invalidated.
-     */
-    public void initialize() {
-        // Nothing here
-    }
 
     /**
      * This method should be called every tick to update the state of this element.

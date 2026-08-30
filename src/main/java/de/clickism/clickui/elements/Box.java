@@ -147,9 +147,9 @@ public class Box extends UiElement<Box> {
         if (axis().isHorizontal()) {
             // Horizontal axis
             return this.children().stream()
-                .mapToInt(child -> child.bounds().height())
-                .max()
-                .orElse(0) + padding().top() + padding().bottom();
+                       .mapToInt(child -> child.bounds().height())
+                       .max()
+                       .orElse(0) + padding().top() + padding().bottom();
         }
         // Vertical axis
         int totalPadding = padding().top() + padding().bottom();
@@ -237,6 +237,7 @@ public class Box extends UiElement<Box> {
             super.renderTree(context);
             return;
         }
+        context = renderContextToUse(context);
         // Render self
         this.renderElement(context);
         // Render children with scroll offset

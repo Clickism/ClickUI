@@ -29,16 +29,12 @@ public abstract class UiEventScreen extends Screen {
 
     private final HitTester hitTester = new HitTester();
 
-    protected UiEventScreen(Component component) {
-        super(component);
-    }
+    private final UiElement<?> eventRoot;
 
-    /**
-     * Returns the root element of the UI tree.
-     *
-     * @return the root element
-     */
-    protected abstract UiElement<?> eventRoot();
+    protected UiEventScreen(Component component, UiElement<?> root) {
+        super(component);
+        this.eventRoot = root;
+    }
 
     /**
      * Updates the hovered element and its state.
@@ -72,7 +68,7 @@ public abstract class UiEventScreen extends Screen {
      * @param mouseY the y-coordinate of the mouse
      */
     protected void updateHoverState(int mouseX, int mouseY) {
-        var hit = hitTester.hitTest(eventRoot(), mouseX, mouseY);
+        var hit = hitTester.hitTest(eventRoot, mouseX, mouseY);
         if (hit == null) {
             // Clear hovered state if no element is hit
             hoveredElement(null);
@@ -185,7 +181,7 @@ public abstract class UiEventScreen extends Screen {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
         // Fire to all
         var event = new KeyPressEvent(code, scanCode, modifiers, new EventState());
-        eventRoot().propagateEventDown(event);
+        eventRoot.propagateEventDown(event);
 
         return false;
     }
@@ -195,7 +191,7 @@ public abstract class UiEventScreen extends Screen {
         if (super.charTyped(character, modifiers)) return true;
         // Fire to all
         var event = new CharTypeEvent(character, modifiers, new EventState());
-        eventRoot().propagateEventDown(event);
+        eventRoot.propagateEventDown(event);
 
         return false;
     }

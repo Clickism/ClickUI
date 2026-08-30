@@ -5,7 +5,6 @@ import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
-import de.clickism.clickui.util.Util;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
@@ -21,7 +20,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
     }
 
     private void openTestScreen() {
-        var screen = UiScreen.create(box()
+        var screen = UiScreen.asScreen(box()
             .vertical()
             .childGap(10)
             .padding(30)
@@ -66,7 +65,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
 
         Ref<NumberField> numberRef = ref();
 
-        var newScreen = UiScreen.create(box()
+        var newScreen = UiScreen.asScreen(box()
             .alignCenter()
             .grow()
             .style(s -> s
@@ -154,6 +153,6 @@ public class TestMod implements ClientModInitializer, UiBuilder {
 
 //        newScreen.debug(true);
 
-        Util.openScreen(newScreen);
+        newScreen.debug(true).open();
     }
 }

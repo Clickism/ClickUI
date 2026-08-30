@@ -17,6 +17,8 @@ public record RenderContext(
     GuiGraphics graphics,
     int mouseX,
     int mouseY,
+    int screenWidth,
+    int screenHeight,
     float delta,
     boolean debug
 ) {
@@ -27,5 +29,15 @@ public record RenderContext(
      */
     public Font font() {
         return Util.font();
+    }
+
+    /**
+     * Returns a new RenderContext with the specified debug flag.
+     *
+     * @param debug Whether to enable debug mode.
+     * @return A new RenderContext with the specified debug flag.
+     */
+    public RenderContext withDebug(boolean debug) {
+        return new RenderContext(graphics, mouseX, mouseY, screenWidth, screenHeight, delta, debug);
     }
 }

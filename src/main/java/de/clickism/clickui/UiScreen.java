@@ -1,37 +1,16 @@
 package de.clickism.clickui;
 
-import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.render.RenderContext;
-import de.clickism.clickui.render.TooltipRenderer;
 import de.clickism.clickui.util.Util;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
 
-/**
- * A screen that contains a UI tree and handles rendering and layout.
- * <p>
- * Subclasses should implement the {@link build()} method to define the structure of the UI.
- */
-public abstract class UiScreen extends UiEventScreen implements UiBuilder {
+public abstract class UiScreen<S extends UiScreen<S>> extends UiComponent<S>
+    implements UiScreenControls {
     /**
-     * The root element of the UI tree.
+     * The title component of this UiScreen.
      */
-    private UiElement<?> root;
-
-    /**
-     * The parent screen of this UiScreen, if any.
-     * This can be used to navigate back to the previous screen.
-     */
-    private @Nullable Screen parent;
-
-    /**
-     * Indicates whether debug mode is enabled for this UiScreen.
-     * When enabled, additional debug information may be rendered.
-     */
-    private boolean debug = false;
+    private Component title = Component.empty();
 
     /**
      * Whether the background of the screen should be rendered.
@@ -39,224 +18,105 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     private boolean background = true;
 
     /**
-     * Creates a new UiScreen with the specified title component.
+     * Returns the title component of this UiScreen.
      *
-     * @param component the title component of the screen
+     * @return the title component
      */
-    public UiScreen(Component component) {
-        super(component);
+    public Component title() {
+        return title;
     }
 
     /**
-     * Creates a new UiScreen.
-     */
-    public UiScreen() {
-        this(Component.empty());
-    }
-
-    /**
-     * Creates a new UiScreen with the specified content element.
+     * Sets the title component of this UiScreen.
      *
-     * @param content the root element of the UI tree
-     * @return a new UiScreen instance with the specified content
+     * @param title the title component to set
+     * @return this UiScreen instance for method chaining
      */
-    public static UiScreen create(UiElement<?> content) {
-        return new UiScreen() {
-            @Override
-            public UiElement<?> build() {
-                return content;
-            }
-        };
-    }
-
-    /**
-     * Returns the current UiScreen if the current screen is an instance of UiScreen, otherwise returns null.
-     *
-     * @return the current UiScreen or null if the current screen is not a UiScreen
-     */
-    public static @Nullable UiScreen current() {
-        var screen = Minecraft.getInstance().screen;
-        if (screen instanceof UiScreen uiScreen) {
-            return uiScreen;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the parent screen of this UiScreen, if any.
-     *
-     * @return the parent screen, or null if there is no parent
-     */
-    public @Nullable Screen parent() {
-        return parent;
-    }
-
-    /**
-     * Sets the parent screen of this UiScreen.
-     *
-     * @param parent the parent screen to set, or null if there is no parent
-     */
-    public void parent(@Nullable UiScreen parent) {
-        this.parent = parent;
+    public UiScreen<S> title(Component title) {
+        this.title = title;
+        return this;
     }
 
     /**
      * Sets whether the background of the screen should be rendered.
      *
      * @param background true to render the background, false to not render it
+     * @return this UiScreen instance for method chaining
      */
-    public void background(boolean background) {
+    public UiScreen<S> background(boolean background) {
         this.background = background;
-    }
-
-    /**
-     * Opens this UiScreen in the Minecraft client, setting the current screen as its parent.
-     * <p>
-     * Will navigate back to the previous screen when this screen is closed.
-     */
-    public void open() {
-        open(Minecraft.getInstance().screen);
-    }
-
-    /**
-     * Opens this UiScreen in the Minecraft client, setting the specified parent screen.
-     *
-     * @param parent the parent screen to set for this UiScreen
-     */
-    public void open(Screen parent) {
-        this.parent = parent;
-        Util.openScreen(this);
-    }
-
-    /**
-     * Opens this UiScreen in the Minecraft client without setting a parent screen.
-     * <p>
-     * Will close all other screens when this screen is closed.
-     */
-    public void openFresh() {
-        this.parent = null;
-        Util.openScreen(this);
-    }
-
-    /**
-     * Closes this screen and navigates back to the parent screen, if any.
-     */
-    public void close() {
-        if (parent == null) {
-            Util.openScreen(null);
-            return;
-        }
-        Util.openScreen(parent);
-    }
-
-    /**
-     * Closes all open screens.
-     */
-    public void closeAll() {
-        Util.openScreen(null);
+        return this;
     }
 
     @Override
-    protected UiElement<?> eventRoot() {
-        return root; // Return the root element for event handling
-    }
-
-    /**
-     * Enables or disables debug mode for this UiScreen.
-     *
-     * @param debug true to enable debug mode, false to disable it
-     */
-    public void debug(boolean debug) {
-        this.debug = debug;
-    }
-
-    /**
-     * Builds the root element of the UI tree.
-     * This method should be implemented by subclasses to define the structure of the UI.
-     * <p>
-     * This function is called only once during the initialization of the screen.
-     *
-     * @return the root element of the UI tree
-     */
-    public abstract UiElement<?> build();
-
-    /**
-     * Invalidates the layout of this screen.
-     * See {@link UiElement#invalidateLayout()} for more info.
-     */
-    public void invalidate() {
-        initializeIfNeeded();
-        this.root.invalidateLayout();
-    }
-
-    /**
-     * Initializes the UI tree by calling the build method and setting up the root element.
-     */
-    private void initializeIfNeeded() {
-        if (this.root != null) {
-            // Already initialize
-            return;
-        }
-        var root = build();
-        if (root != null) {
-            this.root = root;
-        } else {
-            // Empty fallback element
-            this.root = box();
-        }
+    public Screen screenToOpen() {
+        return new UiScreenHandler(this);
     }
 
     @Override
-    protected void init() {
-        initializeIfNeeded();
-        // Initialize all elements anyways
-        Util.preOrder(this.root, UiElement::initialize);
-        // Layout the root element
-        var screen = box()
-            .width(this.width)
-            .height(this.height);
-        screen.children(this.root);
-        // Layout again
-        new LayoutEngine().layout(screen);
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        // Render background if enabled
+    public void render(RenderContext context) {
+        // Render the background if enabled
         if (background) {
-            this.renderBackground(graphics);
+            renderBackground(context);
         }
-        // Lay out root again if dirty
-        if (root.dirtyLayout()) {
-            init();
-            // Clear dirty state
-            root.clearDirtyLayout();
-        }
-        // Call event handler
-        super.render(graphics, mouseX, mouseY, delta);
-        // Render the tree
-        var context = new RenderContext(graphics, mouseX, mouseY, delta, debug);
-        root.renderTree(context);
-        // Render tooltips
-        Util.preOrder(root, element -> {
-            if (!element.isTooltipVisible()) return;
-            new TooltipRenderer(element.tooltip(), context).render();
-        });
+        super.render(context);
     }
 
-    @Override
-    public void renderBackground(GuiGraphics graphics) {
-        graphics.fillGradient(0, 0, this.width, this.height, -0x4FEFEFF0, -0x3FEFEFF0);
+    /**
+     * Renders the background of the screen.
+     *
+     * @param context the render context to use for rendering the background
+     */
+    public void renderBackground(RenderContext context) {
+        context.graphics().fillGradient(0, 0, context.screenWidth(), context.screenHeight(), -0x4FEFEFF0, -0x3FEFEFF0);
     }
 
-    @Override
-    public void tick() {
-        // Tick all elements in the tree
-        Util.preOrder(root, UiElement::tick);
-    }
-
-    @Override
-    public void onClose() {
+    /**
+     * Called when the screen is closed.
+     */
+    public void handleClose() {
+        // Try to go back by default
         this.close();
+    }
+
+    /**
+     * Opens a UiElement as a screen in the Minecraft client.
+     *
+     * @param root the root element of the UI tree to be displayed as a screen
+     */
+    public static void openAsScreen(UiElement<?> root) {
+        Util.openScreen(new UiScreenHandler(root));
+    }
+
+    /**
+     * Wraps a UiElement in a UiScreen, allowing it to be used as a screen in the Minecraft client.
+     * <p>
+     * When possible, better to use {@link UiScreen#openAsScreen(UiElement)}.
+     *
+     * @param root the root element of the UI tree to be wrapped as a screen
+     * @return a UiScreen that wraps the specified UiElement
+     */
+    public static UiScreen<? extends UiScreen<?>> asScreen(UiElement<?> root) {
+        return new UiElementScreen(root);
+    }
+
+    /**
+     * A UiScreen that wraps a UiElement, allowing it to be used as a screen in the Minecraft client.
+     */
+    private static class UiElementScreen extends UiScreen<UiElementScreen> {
+        private final UiElement<?> root;
+
+        private UiElementScreen(UiElement<?> root) {
+            this.root = root;
+        }
+
+        @Override
+        protected void build() {
+            // Grow to take up same space as screen
+            // So that the root acts like a screen and can be used as a screen
+            grow();
+            // Add root as usual
+            add(root);
+        }
     }
 }
