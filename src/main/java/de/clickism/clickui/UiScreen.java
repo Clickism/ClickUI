@@ -181,9 +181,18 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
     public abstract Element<?> build();
 
     /**
+     * Invalidates the layout of this screen.
+     * See {@link Element#invalidateLayout()} for more info.
+     */
+    public void invalidate() {
+        initializeIfNeeded();
+        this.root.invalidateLayout();
+    }
+
+    /**
      * Initializes the UI tree by calling the build method and setting up the root element.
      */
-    private void initialize() {
+    private void initializeIfNeeded() {
         if (this.root != null) {
             // Already initialize
             return;
@@ -199,7 +208,7 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
 
     @Override
     protected void init() {
-        initialize();
+        initializeIfNeeded();
         // Initialize all elements anyways
         Util.preOrder(this.root, Element::initialize);
         // Layout the root element
@@ -218,10 +227,10 @@ public abstract class UiScreen extends UiEventScreen implements UiBuilder {
             this.renderBackground(graphics);
         }
         // Lay out root again if dirty
-        if (root.isDirty()) {
+        if (root.dirtyLayout()) {
             init();
             // Clear dirty state
-            root.clearDirty();
+            root.clearDirtyLayout();
         }
         // Call event handler
         super.render(graphics, mouseX, mouseY, delta);

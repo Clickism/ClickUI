@@ -13,4 +13,11 @@ public record DragEvent(
     int button,
     EventState state
 ) implements Event {
+    public double totalDeltaX() {
+        return currentX - startX;
+    }
+
+    public double totalDeltaY() {
+        return currentY - startY;
+    }
 }

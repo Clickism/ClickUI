@@ -13,16 +13,24 @@ import java.util.function.Supplier;
  * They are not rendered directly, instead they are used to build the UI tree and manage state.
  * <p>
  * To trigger a rebuild of a component (i.e. when state changes),
- * call {@link #rebuild()} instead of {@link #invalidate()}.
+ * call {@link #rebuild()} instead of {@link #invalidateLayout()}.
  *
  * @param <S> The self type of the component
  */
 // TODO: Keep focus after rebuild?
+// TODO: Rename to UiComponent to not confuse with text components?
 public abstract class Component<S extends Component<S>> extends Element<S>
     implements UiBuilder {
 
     private int memoIndex = 0;
     private final List<Object> memeoized = new ArrayList<>();
+
+    /**
+     * Indicates whether the component is marked as dirty and needs to be rebuilt.
+     * <p>
+     * True by defualt, so that the component is built when first created.
+     */
+    private boolean dirtyTree = true;
 
     /**
      * Builds the UI tree for this component.
@@ -35,31 +43,37 @@ public abstract class Component<S extends Component<S>> extends Element<S>
     protected abstract void build();
 
     /**
-     * Rebuilds the UI tree for this component.
+     * Marks the component as needing a rebuild.
      */
     @ApiStatus.Internal
     public final void rebuild() {
-        super.invalidate();
+        this.dirtyTree = true;
     }
 
-    @Override
-    public void invalidate() {
-        this.rebuild();
+    /**
+     * Rebuilds the component if it is marked as dirty.
+     * <p>
+     * This method is called by the UI framework during the render cycle.
+     */
+    @ApiStatus.Internal
+    public final void performRebuildIfNeeded() {
+        if (!dirtyTree) return;
+
+        dirtyTree = false;
+        memoIndex = 0;
+
+        clear();
+        build();
+
+        invalidateLayout();
     }
+
+    // TODO: Make it so that invalidate marks the component as invalid, and only invalid components gets rebuilt when the root is invalid, and the rest gets relayed out
+    // TODO: If after rebuild, the bounds are different, then the parent should be invalidated and relayouted! Not REBUILT!
 
     @Override
     public void render(RenderContext context) {
         // No render by default in components
-    }
-
-    @Override
-    public void initialize() {
-        // Reset memoization index for this build cycle
-        memoIndex = 0;
-        // Build for the first time here, to avoid calling build() in the constructor
-        // which can lead to issues with subclass initialization.
-        clear();
-        build();
     }
 
     /**

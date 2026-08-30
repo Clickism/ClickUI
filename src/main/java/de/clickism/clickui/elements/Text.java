@@ -52,7 +52,7 @@ public class Text extends Element<Text> implements Wrappable {
         this.lines = Util.font()
             .getSplitter()
             .splitLines(text, Integer.MAX_VALUE, Style.EMPTY);
-        this.invalidate();
+        this.invalidateLayout();
         return this;
     }
 
@@ -75,7 +75,7 @@ public class Text extends Element<Text> implements Wrappable {
      */
     public Text alignText(Align align) {
         this.align = align;
-        this.invalidate();
+        this.invalidateLayout();
         return this;
     }
 

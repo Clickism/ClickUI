@@ -1,6 +1,5 @@
 package de.clickism.clickui.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.Element;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.layout.LayoutEngine;
@@ -32,13 +31,13 @@ public class TooltipRenderer {
      * Prepares the tooltip for rendering by initializing and laying it out if needed.
      */
     private void prepare() {
-        if (!tooltip.isDirty()) return;
+        if (!tooltip.dirtyLayout()) return;
         // Initialize element
         Util.preOrder(this.tooltip, Element::initialize);
         // Layout element
         new LayoutEngine().layout(tooltip);
         // Clear dirty
-        tooltip.clearDirty();
+        tooltip.clearDirtyLayout();
     }
 
     /**

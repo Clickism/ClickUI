@@ -41,7 +41,7 @@ public abstract class Element<S extends Element<S>>
     /**
      * Whether this element is the root of the tree and needs to be layed out again.
      */
-    private boolean dirtyRoot = false;
+    private boolean dirtyLayout = false;
 
     /**
      * Layout information for this element,
@@ -358,8 +358,8 @@ public abstract class Element<S extends Element<S>>
     /**
      * Invalidates the layout of this element tree.
      */
-    public void invalidate() {
-        root().dirtyRoot = true;
+    public void invalidateLayout() {
+        root().dirtyLayout = true;
     }
 
     /**
@@ -381,16 +381,16 @@ public abstract class Element<S extends Element<S>>
      * @return whether this element is dirty and needs to be layed out again
      */
     @ApiStatus.Internal
-    public boolean isDirty() {
-        return root().dirtyRoot;
+    public boolean dirtyLayout() {
+        return root().dirtyLayout;
     }
 
     /**
      * Clears the dirty flag of this element.
      */
     @ApiStatus.Internal
-    public void clearDirty() {
-        root().dirtyRoot = false;
+    public void clearDirtyLayout() {
+        root().dirtyLayout = false;
     }
 
     /**
@@ -444,7 +444,7 @@ public abstract class Element<S extends Element<S>>
     public S tooltip(@Nullable Element<?> tooltip) {
         this.tooltip = tooltip;
         if (tooltip != null) {
-            this.tooltip.invalidate();
+            this.tooltip.invalidateLayout();
         }
         return self();
     }
@@ -552,6 +552,7 @@ public abstract class Element<S extends Element<S>>
      *
      * @param context the render context to render with
      */
+    // TODO: Render hook system via style, so that custom rendering is possible
     public abstract void render(RenderContext context);
 
     /**

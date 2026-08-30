@@ -26,7 +26,7 @@ public class Grid extends Element<Grid> {
     public Grid(int columns) {
         this.columns = columns;
         this.rebuildGrid();
-        this.invalidate();
+        this.invalidateLayout();
     }
 
     /**
@@ -71,7 +71,7 @@ public class Grid extends Element<Grid> {
         }
         this.columns = columns;
         this.rebuildGrid();
-        this.invalidate();
+        this.invalidateLayout();
         return this;
     }
 

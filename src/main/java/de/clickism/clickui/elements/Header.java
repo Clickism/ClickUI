@@ -18,6 +18,7 @@ public class Header extends Text {
         super(text.copy().withStyle(ChatFormatting.BOLD));
         var style = this.style();
         switch (level) {
+            // TODO: Refactor padding to be more visible
             case 1 -> {
                 style.fontScale(2f);
                 padding(6, 0);

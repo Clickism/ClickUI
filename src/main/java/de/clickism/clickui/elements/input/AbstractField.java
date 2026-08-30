@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -82,6 +83,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * @param value the text value to set
      */
     public S value(String value) {
+        if (Objects.equals(this.value, value)) {
+            // Old value, don't trigger anything
+            return self();
+        }
         this.value = value;
         // Make sure cursor is valid still
         this.cursorPos = Mth.clamp(cursorPos, 0, value.length());

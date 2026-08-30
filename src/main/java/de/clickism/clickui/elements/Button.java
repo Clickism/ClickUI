@@ -11,8 +11,6 @@ import de.clickism.clickui.style.BorderPosition;
 import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
 
-import java.awt.*;
-
 import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 
 /**
@@ -61,7 +59,7 @@ public class Button extends Element<Button> {
      */
     public void label(Component label) {
         this.label = label;
-        this.invalidate();
+        this.invalidateLayout();
     }
 
     @Override

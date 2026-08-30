@@ -1,15 +1,10 @@
 package de.clickism.clickui.elements;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.Element;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A UI element that displays an image from a specified texture resource.
@@ -38,7 +33,7 @@ public class Image extends Element<Image> {
      */
     public Image texture(ResourceLocation texture) {
         this.texture = texture;
-        invalidate();
+        invalidateLayout();
         return this;
     }
 
