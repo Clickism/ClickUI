@@ -3,12 +3,17 @@ package de.clickism.clickui;
 import de.clickism.clickui.elements.*;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.elements.input.TextField;
+import de.clickism.clickui.style.Style;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public interface UiBuilder {
     default <T> Ref<T> ref() {
         return new Ref<>();
+    }
+
+    default Style style() {
+        return Style.empty();
     }
 
     default Box box() {

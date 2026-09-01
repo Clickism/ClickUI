@@ -7,7 +7,8 @@ import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
-import de.clickism.clickui.style.BorderPosition;
+import de.clickism.clickui.style.Border;
+import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
 import net.minecraft.network.chat.Component;
 
@@ -35,10 +36,10 @@ public class Button extends UiElement<Button> {
         // Adjust default padding
         // TODO: Fix default pading? why these values
         this.padding(DEFAULT_PADDING);
-        this.style(s -> s
-            .whenHovered(h -> h
-                .border(UiColor.WHITE)
-                .borderPosition(BorderPosition.CENTER)));
+        this.style(style()
+            .whenHovered(style()
+                .borderColor(UiColor.WHITE)
+                .borderPosition(Border.Position.CENTER)));
         // Play down sound on click
         this.onClick(event -> Util.playDownSound());
     }
@@ -94,9 +95,8 @@ public class Button extends UiElement<Button> {
         // Revert blending
         RenderSystem.disableBlend();
         // Render label
-        // TODO: Move outline into real border logic
         // TODO: Scrolling text if it doesn't fit in the button
-        var fontScale = resolvedStyle().fontScale();
+        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
         var renderer = new ScaledTextRenderer(context);
         // Center the label vertically and horizontally
         var textWidth = renderer.measureWidth(label, fontScale);

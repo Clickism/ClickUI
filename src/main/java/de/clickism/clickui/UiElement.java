@@ -6,12 +6,12 @@ import de.clickism.clickui.event.EventTarget;
 import de.clickism.clickui.layout.*;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
-import de.clickism.clickui.render.StyleRenderer;
+import de.clickism.clickui.render.style.StyleRenderer;
 import de.clickism.clickui.state.ElementState;
 import de.clickism.clickui.state.ElementStateHolder;
-import de.clickism.clickui.style.ResolvedStyle;
 import de.clickism.clickui.style.Style;
 import de.clickism.clickui.style.StyleContext;
+import de.clickism.clickui.style.StyleMap;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +51,7 @@ public abstract class UiElement<S extends UiElement<S>>
     /**
      * Style information for this element.
      */
-    private Style style = new Style();
+    private Style style = Style.empty();
     /**
      * The state of this element, used for rendering.
      */
@@ -286,7 +286,7 @@ public abstract class UiElement<S extends UiElement<S>>
      *
      * @return the style of this element
      */
-    public Style style() {
+    public Style elementStyle() {
         return this.style;
     }
 
@@ -295,7 +295,7 @@ public abstract class UiElement<S extends UiElement<S>>
      *
      * @return the resolved style of this element
      */
-    public ResolvedStyle resolvedStyle() {
+    public StyleMap resolvedStyle() {
         return this.style.resolve(new StyleContext(this, this.state));
     }
 
@@ -351,16 +351,14 @@ public abstract class UiElement<S extends UiElement<S>>
         }
     }
 
-    // TODO: Make style api nicer
-
     /**
-     * Applies the given style consumer to this element's style, allowing for fluent style configuration.
+     * Sets the style of this element, which is used for rendering.
      *
-     * @param styleConsumer the style consumer to apply to this element's style
+     * @param style the style to set
      * @return this element
      */
-    public S style(Consumer<Style> styleConsumer) {
-        styleConsumer.accept(this.style);
+    public S style(Style style) {
+        this.style = style;
         return self();
     }
 
@@ -593,13 +591,13 @@ public abstract class UiElement<S extends UiElement<S>>
         var renderInside = padding().top() >= height;
         var offsetY = renderInside
             ? 2
-            : - height - 1;
+            : -height - 1;
         var offsetX = renderInside
             ? 2
             : 0;
         renderer.render(
             Component.literal(this.getClass().getSimpleName()),
-            bounds().x()  + offsetX,
+            bounds().x() + offsetX,
             bounds().y() + offsetY,
             scale,
             UiColor.RED.color()

@@ -1,6 +1,5 @@
 package de.clickism.clickui.elements;
 
-import de.clickism.clickui.render.RenderContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -16,7 +15,7 @@ public class Header extends Text {
      */
     public Header(Component text, int level) {
         super(text.copy().withStyle(ChatFormatting.BOLD));
-        var style = this.style();
+        var style = this.elementStyle();
         switch (level) {
             // TODO: Refactor padding to be more visible
             case 1 -> {

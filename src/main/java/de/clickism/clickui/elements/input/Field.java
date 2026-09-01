@@ -4,11 +4,9 @@ import de.clickism.clickui.UiColor;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
-import de.clickism.clickui.style.BorderPosition;
+import de.clickism.clickui.style.Border;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.renderer.RenderType;
-
-import java.awt.*;
 
 /**
  * A simple implementation of a text field with default styling and behavior.
@@ -26,14 +24,14 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         // TODO: Better default height
         this.padding(DEFAULT_PADDING);
         // Set style
-        this.style(s -> s
-            .background(UiColor.BLACK)
-            .border(UiColor.rgb(0xA0A0A0))
-            .borderPosition(BorderPosition.INSIDE)
-            .whenHovered(h -> h
-                .border(UiColor.WHITE))
-            .whenFocused(f -> f
-                .border(UiColor.WHITE))
+        this.style(style()
+            .backgroundColor(UiColor.BLACK)
+            .borderColor(UiColor.rgb(0xA0A0A0))
+            .borderPosition(Border.Position.INSIDE)
+            .whenHovered(style()
+                .borderColor(UiColor.WHITE))
+            .whenFocused(style()
+                .borderColor(UiColor.WHITE))
         );
     }
 

@@ -6,6 +6,7 @@ import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
+import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -108,7 +109,7 @@ public class Text extends UiElement<Text> implements Wrappable {
 
     @Override
     public Size intrinsicSize() {
-        var fontScale = this.resolvedStyle().fontScale();
+        var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
         var width = lines.stream()
             .mapToDouble(line -> Util.font().width(line))
             .max()
@@ -121,7 +122,7 @@ public class Text extends UiElement<Text> implements Wrappable {
     @Override
     public Size defaultMinSize() {
         var splitter = Util.font().getSplitter();
-        var scale = resolvedStyle().fontScale();
+        var scale = resolvedStyle().get(StyleProperty.FONT_SCALE);
 
         final var currentWord = new ArrayList<FormattedText>();
         final var maxWordWidth = new AtomicDouble(0);
@@ -171,7 +172,7 @@ public class Text extends UiElement<Text> implements Wrappable {
             .getSplitter()
             .splitLines(text, maxWidth, Style.EMPTY);
         // Calculate new height
-        var fontScale = this.resolvedStyle().fontScale();
+        var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
         var height = font.lineHeight * fontScale * lines.size();
         height += this.padding().vertical();
         // Update bounds with new height
@@ -185,6 +186,7 @@ public class Text extends UiElement<Text> implements Wrappable {
         var y = this.bounds().y() + this.padding().top();
         var renderer = new ScaledTextRenderer(context);
         var style = this.resolvedStyle();
+        var fontScale = style.get(StyleProperty.FONT_SCALE);
 
         // TODO: Cascading text color?
         // TODO: Text color?
@@ -193,7 +195,7 @@ public class Text extends UiElement<Text> implements Wrappable {
         // Render each line
         for (var line : charLines) {
             // Align text based on the specified alignment
-            var width = renderer.measureWidth(line, style.fontScale());
+            var width = renderer.measureWidth(line, style.get(StyleProperty.FONT_SCALE));
             var space = this.bounds().width() - this.padding().horizontal() - width;
             var lineX = x;
             switch (align) {
@@ -204,8 +206,8 @@ public class Text extends UiElement<Text> implements Wrappable {
                 }
             }
             // Render text
-            renderer.render(line, lineX, y, style.fontScale(), 0xFFFFFFFF);
-            y += (int) renderer.measureHeight(style.fontScale());
+            renderer.render(line, lineX, y, fontScale, 0xFFFFFFFF);
+            y += (int) renderer.measureHeight(fontScale);
         }
     }
 

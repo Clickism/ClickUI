@@ -17,54 +17,54 @@ public class OverflowScreen extends UiScreen<OverflowScreen> {
             .children(
                 h4("Select Symbol")
                     .padding(6, 12)
-                    .style(s -> s
-                        .border(UiColor.LIGHT_GRAY.alpha(0.5f))
-                        .background(UiColor.BLACK.alpha(0.5f))),
+                    .style(style()
+                        .borderColor(UiColor.LIGHT_GRAY.alpha(0.5f))
+                        .backgroundColor(UiColor.BLACK.alpha(0.5f))),
                 box()
                     .grow()
                     .crossAlign(Align.CENTER)
                     .maxWidth(400)
                     .padding(8)
-                    .style(s -> s
-                        .border(UiColor.LIGHT_GRAY.alpha(0.5f))
-                        .background(UiColor.BLACK.alpha(0.5f))
+                    .style(style()
+                        .borderColor(UiColor.LIGHT_GRAY.alpha(0.5f))
+                        .backgroundColor(UiColor.BLACK.alpha(0.5f))
                     )
                     .scrollable(true)
                     .children(
                         box()
                             .scrollable(true)
                             .size(200)
-                            .style(s -> s
-                                .border(UiColor.LIGHT_GRAY.alpha(0.5f))
-                                .background(UiColor.BLACK))
+                            .style(style()
+                                .borderColor(UiColor.LIGHT_GRAY.alpha(0.5f))
+                                .backgroundColor(UiColor.BLACK))
                             .children(
                                 box()
                                     .width(50)
                                     .height(400)
                                     .overrideStyle(Style.empty()
-                                        .background(UiColor.RED)),
+                                        .backgroundColor(UiColor.RED)),
 
                                 box()
                                     .width(50)
                                     .height(500)
                                     .overrideStyle(Style.empty()
-                                        .background(UiColor.BEIGE))
+                                        .backgroundColor(UiColor.BEIGE))
                             ),
 
                         box()
                             .size(200)
-                            .style(s -> s
-                                .background(UiColor.CYAN)),
+                            .style(style()
+                                .backgroundColor(UiColor.CYAN)),
 
                         box()
                             .size(200)
-                            .style(s -> s
-                                .background(UiColor.MAGENTA)),
+                            .style(style()
+                                .backgroundColor(UiColor.MAGENTA)),
 
                         box()
                             .size(200)
-                            .style(s -> s
-                                .background(UiColor.TEAL))
+                            .style(style()
+                                .backgroundColor(UiColor.TEAL))
                     )
             ));
     }

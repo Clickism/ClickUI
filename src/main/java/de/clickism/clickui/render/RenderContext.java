@@ -1,5 +1,6 @@
 package de.clickism.clickui.render;
 
+import de.clickism.clickui.UiScreenHandler;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -7,19 +8,19 @@ import net.minecraft.client.gui.GuiGraphics;
 /**
  * Represents the render context when rendering a UI element.
  *
- * @param graphics
- * @param mouseX
- * @param mouseY
- * @param delta
- * @param debug
+ * @param graphics The graphics context used for rendering.
+ * @param mouseX   The current X position of the mouse cursor.
+ * @param mouseY   The current Y position of the mouse cursor.
+ * @param delta    The time delta since the last frame.
+ * @param screen   The screen handler associated with the current UI screen.
+ * @param debug    Whether debug mode is enabled.
  */
 public record RenderContext(
     GuiGraphics graphics,
     int mouseX,
     int mouseY,
-    int screenWidth,
-    int screenHeight,
     float delta,
+    UiScreenHandler screen,
     boolean debug
 ) {
     /**
@@ -32,12 +33,30 @@ public record RenderContext(
     }
 
     /**
+     * Returns the width of the screen.
+     *
+     * @return The width of the screen.
+     */
+    public int screenWidth() {
+        return screen.width;
+    }
+
+    /**
+     * Returns the height of the screen.
+     *
+     * @return The height of the screen.
+     */
+    public int screenHeight() {
+        return screen.height;
+    }
+
+    /**
      * Returns a new RenderContext with the specified debug flag.
      *
      * @param debug Whether to enable debug mode.
      * @return A new RenderContext with the specified debug flag.
      */
     public RenderContext withDebug(boolean debug) {
-        return new RenderContext(graphics, mouseX, mouseY, screenWidth, screenHeight, delta, debug);
+        return new RenderContext(graphics, mouseX, mouseY, delta, screen, debug);
     }
 }

@@ -5,6 +5,7 @@ import de.clickism.clickui.UiBuilder;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
+import de.clickism.clickui.style.Border;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
@@ -27,10 +28,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             .children(
                 text("Hello, this is a test screen!")
                     .padding(20)
-                    .style(s -> s
+                    .style(style()
                         .fontScale(2.0f)
-                        .background(UiColor.BLUE)
-                        .border(UiColor.YELLOW)
+                        .backgroundColor(UiColor.BLUE)
+                        .borderColor(UiColor.YELLOW)
                         .borderWidth(5)),
                 text(Component.literal("Whaaat?").withStyle(ChatFormatting.BOLD)),
                 button("Click me!")
@@ -48,8 +49,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 box()
                     .height(200)
                     .vertical()
-                    .style(s -> s
-                        .background(UiColor.GREEN)
+                    .style(style()
+                        .backgroundColor(UiColor.GREEN)
                         .alpha(0.5f))
                     .children(
                         text("This is a box")
@@ -68,15 +69,15 @@ public class TestMod implements ClientModInitializer, UiBuilder {
         var newScreen = UiScreen.asScreen(box()
             .alignCenter()
             .grow()
-            .style(s -> s
-                .background(UiColor.BLACK)
+            .style(style()
+                .backgroundColor(UiColor.WHITE_A50)
                 .alpha(0.5f))
             .children(
                 box()
                     .width(300)
-                    .style(s -> s
-                        .border(UiColor.LIGHT_GRAY)
-                        .background(UiColor.BLACK)
+                    .style(style()
+                        .borderColor(UiColor.LIGHT_GRAY)
+                        .backgroundColor(UiColor.BLACK)
                         .alpha(0.5f))
                     .padding(8)
                     .childGap(8)
@@ -92,7 +93,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .padding(16)
                             .height(100)
                             .childGap(10)
-                            .style(s -> s.border(UiColor.GREEN))
+                            .style(style().borderColor(UiColor.GREEN))
                             .children(
                                 text("Scrollable content line 1"),
                                 text("Scrollable content line 2"),
@@ -114,7 +115,32 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 button("Whaat?"),
                                 text("Scrollable content line 8"),
                                 text("Scrollable content line 9"),
-                                button("Far down!?")
+                                button("Far down!?"),
+                                // Test borders
+                                box()
+                                    .width(50)
+                                    .height(50)
+                                    .style(style()
+                                        .backgroundColor(UiColor.WHITE_A30)
+                                        .whenHovered(style()
+                                            .borderPosition(Border.Position.CENTER)
+                                            .borderColor(UiColor.RED)
+                                            .borderWidth(3))),
+
+                                box()
+                                    .width(50)
+                                    .height(50)
+                                    .style(style()
+                                        .backgroundColor(UiColor.WHITE_A30)
+                                        .whenHovered(style()
+                                            .borderPosition(Border.Position.INSIDE)
+                                            .borderColor(UiColor.BLUE))),
+
+                                box()
+                                    .width(50)
+                                    .height(50)
+                                    .style(style()
+                                        .backgroundColor(UiColor.WHITE_A30))
                             ),
                         text("You can go back to the previous screen by clicking the button below.\n\nAlternatively, you can also press the §lESC §rkey to go back.")
                             .alignTextCenter()
@@ -123,9 +149,9 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         textField("Type something...")
                             .tooltip(box()
                                 .size(20)
-                                .style(b -> b
-                                    .background(UiColor.YELLOW)
-                                    .border(UiColor.RED)))
+                                .style(style()
+                                    .backgroundColor(UiColor.YELLOW)
+                                    .borderColor(UiColor.RED)))
                             .maxLength(32)
                             .suggest("hello", "bye", "heat"),
                         numberField("Type a number...")
@@ -151,8 +177,8 @@ public class TestMod implements ClientModInitializer, UiBuilder {
             )
         );
 
-//        newScreen.debug(true);
-
-        newScreen.debug(true).open();
+        newScreen
+            .debug(false)
+            .open();
     }
 }

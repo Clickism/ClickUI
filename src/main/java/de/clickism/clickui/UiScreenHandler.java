@@ -1,6 +1,7 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.style.Style;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -46,7 +47,7 @@ public class UiScreenHandler extends UiEventScreen implements UiScreenControls {
         // Call event handler
         super.render(graphics, mouseX, mouseY, delta);
         // Render the tree
-        var context = new RenderContext(graphics, mouseX, mouseY, width, height, delta, false);
+        var context = new RenderContext(graphics, mouseX, mouseY, delta, this, false);
         tree.render(context);
         // Render tooltips
         tree.renderTooltips(context);
