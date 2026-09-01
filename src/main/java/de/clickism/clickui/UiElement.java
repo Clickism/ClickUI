@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * An element in the UI hierarchy.
@@ -300,6 +299,17 @@ public abstract class UiElement<S extends UiElement<S>>
     }
 
     /**
+     * Merges the given style into the existing style of this element, combining their style properties.
+     *
+     * @param style the style to set
+     * @return this element
+     */
+    public S style(Style style) {
+        this.style.merge(style);
+        return self();
+    }
+
+    /**
      * Overrides the style of this element with the given style, replacing any existing style.
      *
      * @param style the style to override with
@@ -349,17 +359,6 @@ public abstract class UiElement<S extends UiElement<S>>
         if (parent != null) {
             parent.propagateEventUp(event);
         }
-    }
-
-    /**
-     * Sets the style of this element, which is used for rendering.
-     *
-     * @param style the style to set
-     * @return this element
-     */
-    public S style(Style style) {
-        this.style = style;
-        return self();
     }
 
     /**

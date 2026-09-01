@@ -135,6 +135,18 @@ public class Style implements StyleBuilder<Style> {
         return resolved;
     }
 
+    /**
+     * Merges another Style instance into this one, combining their style properties and conditional styles.
+     *
+     * @param other The other Style instance to merge into this one.
+     * @return This Style instance, allowing for method chaining.
+     */
+    public Style merge(Style other) {
+        this.styleMap.merge(other.styleMap);
+        this.conditionalStyles.addAll(other.conditionalStyles);
+        return this;
+    }
+
     @Override
     public Style style() {
         return this;

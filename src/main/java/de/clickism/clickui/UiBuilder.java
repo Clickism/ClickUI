@@ -80,6 +80,14 @@ public interface UiBuilder {
         return new Header(title, 5);
     }
 
+    default Header h6(String title) {
+        return new Header(Component.literal(title), 6);
+    }
+
+    default Header h6(Component title) {
+        return new Header(title, 6);
+    }
+
     default TextField textField() {
         return new TextField();
     }

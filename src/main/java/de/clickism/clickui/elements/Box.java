@@ -6,6 +6,8 @@ import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import net.minecraft.util.Mth;
 
+import java.util.LinkedList;
+
 // TODO: Overflow hidden, show, scroll etc.
 // TODO: Fix nested scroll boxes don't work
 // TODO: Fix scroll boxes capture scroll events even when not hovered
@@ -248,6 +250,7 @@ public class Box extends UiElement<Box> {
         var y1 = bounds.y();
         var x2 = bounds.x() + bounds.width();
         var y2 = bounds.y() + bounds.height();
+        // TODO: Fix nested scissor not working properly, way to transform coordinates
         graphics.enableScissor(x1, y1, x2, y2);
 
         graphics.pose().pushPose();

@@ -67,6 +67,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
         Ref<NumberField> numberRef = ref();
 
         var newScreen = UiScreen.asScreen(box()
+            .scrollable(true)
             .alignCenter()
             .grow()
             .style(style()
@@ -91,7 +92,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .scrollable(true)
                             .width(300)
                             .padding(16)
-                            .height(100)
+                            .height(300)
                             .childGap(10)
                             .style(style().borderColor(UiColor.GREEN))
                             .children(
@@ -140,7 +141,23 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                     .width(50)
                                     .height(50)
                                     .style(style()
-                                        .backgroundColor(UiColor.WHITE_A30))
+                                        .backgroundColor(UiColor.WHITE_A30)),
+
+                                // Test headers, random text
+                                box().children(
+                                    h1("Header 1"),
+                                    text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+                                    h2("Header 2"),
+                                    text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."),
+                                    h3("Header 3"),
+                                    text("Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."),
+                                    h4("Header 4"),
+                                    text("Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+                                    h5("Header 5"),
+                                    text("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."),
+                                    h6("Header 6"),
+                                    text("Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.")
+                                )
                             ),
                         text("You can go back to the previous screen by clicking the button below.\n\nAlternatively, you can also press the §lESC §rkey to go back.")
                             .alignTextCenter()
