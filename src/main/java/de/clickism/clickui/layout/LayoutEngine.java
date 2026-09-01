@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * layout axis. It calculates the sizes and positions of each element and its children, taking into account padding,
  * child gaps, and sizing types (fixed, fit, or grow).
  */
+// TODO: Fix alignment of wrapped elements is wrong in the first pass, because width not updated? i thnk?
 public class LayoutEngine {
     /**
      * Lays out the given root element and its children based on their sizing and layout axis.
@@ -133,7 +134,7 @@ public class LayoutEngine {
         } else if (measureWidth) {
             var newWidth = intrinsic.width() + padding.horizontal() + totalLineCross;
             width = Math.max(width, newWidth);
-            element.bounds(element.bounds().withHeight(width));
+            element.bounds(element.bounds().withWidth(width));
         }
     }
 
@@ -652,8 +653,7 @@ public class LayoutEngine {
 
         // Iterate over children and put them into a line
         var children = parent.children();
-        for (int i = 0; i < children.size(); i++) {
-            var child = children.get(i);
+        for (var child : children) {
             if (!child.positioning().affectsLayout()) {
                 // Just add so it gets layed out, but don't change size
                 line.children.add(child);
@@ -664,7 +664,7 @@ public class LayoutEngine {
             int crossSize = child.bounds().crossSize(axis);
 
             // First child has no gap before
-            var gap = i == 0
+            var gap = line.children.isEmpty()
                 ? 0
                 : parent.childGap();
 

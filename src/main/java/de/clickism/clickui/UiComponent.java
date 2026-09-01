@@ -4,8 +4,7 @@ import de.clickism.clickui.reactivity.State;
 import de.clickism.clickui.render.RenderContext;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -13,7 +12,7 @@ import java.util.function.Supplier;
  * They are not rendered directly, instead they are used to build the UI tree and manage state.
  * <p>
  * To trigger a rebuild of a component (i.e. when state changes),
- * call {@link #rebuild()} instead of {@link #invalidateLayout()}.
+ * call {@link #invalidateTree()} instead of {@link #invalidateLayout()}.
  *
  * @param <S> The self type of the component
  */
@@ -23,7 +22,9 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
     implements UiBuilder {
 
     private int memoIndex = 0;
-    private final List<Object> memeoized = new ArrayList<>();
+    private final List<Object> indexMemoized = new ArrayList<>();
+    private final Map<Object, Object> keyMemoized = new HashMap<>();
+    private final Set<Object> usedMemoKeys = new HashSet<>();
 
     /**
      * Indicates whether the component is marked as dirty and needs to be rebuilt.
@@ -43,10 +44,11 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
     protected abstract void build();
 
     /**
-     * Marks the component as needing a rebuild.
+     * Invalidates this component's element tree.
+     * <p>
+     * This will cause the component to be rebuilt on the next render cycle.
      */
-    @ApiStatus.Internal
-    public final void rebuild() {
+    public final void invalidateTree() {
         this.dirtyTree = true;
     }
 
@@ -56,14 +58,18 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
      * This method is called by the UI framework during the render cycle.
      */
     @ApiStatus.Internal
-    public final void performRebuildIfNeeded() {
+    public final void rebuildIfNeeded() {
         if (!dirtyTree) return;
 
         dirtyTree = false;
         memoIndex = 0;
+        usedMemoKeys.clear();
 
         clear();
         build();
+
+        // Remove unused memoized keys
+        keyMemoized.keySet().retainAll(usedMemoKeys);
 
         invalidateLayout();
     }
@@ -86,7 +92,7 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
      * @return a new state variable that is tied to this component
      */
     protected <T> State<T> state(T initialValue) {
-        return new State<>(initialValue, this);
+        return new State<>(initialValue, value -> this.invalidateTree());
     }
 
     /**
@@ -102,23 +108,54 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
      */
     @SuppressWarnings("unchecked")
     protected <T> T memo(Supplier<T> supplier) {
-        if (memoIndex < memeoized.size()) {
+        if (memoIndex < indexMemoized.size()) {
             // Return the existing value
-            return (T) memeoized.get(memoIndex++);
+            return (T) indexMemoized.get(memoIndex++);
         } else {
             // Compute the value and store it
             T value = supplier.get();
-            memeoized.add(value);
+            indexMemoized.add(value);
             memoIndex++;
             return value;
         }
     }
 
     /**
-     * Clears the memoization cache for this component.
+     * Memoizes the result of a supplier function for the current build cycle, using a key.
+     * <p>
+     * This is useful for memoizing values that are not tied to the order of calls,
+     * but rather to a specific key.
+     *
+     * @param key      the key to use for memoization
+     * @param supplier the supplier function to memoize
+     * @param <K>      the type of the key
+     * @param <T>      the type of the value to memoize
+     * @return the memoized value
+     */
+    @SuppressWarnings("unchecked")
+    protected <K, T> T memo(K key, Supplier<T> supplier) {
+        usedMemoKeys.add(key);
+        if (keyMemoized.containsKey(key)) {
+            return (T) keyMemoized.get(key);
+        } else {
+            T value = supplier.get();
+            keyMemoized.put(key, value);
+            return value;
+        }
+    }
+
+    /**
+     * Clears the index-memoization cache for this component.
      */
     protected void clearMemo() {
-        memeoized.clear();
+        indexMemoized.clear();
         memoIndex = 0;
+    }
+
+    /**
+     * Clears the key-memoization cache for this component, but only for key-based memoization.
+     */
+    protected void clearMemoKeys() {
+        keyMemoized.clear();
     }
 }

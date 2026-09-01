@@ -51,7 +51,7 @@ public class UiElementTree {
         Util.preOrder(root, element -> {
             if (!(element instanceof UiComponent<?> component)) return;
             // Rebuild component if needed
-            component.performRebuildIfNeeded();
+            component.rebuildIfNeeded();
         });
 
         // Second pass: layout elements

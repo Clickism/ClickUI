@@ -163,6 +163,7 @@ public class Text extends UiElement<Text> implements Wrappable {
         return new Size(minWidth, minHeight);
     }
 
+    // TODO: Wrap by character if a single word is too long to fit within the maxWidth
     @Override
     public void wrap(int maxWidth) {
         var font = Util.font();

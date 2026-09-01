@@ -53,8 +53,8 @@ public interface UiScreenControls {
      * @param parent the parent screen to set for this UiScreen
      */
     default void open(@Nullable Screen parent) {
-        this.parentScreen(parent);
         Util.openScreen(this.screenToOpen());
+        this.parentScreen(parent);
     }
 
     /**
@@ -63,8 +63,7 @@ public interface UiScreenControls {
      * Will close all other screens when this screen is closed.
      */
     default void openFresh() {
-        this.parentScreen(null);
-        Util.openScreen(this.screenToOpen());
+        open(null);
     }
 
     /**
