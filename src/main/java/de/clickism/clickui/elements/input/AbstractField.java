@@ -50,6 +50,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
 
     private boolean invalidInput = false;
 
+    private boolean allowInput = true;
+
     /*+
      * Constructs a new AbstractTextField instance.
      */
@@ -219,6 +221,17 @@ public abstract class AbstractField<S extends AbstractField<S>>
     }
 
     /**
+     * Sets whether the text box should allow input from the user.
+     *
+     * @param allow true to allow input, false to disable input
+     * @return the current instance of the text box
+     */
+    public S allowInput(boolean allow) {
+        this.allowInput = allow;
+        return self();
+    }
+
+    /**
      * Sets a custom input filter for the text box.
      *
      * @param filter the input filter function to set
@@ -268,9 +281,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     public boolean listening() {
         // TODO: Check if visible
-        return !this.disabled() && this.focused();
+        return !this.disabled() && this.focused() && allowInput;
     }
-
 
     /**
      * Handles cursor movement and updates the display position and suggestion accordingly.

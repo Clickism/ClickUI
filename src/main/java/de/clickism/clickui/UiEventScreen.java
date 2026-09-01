@@ -22,18 +22,20 @@ public abstract class UiEventScreen extends Screen {
      * Keep track of the focused element
      */
     private @Nullable UiElement<?> focusedElement = null;
-
+    /**
+     * Keep track of the dragged element
+     */
     private @Nullable UiElement<?> draggedElement = null;
     private double dragStartX = 0;
     private double dragStartY = 0;
 
     private final HitTester hitTester = new HitTester();
 
-    private final UiElement<?> eventRoot;
+    private final UiElement<?> root;
 
     protected UiEventScreen(Component component, UiElement<?> root) {
         super(component);
-        this.eventRoot = root;
+        this.root = root;
     }
 
     /**
@@ -68,7 +70,7 @@ public abstract class UiEventScreen extends Screen {
      * @param mouseY the y-coordinate of the mouse
      */
     protected void updateHoverState(int mouseX, int mouseY) {
-        var hit = hitTester.hitTest(eventRoot, mouseX, mouseY);
+        var hit = hitTester.hitTest(root, mouseX, mouseY);
         if (hit == null) {
             // Clear hovered state if no element is hit
             hoveredElement(null);
@@ -181,7 +183,7 @@ public abstract class UiEventScreen extends Screen {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
         // Fire to all
         var event = new KeyPressEvent(code, scanCode, modifiers, new EventState());
-        eventRoot.propagateEventDown(event);
+        root.propagateEventDown(event);
 
         return false;
     }
@@ -191,7 +193,7 @@ public abstract class UiEventScreen extends Screen {
         if (super.charTyped(character, modifiers)) return true;
         // Fire to all
         var event = new CharTypeEvent(character, modifiers, new EventState());
-        eventRoot.propagateEventDown(event);
+        root.propagateEventDown(event);
 
         return false;
     }
