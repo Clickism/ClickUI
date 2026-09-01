@@ -145,6 +145,9 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         text("You can go back to the previous screen by clicking the button below.\n\nAlternatively, you can also press the §lESC §rkey to go back.")
                             .alignTextCenter()
                             .padding(4),
+                        text("veyrlongwordthatshouldwrapandbreakintomultiplelinesbecauseitistoolongbutitkindadoesntithink")
+                            .alignTextCenter()
+                            .padding(4),
                         new Counter(),
                         textField("Type something...")
                             .tooltip(box()

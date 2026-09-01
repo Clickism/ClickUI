@@ -121,41 +121,14 @@ public class Text extends UiElement<Text> implements Wrappable {
 
     @Override
     public Size defaultMinSize() {
-        var splitter = Util.font().getSplitter();
-        var scale = resolvedStyle().get(StyleProperty.FONT_SCALE);
+        // Minecraft's split lines can keep breaking characters down to individual characters
+        // So the min width can always go down to 0
+        var minWidth = 0;
 
-        final var currentWord = new ArrayList<FormattedText>();
-        final var maxWordWidth = new AtomicDouble(0);
-
-        // Iterate over the text and find the maximum word widthx
-        StringDecomposer.iterateFormatted(text, Style.EMPTY, (index, style, codePoint) -> {
-            if (codePoint == ' ' || codePoint == '\n') {
-                if (!currentWord.isEmpty()) {
-                    var word = FormattedText.composite(currentWord);
-                    maxWordWidth.getAndUpdate(value ->
-                        Math.max(value, splitter.stringWidth(word)));
-                    currentWord.clear();
-                }
-                return true;
-            }
-            currentWord.add(FormattedText.of(
-                new String(Character.toChars(codePoint)),
-                style
-            ));
-            return true;
-        });
-
-        // Handle the last word if the text doesn't end with a space or newline
-        if (!currentWord.isEmpty()) {
-            var word = FormattedText.composite(currentWord);
-            maxWordWidth.getAndUpdate(value ->
-                Math.max(value, splitter.stringWidth(word)));
-        }
-
-        var height = Util.font().lineHeight * scale;
-
-        var minWidth = (int) Math.ceil(maxWordWidth.get() * scale);
-        var minHeight = (int) Math.ceil(height);
+        // Calculate the minimum height based on the font's line height and the font scale
+        var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
+        var lineHeight = Util.font().lineHeight;
+        var minHeight = (int) Math.ceil(lineHeight * fontScale);
 
         // Add padding to the minimum size
         minWidth += this.padding().horizontal();
