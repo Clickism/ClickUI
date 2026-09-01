@@ -48,18 +48,75 @@ public interface StyleBuilder<S extends StyleBuilder<S>>
         return self();
     }
 
-    default S borderColor(FourSided<UiColor> color) {
-        style().set(StyleProperty.BORDER_COLOR, color);
+    default S borderColorTop(UiColor color) {
+        style().update(StyleProperty.BORDER_COLOR, border ->
+            border.withTop(color));
         return self();
     }
 
-    default S borderWidth(FourSided<Integer> width) {
-        style().set(StyleProperty.BORDER_WIDTH, width);
+    default S borderColorBottom(UiColor color) {
+        style().update(StyleProperty.BORDER_COLOR, border ->
+            border.withBottom(color));
         return self();
     }
 
-    default S borderPosition(FourSided<Border.Position> position) {
-        style().set(StyleProperty.BORDER_POSITION, position);
+    default S borderColorLeft(UiColor color) {
+        style().update(StyleProperty.BORDER_COLOR, border ->
+            border.withLeft(color));
+        return self();
+    }
+
+    default S borderColorRight(UiColor color) {
+        style().update(StyleProperty.BORDER_COLOR, border ->
+            border.withRight(color));
+        return self();
+    }
+
+    default S borderWidthTop(int width) {
+        style().update(StyleProperty.BORDER_WIDTH, border ->
+            border.withTop(width));
+        return self();
+    }
+
+    default S borderWidthBottom(int width) {
+        style().update(StyleProperty.BORDER_WIDTH, border ->
+            border.withBottom(width));
+        return self();
+    }
+
+    default S borderWidthLeft(int width) {
+        style().update(StyleProperty.BORDER_WIDTH, border ->
+            border.withLeft(width));
+        return self();
+    }
+
+    default S borderWidthRight(int width) {
+        style().update(StyleProperty.BORDER_WIDTH, border ->
+            border.withRight(width));
+        return self();
+    }
+
+    default S borderPositionTop(Border.Position position) {
+        style().update(StyleProperty.BORDER_POSITION, border ->
+            border.withTop(position));
+        return self();
+    }
+
+    default S borderPositionBottom(Border.Position position) {
+        style().update(StyleProperty.BORDER_POSITION, border ->
+            border.withBottom(position));
+        return self();
+    }
+
+    default S borderPositionLeft(Border.Position position) {
+        style().update(StyleProperty.BORDER_POSITION, border ->
+            border.withLeft(position));
+        return self();
+    }
+
+    default S borderPositionRight(Border.Position position) {
+        style().update(StyleProperty.BORDER_POSITION, border ->
+            border.withRight(position));
         return self();
     }
 }

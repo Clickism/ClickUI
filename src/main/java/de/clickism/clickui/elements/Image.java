@@ -14,6 +14,8 @@ public class Image extends UiElement<Image> {
     private final int width;
     private final int height;
 
+    private boolean keepAspectRatio = false;
+
     /**
      * Creates a new Image element with the specified texture.
      *
@@ -23,6 +25,17 @@ public class Image extends UiElement<Image> {
         this.texture = texture;
         this.width = width;
         this.height = height;
+    }
+
+    /**
+     * Sets whether to keep the aspect ratio of the image when growing.
+     *
+     * @param keepAspectRatio true to keep the aspect ratio, false otherwise
+     * @return this Image element for method chaining
+     */
+    public Image keepAspectRatio(boolean keepAspectRatio) {
+        this.keepAspectRatio = keepAspectRatio;
+        return this;
     }
 
     /**
@@ -41,6 +54,14 @@ public class Image extends UiElement<Image> {
     public Size intrinsicSize() {
         if (texture == null) {
             return Size.ZERO;
+        }
+        if (keepAspectRatio) {
+            // Get current width from bounds
+            var currentWidth = bounds().width() - padding().horizontal();
+            // Calculate height based on aspect ratio
+            var aspectRatio = (double) height / width;
+            var calculatedHeight = (int) (currentWidth * aspectRatio);
+            return new Size(currentWidth, calculatedHeight);
         }
         return new Size(width, height);
     }

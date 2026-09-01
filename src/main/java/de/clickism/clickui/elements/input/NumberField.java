@@ -4,6 +4,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * A UI element that allows users to input numbers.
@@ -16,6 +17,8 @@ public class NumberField extends Field<NumberField> {
 
     private double maxValue = Double.MAX_VALUE;
     private double minValue = Double.MIN_VALUE;
+
+    private Consumer<Double> onNumberChanged = value -> {};
 
     /**
      * Creates a new NumberField instance.
@@ -35,6 +38,34 @@ public class NumberField extends Field<NumberField> {
         });
         // Set validator to check if the input is a valid number
         this.validator(this::isValid);
+        this.onValueChanged(value -> {
+            var parsed = parseValue();
+            if (parsed != null) {
+                onNumberChanged.accept(parsed);
+            }
+        });
+    }
+
+    /**
+     * Sets a callback to be invoked when the number in the field changes.
+     *
+     * @param onNumberChanged the callback to be invoked when the number changes
+     * @return the current instance of NumberField
+     */
+    public NumberField onNumberChanged(Consumer<Double> onNumberChanged) {
+        this.onNumberChanged = onNumberChanged;
+        return this;
+    }
+
+    /**
+     * Sets the value of the NumberField to the specified double value.
+     *
+     * @param value the double value to set
+     * @return the current instance of NumberField
+     */
+    public NumberField value(double value) {
+        this.value(String.valueOf(value));
+        return this;
     }
 
     /**

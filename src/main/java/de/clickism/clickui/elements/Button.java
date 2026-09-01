@@ -1,8 +1,8 @@
 package de.clickism.clickui.elements;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiColor;
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
@@ -63,6 +63,18 @@ public class Button extends UiElement<Button> {
         this.invalidateLayout();
     }
 
+    /**
+     * Sets the button's overlay color.
+     *
+     * @param color the color to set as the overlay, with 0.4f alpha for semi-transparency
+     * @return this button instance for chaining
+     */
+    public Button buttonColor(UiColor color) {
+        this.style(style()
+            .overlayColor(color.alpha(0.4f)));
+        return this;
+    }
+
     @Override
     public Size intrinsicSize() {
         // TODO: Consider font size
@@ -106,8 +118,8 @@ public class Button extends UiElement<Button> {
         textY += 1; // Adjust for better visual alignment
         // Text color
         var color = state().disabled()
-                    ? 0xFFAAAAAA
-                    : 0xFFFFFFFF;
+            ? 0xFFAAAAAA
+            : 0xFFFFFFFF;
         renderer.render(label, textX, textY, fontScale, color);
     }
 
