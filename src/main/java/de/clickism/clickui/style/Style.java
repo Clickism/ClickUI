@@ -10,7 +10,7 @@ import java.util.function.UnaryOperator;
  */
 // TODO: Custom renderer hooks
 public class Style implements StyleBuilder<Style> {
-    private final StyleMap styleMap = new StyleMap();
+    private final StyleData resolved = new StyleData();
     private final List<ConditionalStyle> conditionalStyles = new ArrayList<>();
 
     /**
@@ -38,7 +38,7 @@ public class Style implements StyleBuilder<Style> {
      * @return This Style instance, allowing for method chaining.
      */
     public <T> Style set(StyleProperty<T> property, T value) {
-        styleMap.set(property, value);
+        resolved.set(property, value);
         return this;
     }
 
@@ -50,7 +50,7 @@ public class Style implements StyleBuilder<Style> {
      * @return The value of the style property, or null if it has not been set.
      */
     public <T> T get(StyleProperty<T> property) {
-        return styleMap.get(property);
+        return resolved.get(property);
     }
 
     /**
@@ -62,9 +62,31 @@ public class Style implements StyleBuilder<Style> {
      * @return This Style instance, allowing for method chaining.
      */
     public <T> Style update(StyleProperty<T> property, UnaryOperator<T> updater) {
-        T currentValue = styleMap.get(property);
+        T currentValue = resolved.get(property);
         T newValue = updater.apply(currentValue);
-        styleMap.set(property, newValue);
+        resolved.set(property, newValue);
+        return this;
+    }
+
+    /**
+     * Adds a render hook that will be called during the rendering process.
+     *
+     * @param renderer The renderer to be called during the rendering process.
+     * @return This Style instance, allowing for method chaining.
+     */
+    public Style addPreRenderHook(RenderHook.Renderer renderer) {
+        resolved.renderHooks().add(new RenderHook(RenderHook.Type.PRE, renderer));
+        return this;
+    }
+
+    /**
+     * Adds a render hook that will be called after the rendering process.
+     *
+     * @param renderer The renderer to be called after the rendering process.
+     * @return This Style instance, allowing for method chaining.
+     */
+    public Style addPostRenderHook(RenderHook.Renderer renderer) {
+        resolved.renderHooks().add(new RenderHook(RenderHook.Type.POST, renderer));
         return this;
     }
 
@@ -116,10 +138,10 @@ public class Style implements StyleBuilder<Style> {
      * @param context The context to resolve the style against.
      * @return A StyleMap containing the resolved style properties.
      */
-    public StyleMap resolve(StyleContext context) {
+    public StyleData resolve(StyleContext context) {
         // Start with the screen style map
-        StyleMap resolved = new StyleMap();
-        resolved.merge(styleMap);
+        StyleData resolved = new StyleData();
+        resolved.merge(this.resolved);
 
         // Apply conditional styles
         for (var conditionalStyle : conditionalStyles) {
@@ -142,7 +164,7 @@ public class Style implements StyleBuilder<Style> {
      * @return This Style instance, allowing for method chaining.
      */
     public Style merge(Style other) {
-        this.styleMap.merge(other.styleMap);
+        this.resolved.merge(other.resolved);
         this.conditionalStyles.addAll(other.conditionalStyles);
         return this;
     }

@@ -1,26 +1,22 @@
 package de.clickism.clickui.style;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Represents a collection of style properties and their corresponding values.
  */
-public record StyleMap(Map<StyleProperty<?>, Object> properties) {
+public record StyleData(
+    Map<StyleProperty<?>, Object> properties,
+    List<RenderHook> renderHooks
+) {
     /**
-     * Creates a new empty StyleMap.
+     * Creates a new empty StyleData.
      */
-    public StyleMap() {
-        this(new HashMap<>());
-    }
-
-    /**
-     * Creates a new StyleMap with the specified properties.
-     *
-     * @param properties the initial properties to set in the StyleMap
-     */
-    public StyleMap(Map<StyleProperty<?>, Object> properties) {
-        this.properties = new HashMap<>(properties);
+    public StyleData() {
+        this(new HashMap<>(), new ArrayList<>());
     }
 
     /**
@@ -57,12 +53,13 @@ public record StyleMap(Map<StyleProperty<?>, Object> properties) {
     }
 
     /**
-     * Merges the properties of another StyleMap into this one.
+     * Merges the properties of another StyleData into this one.
      * If a property exists in both maps, the value from the other map will overwrite the value in this map.
      *
-     * @param other the other StyleMap to merge into this one
+     * @param other the other StyleData to merge into this one
      */
-    public void merge(StyleMap other) {
+    public void merge(StyleData other) {
         properties.putAll(other.properties());
+        renderHooks.addAll(other.renderHooks());
     }
 }

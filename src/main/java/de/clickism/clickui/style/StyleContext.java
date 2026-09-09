@@ -14,7 +14,7 @@ public record StyleContext(
     UiElement<?> element,
     ElementState state
 ) implements ElementStateHolder<StyleContext> {
-    public StyleContext of(UiElement<?> element, StyleMap screenStyle) {
+    public StyleContext of(UiElement<?> element, StyleData screenStyle) {
         return new StyleContext(element, element.state());
     }
 }

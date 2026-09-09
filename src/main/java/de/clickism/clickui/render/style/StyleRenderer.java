@@ -2,10 +2,7 @@ package de.clickism.clickui.render.style;
 
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.render.RenderContext;
-import de.clickism.clickui.style.Border;
-import de.clickism.clickui.style.FourSided;
-import de.clickism.clickui.style.StyleContext;
-import de.clickism.clickui.style.StyleProperty;
+import de.clickism.clickui.style.*;
 
 public class StyleRenderer {
     private final UiElement<?> element;
@@ -27,6 +24,13 @@ public class StyleRenderer {
         if (background != null) {
             renderBackground(background.color());
         }
+
+        // Render pre-hooks
+        style.renderHooks().forEach(hook -> {
+            if (hook.type() == RenderHook.Type.PRE) {
+                hook.renderer().render(context, element);
+            }
+        });
 
         // Render element itself
         element.render(context);
@@ -53,6 +57,13 @@ public class StyleRenderer {
 
         var borderRenderer = new BorderRenderer(context, element.bounds(), border);
         borderRenderer.render();
+
+        // Render post-hooks
+        style.renderHooks().forEach(hook -> {
+            if (hook.type() == RenderHook.Type.POST) {
+                hook.renderer().render(context, element);
+            }
+        });
 
         // Revert alpha
         context.graphics().setColor(1.0f, 1.0f, 1.0f, 1.0f);

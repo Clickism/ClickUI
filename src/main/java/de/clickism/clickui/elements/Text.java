@@ -160,9 +160,9 @@ public class Text extends UiElement<Text> implements Wrappable {
         var renderer = new ScaledTextRenderer(context);
         var style = this.resolvedStyle();
         var fontScale = style.get(StyleProperty.FONT_SCALE);
+        var color = style.get(StyleProperty.TEXT_COLOR);
 
         // TODO: Cascading text color?
-        // TODO: Text color?
         var charLines = Language.getInstance().getVisualOrder(lines);
 
         // Render each line
@@ -179,7 +179,7 @@ public class Text extends UiElement<Text> implements Wrappable {
                 }
             }
             // Render text
-            renderer.render(line, lineX, y, fontScale, 0xFFFFFFFF);
+            renderer.render(line, lineX, y, fontScale, color.color());
             y += (int) renderer.measureHeight(fontScale);
         }
     }

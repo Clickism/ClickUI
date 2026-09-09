@@ -11,7 +11,7 @@ import de.clickism.clickui.state.ElementState;
 import de.clickism.clickui.state.ElementStateHolder;
 import de.clickism.clickui.style.Style;
 import de.clickism.clickui.style.StyleContext;
-import de.clickism.clickui.style.StyleMap;
+import de.clickism.clickui.style.StyleData;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -294,7 +294,7 @@ public abstract class UiElement<S extends UiElement<S>>
      *
      * @return the resolved style of this element
      */
-    public StyleMap resolvedStyle() {
+    public StyleData resolvedStyle() {
         return this.style.resolve(new StyleContext(this, this.state));
     }
 

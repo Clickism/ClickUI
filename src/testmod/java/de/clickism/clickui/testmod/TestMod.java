@@ -166,22 +166,23 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .alignTextCenter()
                             .padding(4),
                         new Counter(),
-                        textField("Type something...")
+                        numberField("Type something...")
                             .tooltip(box()
                                 .size(20)
                                 .style(style()
                                     .backgroundColor(UiColor.YELLOW)
                                     .borderColor(UiColor.RED)))
                             .maxLength(32)
+                            .highlightInvalid(true)
                             .suggest("hello", "bye", "heat"),
-                        numberField("Type a number...")
-                            .padding(0)
-                            .tooltip(image(
-                                ResourceLocation.tryBuild("minecraft", "textures/block/stone.png"),
-                                32,
-                                32
-                            ))
-                            .ref(numberRef),
+//                        numberField("Type a number...")
+//                            .padding(0)
+//                            .tooltip(image(
+//                                ResourceLocation.tryBuild("minecraft", "textures/block/stone.png"),
+//                                32,
+//                                32
+//                            ))
+//                            .ref(numberRef),
                         button("Print Number")
                             .tooltip(new Counter())
                             .onClick(event -> {

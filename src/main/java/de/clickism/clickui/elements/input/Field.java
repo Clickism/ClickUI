@@ -5,6 +5,7 @@ import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.Border;
+import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.renderer.RenderType;
 
@@ -15,9 +16,9 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
     private static final Padding DEFAULT_PADDING = Padding.create(6, 5, 5, 5);
     private static final int DEFAULT_WIDTH = 100;
 
-    // TODO: Move into custom style props
-    private static final UiColor TEXT_COLOR = UiColor.rgb(0xE0E0E0);
-    private static final UiColor INVALID_COLOR = UiColor.rgb(0xFF5555);
+    private UiColor invalidColor = UiColor.rgb(0xFF5555);
+    private boolean highlightInvalid = false;
+    private boolean textShadow = true;
 
     public Field() {
         // Set default props
@@ -28,11 +29,46 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
             .backgroundColor(UiColor.BLACK)
             .borderColor(UiColor.rgb(0xA0A0A0))
             .borderPosition(Border.Position.INSIDE)
+            .textColor(UiColor.rgb(0xE0E0E0))
             .whenHovered(style()
                 .borderColor(UiColor.WHITE))
             .whenFocused(style()
                 .borderColor(UiColor.WHITE))
         );
+    }
+
+    /**
+     * Sets the color to be used when the field is in an invalid state.
+     *
+     * @param color The color to use for invalid state.
+     * @return The current instance of the field for method chaining.
+     */
+    public S invalidColor(UiColor color) {
+        this.invalidColor = color;
+        return self();
+    }
+
+    /**
+     * Sets whether the text should have a shadow effect.
+     *
+     * @param shadow true to enable text shadow, false to disable
+     * @return The current instance of the field for method chaining.
+     */
+    public S textShadow(boolean shadow) {
+        this.textShadow = shadow;
+        return self();
+    }
+
+    /**
+     * Sets whether the field should highlight itself when in an invalid state,
+     * instead of changing the text color.
+     *
+     * @param highlight true to highlight the field when invalid, false to change text color
+     * @return The current instance of the field for method chaining.
+     */
+    public S highlightInvalid(boolean highlight) {
+        this.highlightInvalid = highlight;
+        return self();
     }
 
     /**
@@ -42,13 +78,13 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
      * @return The RGB color value for the text.
      */
     protected int textColor(boolean placeholder) {
-        if (invalid()) {
-            return INVALID_COLOR.color();
+        if (invalid() && !highlightInvalid) {
+            return invalidColor.color();
         }
         if (placeholder) {
             return UiColor.GRAY.color();
         }
-        return TEXT_COLOR.color();
+        return resolvedStyle().get(StyleProperty.TEXT_COLOR).color();
     }
 
     @Override
@@ -67,12 +103,22 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         String sugestion
     ) {
         var graphics = context.graphics();
+        // Render invalid background if needed
+        if (invalid() && highlightInvalid) {
+            context.graphics().fill(
+                x - 1,
+                y - 1,
+                x + context.font().width(text),
+                y + context.font().lineHeight + 1,
+                invalidColor.alpha(0.6f).color()
+            );
+        }
         // Render text
         var color = textColor(placeholder);
-        graphics.drawString(context.font(), text, x, y, color);
+        graphics.drawString(context.font(), text, x, y, color, textShadow);
         // Render suggestion
         x += context.font().width(text);
-        graphics.drawString(context.font(), sugestion, x, y, UiColor.GRAY.color());
+        graphics.drawString(context.font(), sugestion, x, y, UiColor.GRAY.color(), textShadow);
     }
 
     @Override
@@ -86,7 +132,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
             context.graphics().fill(RenderType.guiOverlay(), x, y, x + width, y + height, color);
         } else {
             // Underscore cursor
-            context.graphics().drawString(context.font(), "_", x, y, color, false);
+            context.graphics().drawString(context.font(), "_", x, y, color, false); // Never shadow
         }
     }
 

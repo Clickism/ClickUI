@@ -9,6 +9,7 @@ import de.clickism.clickui.UiColor;
  */
 public interface StyleProperty<T> {
     // Default style properties
+    StyleProperty<UiColor> TEXT_COLOR = of(UiColor.WHITE);
     StyleProperty<UiColor> BACKGROUND_COLOR = of(UiColor.TRANSPARENT);
     StyleProperty<Float> ALPHA = of(1.0f);
     StyleProperty<Float> FONT_SCALE = of(1.0f);

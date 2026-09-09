@@ -8,6 +8,11 @@ public interface StyleBuilder<S extends StyleBuilder<S>>
 
     Style style();
 
+    default S textColor(UiColor textColor) {
+        style().set(StyleProperty.TEXT_COLOR, textColor);
+        return self();
+    }
+
     default S backgroundColor(UiColor backgroundColor) {
         style().set(StyleProperty.BACKGROUND_COLOR, backgroundColor);
         return self();

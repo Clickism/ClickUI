@@ -129,6 +129,28 @@ public interface UiColor {
         return ((color() >> 24) & 0xFF) / 255.0f;
     }
 
+    default float luminance() {
+        return (0.2126f * red()
+                + 0.7152f * green()
+                + 0.0722f * blue()) / 255.0f;
+    }
+
+    default UiColor pickBetterContrasting(UiColor color1, UiColor color2) {
+        return contrastRatio(color1) >= contrastRatio(color2)
+            ? color1
+            : color2;
+    }
+
+    default float contrastRatio(UiColor other) {
+        float l1 = luminance();
+        float l2 = other.luminance();
+
+        float lighter = Math.max(l1, l2);
+        float darker = Math.min(l1, l2);
+
+        return (lighter + 0.05f) / (darker + 0.05f);
+    }
+
     default UiColor alpha(float a) {
         return rgba(red(), green(), blue(), a);
     }
