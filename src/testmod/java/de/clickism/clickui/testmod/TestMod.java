@@ -1,9 +1,7 @@
 package de.clickism.clickui.testmod;
 
-import de.clickism.clickui.Ref;
-import de.clickism.clickui.UiBuilder;
-import de.clickism.clickui.UiColor;
-import de.clickism.clickui.UiScreen;
+import de.clickism.clickui.*;
+import de.clickism.clickui.elements.input.Checkbox;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.style.Border;
 import net.fabricmc.api.ClientModInitializer;
@@ -11,7 +9,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-public class TestMod implements ClientModInitializer, UiBuilder {
+public class TestMod implements ClientModInitializer, BaseComponents {
     @Override
     public void onInitializeClient() {
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
@@ -66,7 +64,6 @@ public class TestMod implements ClientModInitializer, UiBuilder {
         Ref<NumberField> numberRef = ref();
 
         var newScreen = UiScreen.asScreen(box()
-                .debug(true)
             .alignCenter()
             .grow()
             .style(style()
@@ -181,6 +178,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                 var number = numberRef.get().doubleValue();
                                 event.player().sendSystemMessage(Component.literal("Number: " + number));
                             }),
+                        new Checkbox(),
                         button("Go back")
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {

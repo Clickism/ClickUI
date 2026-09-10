@@ -25,7 +25,7 @@ import java.util.List;
  * An element in the UI hierarchy.
  */
 public abstract class UiElement<S extends UiElement<S>>
-    implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S>, UiBuilder {
+    implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S>, BaseComponents {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
     // TODO: Tooltip support

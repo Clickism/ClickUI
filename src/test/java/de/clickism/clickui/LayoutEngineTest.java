@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
 
-class LayoutEngineTest implements UiBuilder {
+class LayoutEngineTest implements BaseComponents {
 
     @Test
     void renderSimple() {
