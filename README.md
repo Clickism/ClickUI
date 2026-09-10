@@ -1,10 +1,6 @@
 # ClickUI
 
----
-
-_A UI framework like no other. Some might even say, React in Minecraft?_
-
----
+> _A UI framework like no other. Some might even say, React in Minecraft?_
 
 ClickUI is a client-side declarative UI framework designed for Minecraft, completely reimplementing the UI system from scratch.
 It provides a **powerful layout engine**, a range of predefined UI elements/components, alongside
