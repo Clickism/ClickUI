@@ -159,7 +159,7 @@ public class TestMod implements ClientModInitializer, BaseComponents {
                                 )
                             ),
                         text("You can go back to the previous screen by clicking the button below. Alternatively, you can also press the §lESC §rkey to go back.")
-                            .tooltip("Test boksdjl fdsjkl jfslkd jfklsd jfklsdl")
+                            .tooltip("Test boksdjl fdsjkl jfslkd jfklsddfgdfgdfgdfgfdsfsdj jk jdfkl sjkl fsd kfds kljfsl kjfkl sdj klsjdkf jsdlk jfklsdl")
                             .alignTextCenter()
                             .padding(5),
                         text("veyrlongwordthatshouldwrapandbreakintomultiplelinesbecauseitistoolongbutitkindadoesntithink")

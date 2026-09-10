@@ -424,8 +424,23 @@ public abstract class UiElement<S extends UiElement<S>>
      * @return this element
      */
     public S tooltip(@Nullable Component tooltip) {
+        return tooltip(tooltip, 200);
+    }
+
+    /**
+     * Sets the tooltip of this element, which is a text that is displayed when the user hovers over this element.
+     *
+     * @param tooltip  the tooltip to set, or null to clear the tooltip
+     * @param maxWidth the maximum width of the tooltip
+     * @return this element
+     */
+    public S tooltip(@Nullable Component tooltip, int maxWidth) {
         return tooltip(tooltip != null
-            ? text(tooltip)
+            ? box()
+            .maxWidth(maxWidth)
+            .children(
+                text(tooltip)
+            )
             : null);
     }
 
