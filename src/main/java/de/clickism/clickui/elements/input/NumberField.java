@@ -3,6 +3,7 @@ package de.clickism.clickui.elements.input;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -64,8 +65,20 @@ public class NumberField extends Field<NumberField> {
      * @return the current instance of NumberField
      */
     public NumberField value(double value) {
-        this.value(String.valueOf(value));
+        this.value(formatValue(value));
         return this;
+    }
+
+    /**
+     * Formats the given double value to a string representation without trailing zeros.
+     *
+     * @param value the double value to format
+     * @return the formatted string representation of the value
+     */
+    private String formatValue(double value) {
+        return BigDecimal.valueOf(value)
+            .stripTrailingZeros()
+            .toPlainString();
     }
 
     /**
