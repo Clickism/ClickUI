@@ -66,7 +66,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
         Ref<NumberField> numberRef = ref();
 
         var newScreen = UiScreen.asScreen(box()
-            .scrollable(true)
+                .debug(true)
             .alignCenter()
             .grow()
             .style(style()
@@ -74,7 +74,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                 .alpha(0.5f))
             .children(
                 box()
-                    .width(300)
+                    .width(800)
                     .style(style()
                         .borderColor(UiColor.LIGHT_GRAY)
                         .backgroundColor(UiColor.BLACK)
@@ -91,7 +91,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .scrollable(true)
                             .width(300)
                             .padding(16)
-                            .height(300)
+                            .height(100)
                             .childGap(10)
                             .style(style().borderColor(UiColor.GREEN))
                             .children(
@@ -158,9 +158,10 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                                     text("Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.")
                                 )
                             ),
-                        text("You can go back to the previous screen by clicking the button below.\n\nAlternatively, you can also press the §lESC §rkey to go back.")
+                        text("You can go back to the previous screen by clicking the button below. Alternatively, you can also press the §lESC §rkey to go back.")
+                            .tooltip("Test boksdjl fdsjkl jfslkd jfklsd jfklsdl")
                             .alignTextCenter()
-                            .padding(4),
+                            .padding(5),
                         text("veyrlongwordthatshouldwrapandbreakintomultiplelinesbecauseitistoolongbutitkindadoesntithink")
                             .alignTextCenter()
                             .padding(4),
@@ -174,14 +175,6 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                             .maxLength(32)
                             .highlightInvalid(true)
                             .suggest("hello", "bye", "heat"),
-//                        numberField("Type a number...")
-//                            .padding(0)
-//                            .tooltip(image(
-//                                ResourceLocation.tryBuild("minecraft", "textures/block/stone.png"),
-//                                32,
-//                                32
-//                            ))
-//                            .ref(numberRef),
                         button("Print Number")
                             .tooltip(new Counter())
                             .onClick(event -> {

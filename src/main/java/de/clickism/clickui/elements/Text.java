@@ -1,6 +1,5 @@
 package de.clickism.clickui.elements;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.Wrappable;
 import de.clickism.clickui.layout.Size;
@@ -12,12 +11,8 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.StringDecomposer;
 
-import java.util.ArrayList;
 import java.util.List;
-
-// TODO: Text alignment and wrapping
 
 /**
  * A simple UI element used for displaying text.
@@ -39,7 +34,7 @@ public class Text extends UiElement<Text> implements Wrappable {
      * @param text The text to display.
      */
     public Text(Component text) {
-        this.text(text);
+        this.content(text);
     }
 
     /**
@@ -48,7 +43,7 @@ public class Text extends UiElement<Text> implements Wrappable {
      * @param text The text to display.
      * @return The current Text element instance.
      */
-    public Text text(Component text) {
+    public Text content(Component text) {
         this.text = text;
         this.lines = Util.font()
             .getSplitter()
@@ -63,7 +58,7 @@ public class Text extends UiElement<Text> implements Wrappable {
      * @param text The text to display.
      * @return The current Text element instance.
      */
-    public Text text(String text) {
+    public Text content(String text) {
         this.text(Component.literal(text));
         return this;
     }
@@ -111,9 +106,9 @@ public class Text extends UiElement<Text> implements Wrappable {
     public Size intrinsicSize() {
         var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
         var width = lines.stream()
-            .mapToDouble(line -> Util.font().width(line))
-            .max()
-            .orElse(0) * fontScale;
+                        .mapToDouble(line -> Util.font().width(line))
+                        .max()
+                        .orElse(0) * fontScale;
         var height = Util.font().lineHeight * fontScale * lines.size();
         // Ceil the size to ensure it fits within the bounds
         return new Size((int) Math.ceil(width), (int) Math.ceil(height));
@@ -137,7 +132,6 @@ public class Text extends UiElement<Text> implements Wrappable {
         return new Size(minWidth, minHeight);
     }
 
-    // TODO: Wrap by character if a single word is too long to fit within the maxWidth
     @Override
     public void wrap(int maxWidth) {
         var font = Util.font();

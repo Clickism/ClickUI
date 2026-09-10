@@ -42,13 +42,21 @@ public class TooltipRenderer {
         double tooltipX = context.mouseX() + offset;
         double tooltipY = context.mouseY() + offset;
 
+        // Adjust position if tooltip goes off-screen
+        var bounds = tooltip.root().bounds();
+        if (tooltipX + bounds.width() + offset > screen.width) {
+            tooltipX = screen.width - bounds.width() - offset;
+        }
+        if (tooltipY + bounds.height() + offset > screen.height) {
+            tooltipY = screen.height - bounds.height() - offset;
+        }
+
         // Render the tooltip at the calculated position
         var graphics = context.graphics();
         graphics.pose().pushPose();
         graphics.pose().translate(tooltipX, tooltipY, TOOLTIP_Z_INDEX);
 
         // Render background with padding
-        var bounds = tooltip.root().bounds();
         TooltipRenderUtil.renderTooltipBackground(
             context.graphics(),
             bounds.x(),
