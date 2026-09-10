@@ -69,11 +69,15 @@ public class BorderRenderer {
         }
 
         // Vertical borders render without corners
+        int yStart = top.isVisible() ? topBand.end : y1;
+        int yEnd = bottom.isVisible() ? bottomBand.start : y2;
+
+        // Render vertical borders
         if (left.isVisible()) {
-            graphics.fill(leftBand.start, bounds.y(), leftBand.end, y2, left.color().color());
+            graphics.fill(leftBand.start, yStart, leftBand.end, yEnd, left.color().color());
         }
         if (right.isVisible()) {
-            graphics.fill(rightBand.start, bounds.y(), rightBand.end, y2, right.color().color());
+            graphics.fill(rightBand.start, yStart, rightBand.end, yEnd, right.color().color());
         }
     }
 

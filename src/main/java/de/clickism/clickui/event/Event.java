@@ -7,6 +7,7 @@ import net.minecraft.client.player.LocalPlayer;
 /**
  * Generic interface representing en event.
  */
+// TODO: Add element() method to get the UiElement that triggered the event
 public interface Event {
     /**
      * Returns the state of the event.

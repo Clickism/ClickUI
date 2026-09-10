@@ -1,6 +1,9 @@
 package de.clickism.clickui.testmod;
 
-import de.clickism.clickui.*;
+import de.clickism.clickui.BaseComponents;
+import de.clickism.clickui.Ref;
+import de.clickism.clickui.UiColor;
+import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.Checkbox;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.style.Border;
@@ -178,7 +181,13 @@ public class TestMod implements ClientModInitializer, BaseComponents {
                                 var number = numberRef.get().doubleValue();
                                 event.player().sendSystemMessage(Component.literal("Number: " + number));
                             }),
-                        new Checkbox(),
+                        box()
+                            .size(20)
+                            .style(style()
+                                .backgroundColor(UiColor.BLACK)
+                                .whenHovered(style()
+                                    .borderWidth(3)
+                                    .borderColor(UiColor.WHITE_A50))),
                         button("Go back")
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {

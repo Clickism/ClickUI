@@ -27,6 +27,11 @@ public class Button extends UiElement<Button> {
     private Component label;
 
     /**
+     * Whether to render the button's background. If false, the default background won't be rendered
+     */
+    private boolean defaultBackground = true;
+
+    /**
      * Creates a new Button element with the specified label.
      *
      * @param label the label to display on the button
@@ -75,6 +80,17 @@ public class Button extends UiElement<Button> {
         return this;
     }
 
+    /**
+     * Sets whether to render the button's default background.
+     *
+     * @param defaultBackground true to render the default background, false otherwise
+     * @return this button instance for chaining
+     */
+    public Button defaultBackground(boolean defaultBackground) {
+        this.defaultBackground = defaultBackground;
+        return this;
+    }
+
     @Override
     public Size intrinsicSize() {
         // TODO: Consider font size
@@ -85,6 +101,29 @@ public class Button extends UiElement<Button> {
 
     @Override
     public void render(RenderContext context) {
+        var bounds = this.bounds();
+        // Render default background
+        if (defaultBackground) {
+            renderBackground(context);
+        }
+        // Render label
+        // TODO: Scrolling text if it doesn't fit in the button
+        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
+        var renderer = new ScaledTextRenderer(context);
+        // Center the label vertically and horizontally
+        var textWidth = renderer.measureWidth(label, fontScale);
+        var textHeight = renderer.measureHeight(fontScale);
+        var textX = (int) (bounds.x() + (bounds.width() - textWidth) / 2);
+        var textY = (int) (bounds.y() + (bounds.height() - textHeight) / 2);
+        textY += 1; // Adjust for better visual alignment
+        // Text color
+        var color = state().disabled()
+            ? 0xFFAAAAAA
+            : 0xFFFFFFFF;
+        renderer.render(label, textX, textY, fontScale, color);
+    }
+
+    private void renderBackground(RenderContext context) {
         var graphics = context.graphics();
         var bounds = this.bounds();
         if (bounds.width() < 2 || bounds.height() < 2) {
@@ -102,25 +141,10 @@ public class Button extends UiElement<Button> {
             );
         } catch (Exception e) {
             // Log the error and continue rendering
-            System.err.println("Error rendering button texture: " + e.getMessage());
+            System.err.println("Error rendering button background: " + e.getMessage());
         }
         // Revert blending
         RenderSystem.disableBlend();
-        // Render label
-        // TODO: Scrolling text if it doesn't fit in the button
-        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
-        var renderer = new ScaledTextRenderer(context);
-        // Center the label vertically and horizontally
-        var textWidth = renderer.measureWidth(label, fontScale);
-        var textHeight = renderer.measureHeight(fontScale);
-        var textX = (int) (bounds.x() + (bounds.width() - textWidth) / 2);
-        var textY = (int) (bounds.y() + (bounds.height() - textHeight) / 2);
-        textY += 1; // Adjust for better visual alignment
-        // Text color
-        var color = state().disabled()
-            ? 0xFFAAAAAA
-            : 0xFFFFFFFF;
-        renderer.render(label, textX, textY, fontScale, color);
     }
 
     /**
