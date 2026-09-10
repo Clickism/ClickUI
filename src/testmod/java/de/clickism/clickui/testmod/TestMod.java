@@ -10,7 +10,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 public class TestMod implements ClientModInitializer, UiBuilder {
     @Override
@@ -192,7 +191,7 @@ public class TestMod implements ClientModInitializer, UiBuilder {
                         button("Go back")
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {
-                                event.ui().close();
+                                event.screen().close();
                             })
                     )
             )
