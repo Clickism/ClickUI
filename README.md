@@ -74,7 +74,6 @@ public class Counter extends UiComponent<Counter> {
 
     @Override
     protected void build() {
-        alignCenter();
         children(
             text("Count: " + count.get()),
             button("Increment")
