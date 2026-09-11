@@ -11,33 +11,33 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 //? if fabric {
-/*import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-*///?} else {
-import net.minecraftforge.event.level.BlockEvent;
+//?} else {
+/*import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import static net.minecraftforge.api.distmarker.Dist.CLIENT;import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
-//?}
+*///?}
 
 //? if fabric {
-/*public class TestMod implements ClientModInitializer, BaseComponents {
- *///?} else {
-@Mod("clickui-test-mod")
+public class TestMod implements ClientModInitializer, BaseComponents {
+ //?} else {
+/*@Mod("clickui-test-mod")
 @Mod.EventBusSubscriber(modid = "clickui-test-mod", bus = MOD, value = CLIENT)
 public class TestMod implements BaseComponents {
-//?}
+*///?}
 
     //? if fabric {
-    /*@Override
+    @Override
     public void onInitializeClient() {
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             openTestScreen();
         });
     }
 
-    *///?} else {
-    private static TestMod instance;
+    //?} else {
+    /*private static TestMod instance;
 
     public TestMod() {
         instance = this;
@@ -49,7 +49,7 @@ public class TestMod implements BaseComponents {
             instance.openTestScreen();
         }
     }
-    //?}
+    *///?}
 
     private void openTestScreen() {
         var screen = UiScreen.asScreen(box()
