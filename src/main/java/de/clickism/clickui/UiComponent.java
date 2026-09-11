@@ -16,7 +16,9 @@ import java.util.function.Supplier;
  * <p>
  * To ensure that a component works correctly, there are some rules that must be followed:
  * <ul>
- *     <li>All event listeners must be registered in the {@link #build()} method.</li>
+ *     <li>All event listeners must be registered within the constructor.</li>
+ *     <li>All external listeners must be registed once! For memoized elements,
+ *         ensure that the listeners are registered within the memoized block.</li>
  *     <li>The order of {@link #memo(Supplier)} calls without keys must be consistent,
  *         or invalidated via {@link #clearMemo()}.</li>
  * </ul>
@@ -72,8 +74,6 @@ public abstract class UiComponent<S extends UiComponent<S>> extends UiElement<S>
         memoIndex = 0;
         usedMemoKeys.clear();
 
-        // Clear all event listeners, as they will be re-registered during the build
-        events().clearListeners();
         clear();
         build();
 
