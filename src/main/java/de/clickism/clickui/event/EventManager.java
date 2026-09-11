@@ -28,6 +28,29 @@ public class EventManager {
     }
 
     /**
+     * Removes a specific listener for a given event type.
+     *
+     * @param eventType The class of the event type to remove the listener from.
+     * @param listener  The listener to remove.
+     */
+    public void removeListener(Class<?> eventType, EventListener<?> listener) {
+        var eventListeners = listeners.get(eventType);
+        if (eventListeners != null) {
+            eventListeners.remove(listener);
+            if (eventListeners.isEmpty()) {
+                listeners.remove(eventType);
+            }
+        }
+    }
+
+    /**
+     * Clears all registered listeners from the event manager.
+     */
+    public void clearListeners() {
+        listeners.clear();
+    }
+
+    /**
      * Fires an event to all registered listeners for the event's type.
      *
      * @param event The event to fire.

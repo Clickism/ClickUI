@@ -8,11 +8,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A screen that handles hovered elements and all events,
  * and propagates them to the element tree.
  */
-public abstract class UiEventScreen extends Screen {
+public abstract class UiEventHandler extends Screen {
     private static final int DRAG_THRESHOLD = 5;
     /**
      * Keep track of the hovered element
@@ -33,7 +36,9 @@ public abstract class UiEventScreen extends Screen {
 
     private final UiElement<?> root;
 
-    protected UiEventScreen(Component component, UiElement<?> root) {
+    private final Set<Integer> pressedKeys = new HashSet<>();
+
+    protected UiEventHandler(Component component, UiElement<?> root) {
         super(component);
         this.root = root;
     }
@@ -177,15 +182,33 @@ public abstract class UiEventScreen extends Screen {
         return true;
     }
 
-
     @Override
     public boolean keyPressed(int code, int scanCode, int modifiers) {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
+
+        if (!pressedKeys.add(code)) {
+            // Key is already pressed, ignore repeat and call held event
+            var event = new KeyHeldEvent(code, scanCode, modifiers, new EventState());
+            root.propagateEventDown(event);
+            return false;
+        }
+
         // Fire to all
         var event = new KeyPressEvent(code, scanCode, modifiers, new EventState());
         root.propagateEventDown(event);
 
         return false;
+    }
+
+    @Override
+    public boolean keyReleased(int code, int scanCode, int modifiers) {
+        pressedKeys.remove(code);
+
+        // Fire to all
+        var event = new KeyReleaseEvent(code, scanCode, modifiers, new EventState());
+        root.propagateEventDown(event);
+
+        return super.keyReleased(code, scanCode, modifiers);
     }
 
     @Override

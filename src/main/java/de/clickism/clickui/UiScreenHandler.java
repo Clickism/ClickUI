@@ -1,7 +1,6 @@
 package de.clickism.clickui;
 
 import de.clickism.clickui.render.RenderContext;
-import de.clickism.clickui.style.Style;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A screen that handles a UI tree and manages rendering, layout, and events.
  */
-public class UiScreenHandler extends UiEventScreen implements UiScreenControls {
+public class UiScreenHandler extends UiEventHandler implements UiScreenControls {
     /**
      * The parent screen of this UiScreenHandler, if any.
      * This can be used to navigate back to the previous screen.

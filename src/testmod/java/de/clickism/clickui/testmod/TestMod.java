@@ -162,10 +162,10 @@ public class TestMod implements ClientModInitializer, BaseComponents {
                             .tooltip("Test boksdjl fdsjkl jfslkd jfklsddfgdfgdfgdfgfdsfsdj jk jdfkl sjkl fsd kfds kljfsl kjfkl sdj klsjdkf jsdlk jfklsdl")
                             .alignTextCenter()
                             .padding(5),
-                        text("veyrlongwordthatshouldwrapandbreakintomultiplelinesbecauseitistoolongbutitkindadoesntithink")
-                            .alignTextCenter()
-                            .padding(4),
-                        new Counter(),
+                        new Counter()
+                            .onKeyPress(event -> {
+                                event.player().sendSystemMessage(Component.literal("Counter key pressed!"));
+                            }),
                         numberField("Type something...")
                             .tooltip(box()
                                 .size(20)
