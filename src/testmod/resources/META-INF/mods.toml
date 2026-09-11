@@ -7,7 +7,7 @@ showAsResourcePack=false
 clientSideOnly=false
 
 [[mods]]
-modId="clickui-test-mod"
+modId="clickuitestmod"
 version="1"
 displayName="ClickUI Test Mod"
 

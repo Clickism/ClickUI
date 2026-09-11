@@ -1,5 +1,6 @@
 package de.clickism.clickui.testmod;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.clickism.clickui.BaseComponents;
 import de.clickism.clickui.Ref;
 import de.clickism.clickui.UiColor;
@@ -8,45 +9,67 @@ import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.style.Border;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 //?} else {
-/*import net.minecraftforge.event.level.BlockEvent;
+/*import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import static net.minecraftforge.api.distmarker.Dist.CLIENT;import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 *///?}
 
 //? if fabric {
 public class TestMod implements ClientModInitializer, BaseComponents {
  //?} else {
-/*@Mod("clickui-test-mod")
-@Mod.EventBusSubscriber(modid = "clickui-test-mod", bus = MOD, value = CLIENT)
+/*@Mod("clickuitestmod")
 public class TestMod implements BaseComponents {
 *///?}
+
+    private static KeyMapping openMenuKey;
 
     //? if fabric {
     @Override
     public void onInitializeClient() {
-        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
-            openTestScreen();
+        openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+            "key.clickuitestmod.open_menu",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_O,
+            "category.clickuitestmod"
+        ));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (openMenuKey.consumeClick()) {
+                this.openTestScreen();
+            }
         });
     }
-
     //?} else {
-    /*private static TestMod instance;
 
-    public TestMod() {
-        instance = this;
+    /*public TestMod() {
+        openMenuKey = new KeyMapping(
+            "key.clickuitestmod.open_menu",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_O,
+            "key.categories.clickuitestmod"
+        );
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.getPlayer().level().isClientSide()) {
-            instance.openTestScreen();
+    public void registerKeys(RegisterKeyMappingsEvent event) {
+        event.register(openMenuKey);
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        while (openMenuKey.consumeClick()) {
+            this.openTestScreen();
         }
     }
     *///?}

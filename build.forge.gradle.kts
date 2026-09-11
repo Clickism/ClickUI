@@ -23,23 +23,14 @@ sourceSets {
 }
 
 configurations {
-    named("testmodCompileClasspath") {
-        extendsFrom(named("compileClasspath").get())
-    }
-    named("testmodRuntimeClasspath") {
-        extendsFrom(named("runtimeClasspath").get())
-    }
-    testRuntimeClasspath {
-        extendsFrom(runtimeClasspath)
-    }
-
-    testCompileClasspath {
-        extendsFrom(compileClasspath)
-    }
+    testRuntimeClasspath { extendsFrom(runtimeClasspath) }
+    testCompileClasspath { extendsFrom(compileClasspath) }
 }
 
 legacyForge {
     version = "${property("mod.minecraft_version")}-${property("deps.forge")}"
+
+    addModdingDependenciesTo(sourceSets["testmod"])
 
     runs {
         register("client") {
@@ -57,7 +48,7 @@ legacyForge {
             client()
             gameDirectory = rootProject.file("runs/forge")
             ideName = "Testmod Client (${stonecutter.active?.version})"
-            sourceSet.set(sourceSets["main"])
+            sourceSet.set(sourceSets["testmod"])
         }
     }
 
@@ -65,7 +56,7 @@ legacyForge {
         register(property("mod.id").toString()) {
             sourceSet(sourceSets["main"])
         }
-        register("testmod") {
+        register("clickuitestmod") {
             sourceSet(sourceSets["testmod"])
         }
     }
