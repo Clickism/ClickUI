@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "click-ui",
-	"version": "${version}",
+	"version": "${mod_version}",
 	"name": "Click UI",
 	"description": "A beautiful UI library",
 	"authors": [
@@ -15,7 +15,7 @@
 	"environment": "*",
 	"depends": {
 		"fabricloader": "*",
-		"minecraft": "*",
+		"minecraft": "${minecraft_version}",
 		"java": ">=17",
 		"fabric-api": "*"
 	}

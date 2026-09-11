@@ -4,21 +4,52 @@ import de.clickism.clickui.BaseComponents;
 import de.clickism.clickui.Ref;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
-import de.clickism.clickui.elements.input.Checkbox;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.style.Border;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-public class TestMod implements ClientModInitializer, BaseComponents {
-    @Override
+//? if fabric {
+/*import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+*///?} else {
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import static net.minecraftforge.api.distmarker.Dist.CLIENT;import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+//?}
+
+//? if fabric {
+/*public class TestMod implements ClientModInitializer, BaseComponents {
+ *///?} else {
+@Mod("clickui-test-mod")
+@Mod.EventBusSubscriber(modid = "clickui-test-mod", bus = MOD, value = CLIENT)
+public class TestMod implements BaseComponents {
+//?}
+
+    //? if fabric {
+    /*@Override
     public void onInitializeClient() {
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             openTestScreen();
         });
     }
+
+    *///?} else {
+    private static TestMod instance;
+
+    public TestMod() {
+        instance = this;
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.getPlayer().level().isClientSide()) {
+            instance.openTestScreen();
+        }
+    }
+    //?}
 
     private void openTestScreen() {
         var screen = UiScreen.asScreen(box()
@@ -167,6 +198,7 @@ public class TestMod implements ClientModInitializer, BaseComponents {
                                 event.player().sendSystemMessage(Component.literal("Counter key pressed!"));
                             }),
                         numberField("Type something...")
+                            .ref(numberRef)
                             .tooltip(box()
                                 .size(20)
                                 .style(style()

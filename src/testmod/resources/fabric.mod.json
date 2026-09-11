@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "clickui-test-mod",
-  "version": "0.1",
+  "version": "1",
   "name": "ClickUI Test Mod",
   "description": "A test mod for ClickUI.",
   "authors": [

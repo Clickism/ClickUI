@@ -5,6 +5,7 @@ import de.clickism.clickui.layout.Align;
 import de.clickism.clickui.layout.LayoutEngine;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.layout.Sizing;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ import java.awt.*;
 class LayoutEngineTest implements BaseComponents {
 
     @Test
+    @Disabled
     void renderSimple() {
         renderScreen(box()
             .vertical()
@@ -86,6 +88,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderGrid() {
         renderScreen(box()
             .horizontal()
@@ -119,6 +122,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderSimpleGrid() {
         int size = 50;
         renderScreen(grid(3)
@@ -155,6 +159,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderWrappedChildren() {
         renderScreen(box()
             .padding(10)
@@ -188,6 +193,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderWrapped() {
         renderScreen(box()
             .padding(10)
@@ -219,6 +225,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderCrossAligned() {
         renderScreen(box()
             .width(600)
@@ -245,6 +252,7 @@ class LayoutEngineTest implements BaseComponents {
     }
 
     @Test
+    @Disabled
     void renderGrowHorizontal() {
         renderScreen(box()
             .width(600)

@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+
+license="GPL-3.0"
+issueTrackerURL="https://github.com/Clickism/ClickUI/issues"
+showAsResourcePack=false
+clientSideOnly=false
+
+[[mods]]
+modId="clickui"
+version="${mod_version}"
+displayName="ClickUI"
+authors="Clickism"
+description="A modern, declarative, reactive, client-side UI framework for Minecraft."
+
+#[[dependencies.clickui]]
+#modId="forge"
+#type="required"
+#versionRange="*"
+#side="BOTH"
+#
+#[[dependencies.clickui]]
+#modId = "minecraft"
+#type = "required"

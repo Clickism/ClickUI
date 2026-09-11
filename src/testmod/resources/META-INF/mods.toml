@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+
+license="GPL-3.0"
+issueTrackerURL="https://github.com/Clickism/ClickUI/issues"
+showAsResourcePack=false
+clientSideOnly=false
+
+[[mods]]
+modId="clickui-test-mod"
+version="1"
+displayName="ClickUI Test Mod"
+
+#[[dependencies.clickui-test-mod]]
+#modId="forge"
+#type="required"
+#versionRange="*"
+#side="BOTH"
+#
+#[[dependencies.clickui-test-mod]]
+#modId = "minecraft"
+#type = "required"
