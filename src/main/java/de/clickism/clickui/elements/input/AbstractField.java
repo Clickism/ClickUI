@@ -30,9 +30,9 @@ public abstract class AbstractField<S extends AbstractField<S>>
     private String value = "";
     private String placeholder = "";
 
-    private int cursorPos = 0;
-    private int highlightPos = 0;
-    private int displayPos = 0;
+    protected int cursorPos = 0;
+    protected int highlightPos = 0;
+    protected int displayPos = 0;
 
     private boolean scrolling = true;
 
@@ -59,15 +59,32 @@ public abstract class AbstractField<S extends AbstractField<S>>
         // Register key press event handler
         this.onKeyPress(event -> {
             if (!listening()) return;
-            handleKeyPress(event.code());
+            if (handleKeyPress(event.code())) {
+                event.consume();
+            }
+        });
+        this.onKeyHeld(event -> {
+            if (!listening()) return;
+            if (handleKeyPress(event.code())) {
+                event.consume();
+            }
         });
         // Register character typed event handler
         this.onCharTyped(event -> {
             if (!listening()) return;
             // Insert text
             insertText(Character.toString(event.character()));
+            event.consume();
         });
-        // TODO: Click to move to cursor
+        // Click to move cursor
+        this.onClick(event -> {
+            if (!listening()) return;
+            int newCursorPos = cursorPosAt(event.x());
+            cursorPos = Mth.clamp(newCursorPos, 0, value.length());
+            if (!Screen.hasShiftDown()) {
+                highlightPos = cursorPos;
+            }
+        });
     }
 
     /**
@@ -471,35 +488,37 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * Handles key press events for the text box, including text editing and navigation.
      *
      * @param code the key code of the pressed key
+     * @return true if the key press was handled, false otherwise
      */
-    private void handleKeyPress(int code) {
+    private boolean handleKeyPress(int code) {
         if (Screen.isSelectAll(code)) {
             // Move cursor to the end
             cursorPos = value.length();
             highlightPos = 0; // Highlight from start to end
             handleCursorMove();
-            return;
+            return true;
         }
         if (Screen.isCopy(code)) {
             // Copy highlighted text to clipboard
             var keyboard = Minecraft.getInstance().keyboardHandler;
             keyboard.setClipboard(highlightedText());
-            return;
+            return true;
         }
         if (Screen.isPaste(code)) {
             // Paste text from clipboard
             var keyboard = Minecraft.getInstance().keyboardHandler;
             insertText(keyboard.getClipboard());
-            return;
+            return true;
         }
         if (Screen.isCut(code)) {
             // Copy highlighted text to clipboard and remove it from the value
             var keyboard = Minecraft.getInstance().keyboardHandler;
             keyboard.setClipboard(highlightedText());
             insertText("");
-            return;
+            return true;
         }
         // Other keys
+        boolean processed = true;
         switch (code) {
             case GLFW.GLFW_KEY_BACKSPACE -> {
                 deleteText(-1);
@@ -531,9 +550,13 @@ public abstract class AbstractField<S extends AbstractField<S>>
                     insertText(currentSuggestion);
                 }
             }
+            default -> {
+                processed = false;
+            }
         }
         // Calculate display pos after cursor movement
         handleCursorMove();
+        return processed;
     }
 
     /**
@@ -546,9 +569,9 @@ public abstract class AbstractField<S extends AbstractField<S>>
     }
 
     /**
-     * Calculates the position where the text should be rendered within the text box.
+     * Calculates the UI position where the text should be rendered within the text box.
      *
-     * @return the position of the text within the text box
+     * @return the global UI position of the text within the text box
      */
     protected Point textPosition() {
         var bounds = bounds();
@@ -566,6 +589,22 @@ public abstract class AbstractField<S extends AbstractField<S>>
         x += padding.left();
         y += padding.top();
         return new Point(x, y);
+    }
+
+    /**
+     * Calculates the cursor position based on the mouse click within the text box.
+     *
+     * @param mouseX the x-coordinate of the mouse click
+     * @return the cursor position corresponding to the mouse click
+     */
+    protected int cursorPosAt(int mouseX) {
+        var textPos = textPosition();
+        int x = mouseX - textPos.x();
+        // Get the substring of the value starting from displayPos
+        String visibleText = value.substring(displayPos);
+        // Find the character index corresponding to the mouse click position
+        int charIndex = Util.font().plainSubstrByWidth(visibleText, x).length();
+        return displayPos + charIndex;
     }
 
     /**

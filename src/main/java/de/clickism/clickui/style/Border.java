@@ -1,6 +1,7 @@
 package de.clickism.clickui.style;
 
 import de.clickism.clickui.UiColor;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a border style for UI elements, including its width, position, and color.
@@ -12,7 +13,7 @@ import de.clickism.clickui.UiColor;
 public record Border(
     int width,
     Position position,
-    UiColor color
+    @Nullable UiColor color
 ) {
     /**
      * Checks if the border is visible based on its width and color alpha value.
@@ -20,6 +21,9 @@ public record Border(
      * @return true if the border is visible, false otherwise
      */
     public boolean isVisible() {
+        if (color == null) {
+            return false;
+        }
         return width > 0 && color.alpha() > 0;
     }
 

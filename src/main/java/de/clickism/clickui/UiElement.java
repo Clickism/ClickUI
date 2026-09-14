@@ -59,6 +59,7 @@ public abstract class UiElement<S extends UiElement<S>>
      * The event manager for this element, used for handling events.
      */
     private final EventManager events = new EventManager();
+    private final EventManager globalEvents = new EventManager();
 
     private @Nullable UiElement<?> tooltip = null;
 
@@ -326,6 +327,15 @@ public abstract class UiElement<S extends UiElement<S>>
     }
 
     /**
+     * Returns the global event manager for this element.
+     *
+     * @return the global event manager for this element
+     */
+    public EventManager globalEvents() {
+        return this.globalEvents;
+    }
+
+    /**
      * Propagates the given event to this element and all of its children recursively.
      *
      * @param event the event to propagate
@@ -341,6 +351,28 @@ public abstract class UiElement<S extends UiElement<S>>
 
         // Fire this element's event manager
         this.events.fireEvent(event);
+    }
+
+    /**
+     * Propagates the given event to this element and all of its children recursively,
+     * using the global event manager.
+     *
+     * @param event the event to propagate
+     */
+    public void propagateEventDownGlobal(Event event) {
+        if (event.state().consumed()) {
+            return;
+        }
+        // Fire children first
+        for (var child : children) {
+            child.propagateEventDownGlobal(event);
+            if (event.state().consumed()) {
+                return;
+            }
+        }
+
+        // Fire this element's global event manager
+        this.globalEvents.fireEvent(event);
     }
 
     /**

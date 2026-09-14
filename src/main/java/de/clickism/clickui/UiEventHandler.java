@@ -1,5 +1,6 @@
 package de.clickism.clickui;
 
+import de.clickism.clickui.event.Event;
 import de.clickism.clickui.event.EventState;
 import de.clickism.clickui.event.HitTester;
 import de.clickism.clickui.event.events.*;
@@ -16,7 +17,6 @@ import java.util.Set;
  * and propagates them to the element tree.
  */
 public abstract class UiEventHandler extends Screen {
-    private static final int DRAG_THRESHOLD = 5;
     /**
      * Keep track of the hovered element
      */
@@ -38,6 +38,12 @@ public abstract class UiEventHandler extends Screen {
 
     private final Set<Integer> pressedKeys = new HashSet<>();
 
+    /**
+     * Constructs a new UiEventHandler with the specified title and root element.
+     *
+     * @param component the title of the screen
+     * @param root      the root element of the UI hierarchy
+     */
     protected UiEventHandler(Component component, UiElement<?> root) {
         super(component);
         this.root = root;
@@ -87,10 +93,14 @@ public abstract class UiEventHandler extends Screen {
         if (hoveredElement != target) {
             // Mouse exit event
             if (hoveredElement != null) {
-                hoveredElement.events().fireEvent(new MouseExitEvent(mouseX, mouseY, new EventState()));
+                hoveredElement.events().fireEvent(
+                    new MouseExitEvent(hoveredElement, mouseX, mouseY, new EventState())
+                );
             }
             // Mouse enter event
-            target.events().fireEvent(new MouseEnterEvent(mouseX, mouseY, new EventState()));
+            target.events().fireEvent(
+                new MouseEnterEvent(hoveredElement, mouseX, mouseY, new EventState())
+            );
         }
 
         // Update hovered state
@@ -108,13 +118,13 @@ public abstract class UiEventHandler extends Screen {
         if (focusedElement != null && focusedElement != element) {
             focusedElement.state().focused(false);
             // Send event
-            focusedElement.propagateEventUp(new FocusExitEvent(x, y, new EventState()));
+            focusedElement.propagateEventUp(new FocusExitEvent(element, x, y, new EventState()));
         }
         focusedElement = element;
         if (focusedElement != null) {
             focusedElement.state().focused(true);
             // Send event
-            focusedElement.propagateEventUp(new FocusEnterEvent(x, y, new EventState()));
+            focusedElement.propagateEventUp(new FocusEnterEvent(element, x, y, new EventState()));
         }
     }
 
@@ -125,89 +135,100 @@ public abstract class UiEventHandler extends Screen {
         updateHoverState(mouseX, mouseY);
     }
 
+    /**
+     * Fires a mouse event to the currently hovered element, if any.
+     *
+     * @param event the mouse event to fire
+     * @return true if the event was fired to a hovered element, false otherwise
+     */
+    private boolean fireMouseEvent(Event event) {
+//        updateHoverState(x, y);
+        if (hoveredElement == null || hoveredElement.disabled()) return false;
+        // Fire event to the hovered element
+        hoveredElement.propagateEventUp(event);
+        root.propagateEventDownGlobal(event);
+        return true;
+    }
+
+    /**
+     * Fires a key event to the currently focused element, if any.
+     *
+     * @param event the key event to fire
+     * @return true if the event was fired to a focused element, false otherwise
+     */
+    private boolean fireKeyEvent(Event event) {
+        if (focusedElement == null || focusedElement.disabled()) return false;
+        // Fire event to the focused element
+        focusedElement.propagateEventUp(event);
+        root.propagateEventDownGlobal(event);
+        return true;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateHoverState(x, y);
         updateFocusState(hoveredElement, x, y);
-        if (hoveredElement == null) return false;
-        if (hoveredElement.disabled()) return false;
 
-        // Fire mouse click event to the hovered element
-        var event = new MouseClickEvent(x, y, button, new EventState());
-        hoveredElement.propagateEventUp(event);
+        var event = new MouseClickEvent(hoveredElement, x, y, button, new EventState());
+        if (fireMouseEvent(event)) {
+            if (hoveredElement == null) return true;
+            // Start dragging
+            draggedElement = hoveredElement;
+            dragStartX = mouseX;
+            dragStartY = mouseY;
+            var dragEvent = new DragStartEvent(hoveredElement, x, y, button, new EventState());
+            draggedElement.propagateEventUp(dragEvent);
+            root.propagateEventDownGlobal(dragEvent);
+            return true;
+        }
 
-        // Start dragging
-        draggedElement = hoveredElement;
-        dragStartX = mouseX;
-        dragStartY = mouseY;
-        var dragEvent = new DragStartEvent(x, y, button, new EventState());
-        draggedElement.propagateEventUp(dragEvent);
-        return true;
+        return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         int x = (int) mouseX;
         int y = (int) mouseY;
-        updateHoverState(x, y);
 
-        boolean hovered = hoveredElement != null && !hoveredElement.disabled();
-        if (hovered) {
-            // Fire mouse release event to the hovered element
-            var event = new MouseReleaseEvent(x, y, button, new EventState());
-            hoveredElement.propagateEventUp(event);
-        }
+        var event = new MouseReleaseEvent(hoveredElement, x, y, button, new EventState());
+        var fired = fireMouseEvent(event);
 
         // End dragging
         if (draggedElement != null) {
-            var dragEndEvent = new DragEndEvent(dragStartX, dragStartY, x, y, button, new EventState());
+            var dragEndEvent = new DragEndEvent(draggedElement, dragStartX, dragStartY, x, y, button, new EventState());
             draggedElement.propagateEventUp(dragEndEvent);
+            root.propagateEventDownGlobal(dragEndEvent);
             draggedElement = null;
         }
-        return hovered;
+
+        return fired;
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        int x = (int) mouseX;
-        int y = (int) mouseY;
-        updateHoverState(x, y);
-        if (hoveredElement == null) return false;
         // Fire to all
-        var event = new MouseScrollEvent(x, y, delta, new EventState());
-        hoveredElement.propagateEventUp(event);
-
-        return true;
+        var event = new MouseScrollEvent(hoveredElement, (int) mouseX, (int) mouseY, delta, new EventState());
+        return fireMouseEvent(event);
     }
 
     @Override
     public boolean keyPressed(int code, int scanCode, int modifiers) {
         if (super.keyPressed(code, scanCode, modifiers)) return true;
-
         if (!pressedKeys.add(code)) {
             // Key is already pressed, ignore repeat and call held event
-            var event = new KeyHeldEvent(code, scanCode, modifiers, new EventState());
-            root.propagateEventDown(event);
-            return false;
+            var event = new KeyHeldEvent(focusedElement, code, scanCode, modifiers, new EventState());
+            return fireKeyEvent(event);
         }
-
-        // Fire to all
-        var event = new KeyPressEvent(code, scanCode, modifiers, new EventState());
-        root.propagateEventDown(event);
-
-        return false;
+        var event = new KeyPressEvent(focusedElement, code, scanCode, modifiers, new EventState());
+        return fireKeyEvent(event);
     }
 
     @Override
     public boolean keyReleased(int code, int scanCode, int modifiers) {
         pressedKeys.remove(code);
-
-        // Fire to all
-        var event = new KeyReleaseEvent(code, scanCode, modifiers, new EventState());
-        root.propagateEventDown(event);
-
+        var event = new KeyReleaseEvent(focusedElement, code, scanCode, modifiers, new EventState());
+        fireKeyEvent(event);
         return super.keyReleased(code, scanCode, modifiers);
     }
 
@@ -215,24 +236,30 @@ public abstract class UiEventHandler extends Screen {
     public boolean charTyped(char character, int modifiers) {
         if (super.charTyped(character, modifiers)) return true;
         // Fire to all
-        var event = new CharTypeEvent(character, modifiers, new EventState());
-        root.propagateEventDown(event);
-
+        var event = new CharTypeEvent(focusedElement, character, modifiers, new EventState());
+        fireKeyEvent(event);
         return false;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        int x = (int) mouseX;
-        int y = (int) mouseY;
-        updateHoverState(x, y);
-        if (draggedElement == null) return false;
-        if (draggedElement.disabled()) return false;
-
+        // TODO: Necessary?
+//        updateHoverState(x, y);
+        if (draggedElement == null || draggedElement.disabled()) return false;
         // Fire mouse drag event to the dragged element
-        var event = new DragEvent(dragStartX, dragStartY, mouseX, mouseY, dragX, dragY, button, new EventState());
+        var event = new DragEvent(
+            draggedElement,
+            dragStartX,
+            dragStartY,
+            mouseX,
+            mouseY,
+            dragX,
+            dragY,
+            button,
+            new EventState()
+        );
         draggedElement.propagateEventUp(event);
-
+        root.propagateEventDownGlobal(event);
         return true;
     }
 }

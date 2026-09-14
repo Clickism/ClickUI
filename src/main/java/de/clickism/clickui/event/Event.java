@@ -1,8 +1,10 @@
 package de.clickism.clickui.event;
 
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiScreenHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Generic interface representing en event.
@@ -15,6 +17,13 @@ public interface Event {
      * @return The state of the event.
      */
     EventState state();
+
+    /**
+     * Returns the UiElement that triggered the event.
+     *
+     * @return The UiElement that triggered the event.
+     */
+    UiElement<?> element();
 
     /**
      * Consumes the event, preventing further processing by other listeners.

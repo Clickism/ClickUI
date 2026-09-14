@@ -1,9 +1,11 @@
 package de.clickism.clickui.event.events;
 
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.event.Event;
 import de.clickism.clickui.event.EventState;
 
 public record KeyHeldEvent(
+    UiElement<?> element,
     int code,
     int scanCode,
     int modifiers,

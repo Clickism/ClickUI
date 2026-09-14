@@ -62,6 +62,26 @@ public interface EventTarget<S extends EventTarget<S>>
     }
 
     /**
+     * Registers a listener for key held events.
+     *
+     * @param listener The listener to handle key held events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onKeyHeld(EventListener<KeyHeldEvent> listener) {
+        return on(KeyHeldEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener for key release events.
+     *
+     * @param listener The listener to handle key release events.
+     * @return The current instance of the EventTarget for method chaining.
+     */
+    default S onKeyRelease(EventListener<KeyReleaseEvent> listener) {
+        return on(KeyReleaseEvent.class, listener);
+    }
+
+    /**
      * Registers a listener for key type events.
      *
      * @param listener The listener to handle key type events.

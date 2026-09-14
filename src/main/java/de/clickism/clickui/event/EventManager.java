@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Manages event listeners and dispatches events to them.
  */
-public class EventManager {
+public class EventManager implements EventTarget<EventManager> {
     private final Map<Class<?>, List<EventListener<?>>> listeners = new HashMap<>();
 
     /**
@@ -68,5 +68,10 @@ public class EventManager {
             EventListener<E> typedListener = (EventListener<E>) listener;
             typedListener.handle(event);
         }
+    }
+
+    @Override
+    public EventManager events() {
+        return this;
     }
 }
