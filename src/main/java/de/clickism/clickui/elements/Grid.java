@@ -36,27 +36,31 @@ public class Grid extends UiElement<Grid> {
     private void rebuildGrid() {
         clear();
 
-        var boxes = new ArrayList<UiElement<?>>();
+        int rowCount = (gridChildren.size() + columns - 1) / columns;
+        var rows = new ArrayList<UiElement<?>>(rowCount);
 
         var axis = this.axis();
-        for (int i = 0; i < this.columns; i++) {
-            boxes.add(box()
-                .scrollable(false)
-                .childGap(this.childGap())
-                .axis(axis.isHorizontal()
-                    ? Axis.VERTICAL
-                    : Axis.HORIZONTAL));
+        for (int i = 0; i < rowCount; i++) {
+            rows.add(
+                // Add row
+                box()
+                    .scrollable(false)
+                    .childGap(this.childGap())
+                    .axis(axis.isHorizontal()
+                        ? Axis.VERTICAL
+                        : Axis.HORIZONTAL)
+            );
         }
 
         for (int i = 0; i < gridChildren.size(); i++) {
-            int index = i % this.columns;
-            boxes.get(index).add(gridChildren.get(i));
+            int index = i / this.columns;
+            rows.get(index).add(gridChildren.get(i));
         }
 
         axis(axis.isHorizontal()
             ? Axis.HORIZONTAL
             : Axis.VERTICAL);
-        boxes.forEach(super::add);
+        rows.forEach(super::add);
     }
 
     /**
