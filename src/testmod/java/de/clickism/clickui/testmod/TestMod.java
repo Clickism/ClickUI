@@ -140,6 +140,8 @@ public class TestMod implements BaseComponents {
                     .children(
                         h1("New Screen!"),
                         text("There are some important info here!"),
+                        textField()
+                            .height(40),
                         h3("For example:"),
                         box()
                             .scrollable(true)

@@ -7,6 +7,8 @@ import de.clickism.clickui.util.Util;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -23,7 +25,6 @@ import java.util.function.Predicate;
  *
  * @param <S> the type of the subclass extending this abstract class
  */
-// TODO: Invalid color
 public abstract class AbstractField<S extends AbstractField<S>>
     extends UiElement<S> {
 
@@ -49,8 +50,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
     private String currentSuggestion = "";
 
     private boolean invalidInput = false;
-
     private boolean allowInput = true;
+    private boolean multiLine = false;
 
     /*+
      * Constructs a new AbstractTextField instance.
@@ -79,7 +80,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
         // Click to move cursor
         this.onClick(event -> {
             if (!listening()) return;
-            int newCursorPos = cursorPosAt(event.x());
+            int newCursorPos = cursorPosAt(event.x(), event.y());
             cursorPos = Mth.clamp(newCursorPos, 0, value.length());
             if (!Screen.hasShiftDown()) {
                 highlightPos = cursorPos;
@@ -168,6 +169,19 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     public S scrolling(boolean scrolling) {
         this.scrolling = scrolling;
+        return self();
+    }
+
+    /**
+     * Sets whether the text box should allow multi-line input.
+     * <p>
+     * If enabled, the text box will accept line breaks and display multiple lines of text.
+     *
+     * @param multiLine true to enable multi-line input, false to disable
+     * @return the current instance of the text box
+     */
+    protected S multiLine(boolean multiLine) {
+        this.multiLine = multiLine;
         return self();
     }
 
@@ -267,7 +281,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     protected String applyFilter(String input) {
         // Remove invalid characters
-        input = SharedConstants.filterText(input);
+        input = SharedConstants.filterText(input, multiLine);
         // Apply custom input filter
         input = inputFilter.apply(input);
         // Limit to max length
@@ -306,7 +320,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * <p>
      * Should be called whenever the cursor position changes.
      */
-    private void handleCursorMove() {
+    protected void handleCursorMove() {
         updateDisplayPos();
         updateSuggestion();
     }
@@ -316,7 +330,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * <p>
      * It ensures that the cursor is always visible within the text box by adjusting the display position.
      */
-    private void updateDisplayPos() {
+    protected void updateDisplayPos() {
         int width = bounds().width() - padding().horizontal();
         width -= 4; // Padding for cursor
 
@@ -354,7 +368,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
     /**
      * Updates the current suggestion based on the current value of the text box.
      */
-    private void updateSuggestion() {
+    protected void updateSuggestion() {
         if (!listening()) {
             currentSuggestion = "";
             return;
@@ -368,7 +382,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @param string the text to insert
      */
-    private void insertText(String string) {
+    protected void insertText(String string) {
         if (!listening()) return;
         var filtered = applyFilter(string);
         // Update invalid state
@@ -398,7 +412,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @param direction the direction to delete in, positive or negative
      */
-    private void deleteText(int direction) {
+    protected void deleteText(int direction) {
         if (!listening()) return;
         if (direction == 0) return;
         // If text is highlighted, remove it instead
@@ -462,7 +476,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @param direction the direction to move in, positive or negative
      */
-    private void moveCursor(int direction) {
+    protected void moveCursor(int direction) {
         if (Screen.hasControlDown()) {
             // Move to next word
             cursorPos = wordPosition(direction);
@@ -490,7 +504,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * @param code the key code of the pressed key
      * @return true if the key press was handled, false otherwise
      */
-    private boolean handleKeyPress(int code) {
+    protected boolean handleKeyPress(int code) {
         if (Screen.isSelectAll(code)) {
             // Move cursor to the end
             cursorPos = value.length();
@@ -550,6 +564,11 @@ public abstract class AbstractField<S extends AbstractField<S>>
                     insertText(currentSuggestion);
                 }
             }
+            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
+                if (multiLine) {
+                    insertText("\n");
+                }
+            }
             default -> {
                 processed = false;
             }
@@ -597,7 +616,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * @param mouseX the x-coordinate of the mouse click
      * @return the cursor position corresponding to the mouse click
      */
-    protected int cursorPosAt(int mouseX) {
+    protected int cursorPosAt(int mouseX, int mouseY) {
         var textPos = textPosition();
         int x = mouseX - textPos.x();
         // Get the substring of the value starting from displayPos
@@ -624,7 +643,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @return the highlighted text
      */
-    private String highlightedText() {
+    protected String highlightedText() {
         int start = Math.min(cursorPos, highlightPos);
         int end = Math.max(cursorPos, highlightPos);
         return value.substring(start, end);
@@ -635,7 +654,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @return the start index of the highlighted text
      */
-    private int highlightStart() {
+    protected int highlightStart() {
         return Math.min(cursorPos, highlightPos);
     }
 
@@ -644,7 +663,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      *
      * @return the end index of the highlighted text
      */
-    private int highlightEnd() {
+    protected int highlightEnd() {
         return Math.max(cursorPos, highlightPos);
     }
 

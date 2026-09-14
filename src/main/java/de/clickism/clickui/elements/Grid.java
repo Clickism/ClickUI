@@ -49,7 +49,7 @@ public class Grid extends UiElement<Grid> {
         }
 
         for (int i = 0; i < gridChildren.size(); i++) {
-            int index = i / this.columns;
+            int index = i % this.columns;
             boxes.get(index).add(gridChildren.get(i));
         }
 
