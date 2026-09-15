@@ -8,6 +8,8 @@ import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.Border;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Consumer;
+
 /**
  * A simple checkbox UI element that can be toggled on and off.
  */
@@ -17,6 +19,8 @@ public class Checkbox extends UiElement<Checkbox> {
 
     private boolean checked = false;
 
+    private Consumer<Boolean> onCheckedChange = state -> {};
+
     /**
      * Creates a new Checkbox element.
      */
@@ -24,11 +28,23 @@ public class Checkbox extends UiElement<Checkbox> {
         this.onClick(event -> {
             event.playSound();
             this.toggle();
+            this.onCheckedChange.accept(this.checked);
         });
         this.style(style()
             .whenHovered(style()
                 .borderPosition(Border.Position.INSIDE)
                 .borderColor(UiColor.WHITE)));
+    }
+
+    /**
+     * Sets a listener that will be called whenever the checked state changes.
+     *
+     * @param listener the listener to call when the checked state changes
+     * @return this Checkbox instance for method chaining
+     */
+    public Checkbox onCheckedChange(Consumer<Boolean> listener) {
+        this.onCheckedChange = listener;
+        return this;
     }
 
     @Override
@@ -72,6 +88,11 @@ public class Checkbox extends UiElement<Checkbox> {
         var bounds = this.bounds();
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
+        // Adjust scale to fit in the checkbox size
+        graphics.pose().pushPose();
+        graphics.pose().translate(bounds.x(), bounds.y(), 0.0F);
+        graphics.pose().scale((float) bounds.width() / SIZE, (float) bounds.height() / SIZE, 1.0F);
+        graphics.pose().translate(-bounds.x(), -bounds.y(), 0.0F);
         // Render the checkbox texture based on its state (focused and checked)
         graphics.blit(
             TEXTURE,
@@ -86,5 +107,6 @@ public class Checkbox extends UiElement<Checkbox> {
             64,
             64
         );
+        graphics.pose().popPose();
     }
 }

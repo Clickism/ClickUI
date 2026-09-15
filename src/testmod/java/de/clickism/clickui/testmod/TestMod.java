@@ -232,6 +232,8 @@ public class TestMod implements BaseComponents {
                             .maxLength(32)
                             .highlightInvalid(true)
                             .suggest("hello", "bye", "heat"),
+                        checkbox()
+                            .size(10),
                         button("Print Number")
                             .tooltip(new Counter())
                             .onClick(event -> {
