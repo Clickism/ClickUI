@@ -11,6 +11,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import net.minecraft.util.Mth;
 
 import java.util.List;
 
@@ -135,11 +136,11 @@ public class Text extends UiElement<Text> implements Wrappable {
     @Override
     public void wrap(int maxWidth) {
         var font = Util.font();
+        var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
         this.lines = font
             .getSplitter()
-            .splitLines(text, maxWidth, Style.EMPTY);
+            .splitLines(text, Mth.ceil((float) maxWidth / fontScale), Style.EMPTY);
         // Calculate new height
-        var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
         var height = font.lineHeight * fontScale * lines.size();
         height += this.padding().vertical();
         // Update bounds with new height

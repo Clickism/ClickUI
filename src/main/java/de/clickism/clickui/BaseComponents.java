@@ -21,8 +21,18 @@ public interface BaseComponents {
      * @param <T> the type of the value to be held in the reference
      * @return a new Ref instance
      */
-    default <T> Ref<T> ref() {
-        return new Ref<>();
+    default <T> SafeRef<T> ref() {
+        return new SafeRef<>();
+    }
+
+    /**
+     * Creates a new nullable reference holder for a value of type T.
+     *
+     * @param <T> the type of the value to be held in the reference
+     * @return a new NullableRef instance
+     */
+    default <T> NullableRef<T> nullableRef() {
+        return new NullableRef<>();
     }
 
     /**

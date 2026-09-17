@@ -402,8 +402,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
         value = value.substring(0, cursorPos) + string + value.substring(cursorPos);
         cursorPos = Mth.clamp(cursorPos + string.length(), 0, value.length());
         highlightPos = cursorPos;
-        triggerValueChanged();
         handleCursorMove();
+        triggerValueChanged();
     }
 
     /**
@@ -436,8 +436,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
         // Update invalid state
         invalidInput = value.length() > maxLength;
 
-        triggerValueChanged();
         handleCursorMove();
+        triggerValueChanged();
     }
 
     /**

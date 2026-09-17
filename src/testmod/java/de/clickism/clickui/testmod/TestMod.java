@@ -2,7 +2,7 @@ package de.clickism.clickui.testmod;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import de.clickism.clickui.BaseComponents;
-import de.clickism.clickui.Ref;
+import de.clickism.clickui.SafeRef;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
@@ -118,7 +118,7 @@ public class TestMod implements BaseComponents {
             )
         );
 
-        Ref<NumberField> numberRef = ref();
+        SafeRef<NumberField> numberRef = ref();
 
         var newScreen = UiScreen.asScreen(box()
             .alignCenter()

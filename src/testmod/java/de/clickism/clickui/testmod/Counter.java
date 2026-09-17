@@ -1,7 +1,7 @@
 package de.clickism.clickui.testmod;
 
 import de.clickism.clickui.UiComponent;
-import de.clickism.clickui.reactivity.State;
+import de.clickism.clickui.State;
 
 public class Counter extends UiComponent<Counter> {
     private final State<Integer> count = state(0);

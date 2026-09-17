@@ -1,6 +1,5 @@
 package de.clickism.clickui;
 
-import de.clickism.clickui.reactivity.State;
 import de.clickism.clickui.render.RenderContext;
 import org.jetbrains.annotations.ApiStatus;
 
