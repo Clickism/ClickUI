@@ -10,9 +10,10 @@ import net.minecraft.resources.ResourceLocation;
  * A UI element that displays an image from a specified texture resource.
  */
 public class Image extends UiElement<Image> {
+    private ResourceLocation texture;
     private final int width;
     private final int height;
-    private ResourceLocation texture;
+
     private boolean keepAspectRatio = false;
 
     /**
@@ -24,49 +25,6 @@ public class Image extends UiElement<Image> {
         this.texture = texture;
         this.width = width;
         this.height = height;
-    }
-
-    /**
-     * Fits the given width and height into the specified maximum dimensions while maintaining the specified aspect ratio.
-     *
-     * @param width       the original width
-     * @param height      the original height
-     * @param maxWidth    the maximum allowed width
-     * @param maxHeight   the maximum allowed height
-     * @param aspectRatio the desired aspect ratio (width / height)
-     * @return a Size object representing the fitted dimensions
-     */
-    private static Size fitAspectRatio(
-        int width,
-        int height,
-        int maxWidth,
-        int maxHeight,
-        double aspectRatio
-    ) {
-        if (aspectRatio <= 0) {
-            return new Size(
-                Math.min(width, maxWidth),
-                Math.min(height, maxHeight)
-            );
-        }
-
-        // Start from the requested width.
-        width = Math.min(width, maxWidth);
-        height = (int) Math.ceil(width / aspectRatio);
-
-        // Height overflow -> shrink both dimensions.
-        if (height > maxHeight) {
-            height = maxHeight;
-            width = (int) Math.floor(height * aspectRatio);
-        }
-
-        // Width overflow -> shrink both dimensions.
-        if (width > maxWidth) {
-            width = maxWidth;
-            height = (int) Math.floor(width / aspectRatio);
-        }
-
-        return new Size(width, height);
     }
 
     /**
@@ -98,13 +56,12 @@ public class Image extends UiElement<Image> {
             return Size.ZERO;
         }
         if (keepAspectRatio) {
-            return fitAspectRatio(
-                width,
-                height,
-                width().max(),
-                height().max(),
-                (double) width / height
-            );
+            // Get current width from bounds
+            var currentWidth = bounds().width() - padding().horizontal();
+            // Calculate height based on aspect ratio
+            var aspectRatio = (double) height / width;
+            var calculatedHeight = (int) (currentWidth * aspectRatio);
+            return new Size(currentWidth, calculatedHeight);
         }
         return new Size(width, height);
     }
