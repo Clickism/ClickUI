@@ -23,6 +23,13 @@ public class Text extends UiElement<Text> implements Wrappable {
      * The text to displaY.
      */
     private Component text;
+    /**
+     * The unwrapped lines of text, only split on line breaks.
+     */
+    private List<FormattedText> unwrappedLines;
+    /**
+     * The wrapped lines of text, split on line breaks and wrapping.
+     */
     private List<FormattedText> lines;
     /**
      * The alignment of the text within.
@@ -46,9 +53,10 @@ public class Text extends UiElement<Text> implements Wrappable {
      */
     public Text content(Component text) {
         this.text = text;
-        this.lines = Util.font()
+        this.unwrappedLines = Util.font()
             .getSplitter()
             .splitLines(text, Integer.MAX_VALUE, Style.EMPTY);
+        this.lines = this.unwrappedLines;
         this.invalidateLayout();
         return this;
     }
@@ -106,7 +114,7 @@ public class Text extends UiElement<Text> implements Wrappable {
     @Override
     public Size intrinsicSize() {
         var fontScale = this.resolvedStyle().get(StyleProperty.FONT_SCALE);
-        var width = lines.stream()
+        var width = unwrappedLines.stream()
                         .mapToDouble(line -> Util.font().width(line))
                         .max()
                         .orElse(0) * fontScale;
@@ -157,7 +165,6 @@ public class Text extends UiElement<Text> implements Wrappable {
         var fontScale = style.get(StyleProperty.FONT_SCALE);
         var color = style.get(StyleProperty.TEXT_COLOR);
 
-        // TODO: Cascading text color?
         var charLines = Language.getInstance().getVisualOrder(lines);
 
         // Render each line

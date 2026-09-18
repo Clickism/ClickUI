@@ -709,8 +709,7 @@ public class LayoutEngine {
     }
 
     /**
-     * Wraps the text of the given element if it implements the Wrappable interface
-     * and if it's overflowing its bounds.
+     * Wraps the text of the given element if it implements the Wrappable interface.
      * <p>
      * This method is called recursively for all child elements.
      *
@@ -720,8 +719,7 @@ public class LayoutEngine {
         if (element instanceof Wrappable wrappable) {
             int maxWidth = element.bounds().width()
                            - element.padding().horizontal();
-            boolean overflowing = element.intrinsicSize().width() > maxWidth;
-            if (maxWidth > 0 && overflowing) {
+            if (maxWidth > 0) {
                 wrappable.wrap(maxWidth);
             }
         }
