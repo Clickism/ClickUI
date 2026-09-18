@@ -14,7 +14,14 @@ import java.util.function.Consumer;
  * A simple checkbox UI element that can be toggled on and off.
  */
 public class Checkbox extends UiElement<Checkbox> {
-    public static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
+    /**
+     * The checkbox texture to render.
+     */
+    public static final ResourceLocation TEXTURE = ResourceLocation.tryBuild(
+        ResourceLocation.DEFAULT_NAMESPACE,
+        "textures/gui/checkbox.png"
+    );
+
     private static final int SIZE = 20;
 
     private boolean checked = false;
