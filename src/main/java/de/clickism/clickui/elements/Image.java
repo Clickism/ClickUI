@@ -61,6 +61,13 @@ public class Image extends UiElement<Image> {
             // Calculate height based on aspect ratio
             var aspectRatio = (double) height / width;
             var calculatedHeight = (int) (currentWidth * aspectRatio);
+            // Check that height is less than maxHeight
+            int maxHeight = effectiveMaxSize().height();
+            if (calculatedHeight > maxHeight) {
+                calculatedHeight = maxHeight;
+                // Recalculate width based on new height
+                currentWidth = (int) (calculatedHeight / aspectRatio);
+            }
             return new Size(currentWidth, calculatedHeight);
         }
         return new Size(width, height);
