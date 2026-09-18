@@ -22,7 +22,7 @@ public class HitTester {
         var children = element.children();
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);
-            var childMouse = element.toChildCoordinates(mouse);
+            var childMouse = element.toChildRenderCoordinates(mouse);
             var result = hitTest(child, childMouse);
 
             if (result != null) {

@@ -28,7 +28,6 @@ public abstract class UiElement<S extends UiElement<S>>
     implements Layoutable<S>, ElementStateHolder<S>, EventTarget<S>, BaseComponents {
     // TODO: Visibility, style, hover, events, etc.
     // TODO: Simple scheduler
-    // TODO: Tooltip support
     /**
      * The parent element of this element, or null if this element is the root element.
      */
@@ -432,19 +431,61 @@ public abstract class UiElement<S extends UiElement<S>>
     }
 
     /**
-     * Converts a point from the coordinate space of this element's parent
-     * to the coordinate space of this element.
-     * <p>
-     * By default, this method returns the point unchanged, but subclasses
-     * can override it to apply transformations such as translation, scaling, or rotation.
+     * Converts a point from this element's render coordinates, to its child's render coordinates.
      *
-     * @param point the point in the parent coordinate space
-     * @return the point in this element's coordinate space
+     * @param point the point in this element's render coordinates
+     * @return the point in the child's render coordinates
      */
-    public Point toChildCoordinates(Point point) {
+    public Point toChildRenderCoordinates(Point point) {
         return point;
     }
 
+    /**
+     * Converts a point from this element's child's render coordinates, to its own render coordinates.
+     *
+     * @param point the point in the child's render coordinates
+     * @return the point in this element's render coordinates
+     */
+    public Point fromChildRenderCoordinates(Point point) {
+        return point;
+    }
+
+    /**
+     * Returns the position of this element in screen coordinates, which is the position of this element relative to the top-left corner of the screen.
+     *
+     * @return the position of this element in screen coordinates
+     */
+    public Point renderPosition() {
+        int x = bounds().x();
+        int y = bounds().y();
+
+        UiElement<?> element = this;
+        UiElement<?> parent = element.parent();
+        while (parent != null) {
+            var position = parent.fromChildRenderCoordinates(new Point(x, y));
+            x = position.x();
+            y = position.y();
+            element = parent;
+            parent = element.parent();
+        }
+        return new Point(x, y);
+    }
+
+    /**
+     * Returns the bounds of this element in screen coordinates, which is the rectangle that this element occupies relative to the top-left corner of the screen.
+     *
+     * @return the bounds of this element in screen coordinates
+     */
+    public Rect renderBounds() {
+        var position = renderPosition();
+        return new Rect(position.x(), position.y(), bounds().width(), bounds().height());
+    }
+
+    /**
+     * Returns the tooltip of this element, which is an element that is displayed when the user hovers over this element.
+     *
+     * @return the tooltip of this element, or null if no tooltip is set
+     */
     public UiElement<?> tooltip() {
         return tooltip;
     }
@@ -502,6 +543,11 @@ public abstract class UiElement<S extends UiElement<S>>
         return self();
     }
 
+    /**
+     * Returns whether the tooltip of this element is currently visible.
+     *
+     * @return whether the tooltip of this element is currently visible
+     */
     public boolean isTooltipVisible() {
         return tooltip != null && state().hovered();
     }
@@ -655,7 +701,6 @@ public abstract class UiElement<S extends UiElement<S>>
      *
      * @param context the render context to render with
      */
-    // TODO: Render hook system via style, so that custom rendering is possible
     public abstract void render(RenderContext context);
 
     /**

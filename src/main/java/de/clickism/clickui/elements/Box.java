@@ -6,8 +6,6 @@ import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import net.minecraft.util.Mth;
 
-import java.util.LinkedList;
-
 // TODO: Overflow hidden, show, scroll etc.
 // TODO: Fix nested scroll boxes don't work
 // TODO: Fix scroll boxes capture scroll events even when not hovered
@@ -228,8 +226,13 @@ public class Box extends UiElement<Box> {
     }
 
     @Override
-    public Point toChildCoordinates(Point point) {
+    public Point toChildRenderCoordinates(Point point) {
         return new Point(point.x(), (int) (point.y() + scrollY));
+    }
+
+    @Override
+    public Point fromChildRenderCoordinates(Point point) {
+        return new Point(point.x(), (int) (point.y() - scrollY));
     }
 
     @Override
@@ -245,7 +248,7 @@ public class Box extends UiElement<Box> {
         // Render children with scroll offset
         var graphics = context.graphics();
         // Enable scissor to clip children
-        var bounds = bounds();
+        var bounds = renderBounds();
         var x1 = bounds.x();
         var y1 = bounds.y();
         var x2 = bounds.x() + bounds.width();

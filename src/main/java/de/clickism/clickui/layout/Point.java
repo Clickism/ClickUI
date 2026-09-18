@@ -7,4 +7,7 @@ package de.clickism.clickui.layout;
  * @param y Y coordinate of the point
  */
 public record Point(int x, int y) {
+    public Point add(int dx, int dy) {
+        return new Point(x + dx, y + dy);
+    }
 }

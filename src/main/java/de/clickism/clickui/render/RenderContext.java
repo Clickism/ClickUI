@@ -1,6 +1,8 @@
 package de.clickism.clickui.render;
 
+import de.clickism.clickui.UiElement;
 import de.clickism.clickui.UiScreenHandler;
+import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -58,5 +60,11 @@ public record RenderContext(
      */
     public RenderContext withDebug(boolean debug) {
         return new RenderContext(graphics, mouseX, mouseY, delta, screen, debug);
+    }
+
+    public void withScissor(Rect screenBounds, Runnable render) {
+        graphics.enableScissor(screenBounds.x(), screenBounds.y(), screenBounds.width(), screenBounds.height());
+        render.run();
+        graphics.disableScissor();
     }
 }

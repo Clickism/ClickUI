@@ -7,8 +7,6 @@ import de.clickism.clickui.util.Util;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -776,7 +774,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
     protected void renderWithScissor(RenderContext context, Runnable render) {
         var graphics = context.graphics();
         // Enable scissor
-        var bounds = bounds();
+        var bounds = renderBounds();
         graphics.enableScissor(
             bounds.x() + 1, // For inline border
             bounds.y(),

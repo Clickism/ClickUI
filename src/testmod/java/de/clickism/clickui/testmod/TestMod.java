@@ -128,6 +128,7 @@ public class TestMod implements BaseComponents {
                 .alpha(0.5f))
             .children(
                 box()
+                    .height(300)
                     .width(800)
                     .style(style()
                         .borderColor(UiColor.LIGHT_GRAY)
@@ -135,8 +136,7 @@ public class TestMod implements BaseComponents {
                         .alpha(0.5f))
                     .padding(8)
                     .childGap(8)
-                    .alignCenter()
-                    .scrollable(false)
+                    .scrollable(true)
                     .children(
                         h1("New Screen!"),
                         text("There are some important info here!"),
@@ -152,9 +152,11 @@ public class TestMod implements BaseComponents {
                             .style(style().borderColor(UiColor.GREEN))
                             .children(
                                 text("Scrollable content line 1"),
+                                textField(),
                                 text("Scrollable content line 2"),
                                 text("Scrollable content line 3"),
                                 text("Scrollable content line 4"),
+                                textField(),
                                 button("Drag me!")
                                     .onDragStart(event -> {
                                         event.player().sendSystemMessage(Component.literal("Drag started!"));
