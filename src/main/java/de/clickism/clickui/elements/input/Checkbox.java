@@ -38,8 +38,9 @@ public class Checkbox extends UiElement<Checkbox> {
             this.onCheckedChange.accept(this.checked);
         });
         this.style(style()
+            .borderPosition(Border.Position.INSIDE)
+            .borderColor(UiColor.BLACK)
             .whenHovered(style()
-                .borderPosition(Border.Position.INSIDE)
                 .borderColor(UiColor.WHITE)));
     }
 

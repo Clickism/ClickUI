@@ -30,6 +30,7 @@ public class Button extends UiElement<Button> {
      * Whether to render the button's background. If false, the default background won't be rendered
      */
     private boolean defaultBackground = true;
+    private float displayOffsetX = 0;
 
     /**
      * Creates a new Button element with the specified label.
@@ -106,14 +107,29 @@ public class Button extends UiElement<Button> {
         if (defaultBackground) {
             renderBackground(context);
         }
+        scrollTextIfNeeded(context);
+        // Transform by displayOffsetX for scrolling effect
+        var graphics = context.graphics();
+        graphics.pose().pushPose();
+        var renderBounds = this.renderBounds();
+        var scissorPadding = 2;
+        graphics.enableScissor(
+            renderBounds.x() + scissorPadding,
+            renderBounds.y(),
+            renderBounds.x() + renderBounds.width() - scissorPadding,
+            renderBounds.y() + renderBounds.height()
+        );
+        graphics.pose().translate(-displayOffsetX, 0, 0);
         // Render label
-        // TODO: Scrolling text if it doesn't fit in the button
         var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
         var renderer = new ScaledTextRenderer(context);
         // Center the label vertically and horizontally
         var textWidth = renderer.measureWidth(label, fontScale);
         var textHeight = renderer.measureHeight(fontScale);
         var textX = (int) (bounds.x() + (bounds.width() - textWidth) / 2);
+        if (textWidth > bounds.width()) {
+            textX = bounds.x() + scissorPadding; // Align to left with padding if text is wider than button
+        }
         var textY = (int) (bounds.y() + (bounds.height() - textHeight) / 2);
         textY += 1; // Adjust for better visual alignment
         // Text color
@@ -121,6 +137,35 @@ public class Button extends UiElement<Button> {
             ? 0xFFAAAAAA
             : 0xFFFFFFFF;
         renderer.render(label, textX, textY, fontScale, color);
+        graphics.disableScissor();
+        // Undo transform
+        graphics.pose().popPose();
+    }
+
+    private void scrollTextIfNeeded(RenderContext context) {
+        var bounds = this.bounds();
+        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
+        var renderer = new ScaledTextRenderer(context);
+
+        var textWidth = renderer.measureWidth(label, fontScale);
+        var shownWidth = bounds.width() - 4; // Account for scissor padding
+
+        if (textWidth <= shownWidth) {
+            displayOffsetX = 0;
+            return;
+        }
+
+        var scrollWidth = textWidth - shownWidth;
+
+        var time = System.currentTimeMillis() / 1000.0;
+        var period = Math.max(scrollWidth * 0.25, 3.0);
+
+        var progress = Math.sin(
+            (Math.PI / 2.0) *
+            Math.cos((Math.PI * 2.0) * time / period)
+        ) / 2.0 + 0.5;
+
+        displayOffsetX = (float) (scrollWidth * progress);
     }
 
     private void renderBackground(RenderContext context) {

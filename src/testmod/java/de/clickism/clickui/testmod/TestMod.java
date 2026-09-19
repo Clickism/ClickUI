@@ -6,7 +6,7 @@ import de.clickism.clickui.SafeRef;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
-import de.clickism.clickui.style.Border;
+import de.clickism.clickui.layout.Align;import de.clickism.clickui.style.Border;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -145,6 +145,7 @@ public class TestMod implements BaseComponents {
                         h3("For example:"),
                         box()
                             .scrollable(true)
+                            .crossAlign(Align.CENTER)
                             .width(300)
                             .padding(16)
                             .height(100)
@@ -249,7 +250,8 @@ public class TestMod implements BaseComponents {
                                 .whenHovered(style()
                                     .borderWidth(3)
                                     .borderColor(UiColor.WHITE_A50))),
-                        button("Go back")
+                        button("Go back but very long so the text should be scrolling! So let's see if it actually does that")
+                            .width(150)
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {
                                 event.screen().close();

@@ -63,7 +63,12 @@ public record RenderContext(
     }
 
     public void withScissor(Rect screenBounds, Runnable render) {
-        graphics.enableScissor(screenBounds.x(), screenBounds.y(), screenBounds.width(), screenBounds.height());
+        graphics.enableScissor(
+            screenBounds.x(),
+            screenBounds.y(),
+            screenBounds.x() + screenBounds.width(),
+            screenBounds.y() + screenBounds.height()
+        );
         render.run();
         graphics.disableScissor();
     }
