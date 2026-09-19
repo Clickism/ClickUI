@@ -93,9 +93,9 @@ public class Button extends UiElement<Button> {
 
     @Override
     public Size intrinsicSize() {
-        // TODO: Consider font size
         var height = DEFAULT_HEIGHT - DEFAULT_PADDING.vertical();
-        var width = Util.font().width(label);
+        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
+        var width = (int) (Util.font().width(label) * fontScale);
         return new Size(width, height);
     }
 
