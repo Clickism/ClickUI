@@ -1,12 +1,13 @@
 package de.clickism.clickui.render.style;
 
+import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.*;
 //? if >= 26.1 {
-import net.minecraft.client.renderer.RenderPipelines;
+/*import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.systems.RenderSystem;
-//?}
+*///?}
 
 public class StyleRenderer {
     private final UiElement<?> element;
@@ -22,18 +23,18 @@ public class StyleRenderer {
 
         // Apply alpha
         //? if < 26.1
-        //context.graphics().setColor(1.0f, 1.0f, 1.0f, style.get(StyleProperty.ALPHA));
+        context.graphics().setColor(1.0f, 1.0f, 1.0f, style.get(StyleProperty.ALPHA));
 
         // Render background
         var background = style.get(StyleProperty.BACKGROUND_COLOR);
         if (background != null) {
             //? if >= 26.1 {
-            int alpha = (int) (background.alpha() * style.get(StyleProperty.ALPHA) * 255);
+            /*int alpha = (int) (background.alpha() * style.get(StyleProperty.ALPHA) * 255);
             int color = alpha << 24 + background.red() << 16 + background.green() << 8 + background.blue();
             renderBackground(color);
-            //?} elif < 26.1 {
-            /*renderBackground(background.color());
-            *///?}
+            *///?} elif < 26.1 {
+            renderBackground(background.color());
+            //?}
         }
 
         // Render pre-hooks
@@ -50,12 +51,12 @@ public class StyleRenderer {
         var overlay = style.get(StyleProperty.OVERLAY_COLOR);
         if (overlay != null) {
             //? if >= 26.1 {
-            int alpha = (int) (overlay.alpha() * style.get(StyleProperty.OVERLAY_COLOR).alpha()) * 255;
+            /*int alpha = (int) (overlay.alpha() * style.get(StyleProperty.OVERLAY_COLOR).alpha()) * 255;
             int color = alpha << 24 + overlay.red() << 16 + overlay.green() << 8 + overlay.blue();
             renderBackground(color);
-            //?} elif < 26.1 {
-            /*renderBackground(overlay.color());
-            *///?}
+            *///?} elif < 26.1 {
+            renderBackground(overlay.color());
+            //?}
         }
 
         // Render border
@@ -65,10 +66,14 @@ public class StyleRenderer {
 
         var border = FourSided.<Border>of(null);
         for (var side : FourSided.Side.values()) {
+            UiColor sideColor = borderColor.get(side);
+            //? if >= 26.1 {
+            /*sideColor = sideColor.alpha(sideColor.alpha()*style.get(StyleProperty.ALPHA));
+            *///?}
             border = border.with(side, new Border(
                 borderWidth.get(side),
                 borderPosition.get(side),
-                borderColor.get(side)
+                sideColor
             ));
         }
 
@@ -84,7 +89,7 @@ public class StyleRenderer {
 
         // Revert alpha
         //? if < 26.1
-        //context.graphics().setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        context.graphics().setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     protected void renderBackground(int color) {

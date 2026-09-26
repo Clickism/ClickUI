@@ -5,7 +5,7 @@ import de.clickism.clickui.UiScreenHandler;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Represents the render context when rendering a UI element.
@@ -18,7 +18,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
  * @param debug    Whether debug mode is enabled.
  */
 public record RenderContext(
-    GuiGraphicsExtractor graphics,
+    GuiGraphics graphics,
     int mouseX,
     int mouseY,
     float delta,

@@ -2,7 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.render.RenderContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
@@ -41,18 +41,18 @@ public class UiScreenHandler extends UiEventHandler implements UiScreenControls 
 
     @Override
     //? if < 26.1 {
-    /*public void render
-    *///?} elif >= 26.1 {
-    public void extractRenderState
-    //?}
-            (GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public void render
+    //?} elif >= 26.1 {
+    /*public void extractRenderState
+    *///?}
+            (GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Prepare the tree for render
         tree.prepareRender(this.width, this.height);
         // Call event handler
         //? if < 26.1
-        /*super.render(graphics, mouseX, mouseY, delta);*/
+        super.render(graphics, mouseX, mouseY, delta);
         //? if >= 26.1
-        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        //super.extractRenderState(graphics, mouseX, mouseY, delta);
         // Render the tree
         var context = new RenderContext(graphics, mouseX, mouseY, delta, this, false);
         tree.render(context);

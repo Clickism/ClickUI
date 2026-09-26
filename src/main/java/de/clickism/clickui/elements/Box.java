@@ -256,34 +256,34 @@ public class Box extends UiElement<Box> {
         graphics.enableScissor(x1, y1, x2, y2);
 
 
-        graphics.pose().pushMatrix();
+        graphics.pose().pushPose();
         // Apply scroll offset
         scrollY(scrollY); // Clamp scrollY to valid range
         //? if < 26.1
-        //graphics.pose().translate(0, -scrollY, 0);
+        graphics.pose().translate(0, -scrollY, 0);
         //? if >= 26.1
-        graphics.pose().translate(0, (int) -scrollY);
+        //graphics.pose().translate(0f, (float) -scrollY);
 
         // Render children
         for (var child : children()) {
             child.renderTree(context);
         }
 
-        graphics.pose().popMatrix();
+        graphics.pose().popPose();
         // Disable scissor
         graphics.disableScissor();
 
         if (scrollable && isOverflowing()) {
-            graphics.pose().pushMatrix();
+            graphics.pose().pushPose();
             // Render scrollbar on top of children
             //? if < 26.1
-            //graphics.pose().translate(0, 0, 100);
+            graphics.pose().translate(0, 0, 100);
             //? if >= 26.1
-            graphics.pose().translate(0, 0);
+            //graphics.pose().translate(0, 0);
 
             renderScrollbar(context);
 
-            graphics.pose().popMatrix();
+            graphics.pose().popPose();
         }
 
     }
