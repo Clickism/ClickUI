@@ -3,7 +3,7 @@
 	"id": "click-ui",
 	"version": "${mod_version}",
 	"name": "Click UI",
-	"description": "A beautiful UI library",
+	"description": "A modern, declarative, reactive, client-side UI framework for Minecraft.",
 	"authors": [
 		"Clickism"
 	],
