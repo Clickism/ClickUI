@@ -14,18 +14,18 @@ import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 //? if fabric {
-import net.fabricmc.api.ClientModInitializer;
+/*import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 //? if < 26.1
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 //? if >= 26.1
 //import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-//?} elif forge {
-//import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-//import net.minecraftforge.eventbus.api.SubscribeEvent;
-//import net.minecraftforge.fml.common.Mod;
-//import net.minecraftforge.common.MinecraftForge;
-//import net.minecraftforge.event.TickEvent;
+*///?} elif forge {
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 //?} elif neoforge {
 /*import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -36,11 +36,11 @@ import net.neoforged.bus.api.IEventBus;
 *///?}
 
 //? if fabric {
-public class TestMod implements ClientModInitializer, BaseComponents {
- //?} elif forge {
-/*@Mod("clickuitestmod")
+/*public class TestMod implements ClientModInitializer, BaseComponents {
+ *///?} elif forge {
+@Mod("clickuitestmod")
 public class TestMod implements BaseComponents {
- *///?} elif neoforge {
+ //?} elif neoforge {
 /*@Mod("clickuitestmod")
 public class TestMod implements BaseComponents {
 *///?}
@@ -50,7 +50,7 @@ public class TestMod implements BaseComponents {
     private static KeyMapping openMenuKey;
 
     //? if fabric {
-    @Override
+    /*@Override
     public void onInitializeClient() {
         //? if < 26.1
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
@@ -70,9 +70,9 @@ public class TestMod implements BaseComponents {
             }
         });
     }
-    //?} else {
+    *///?} else {
 
-    /*public TestMod(/^? if neoforge {^//^IEventBus modBus^//^?}^/) {
+    public TestMod(/*? if neoforge {*//*IEventBus modBus*//*?}*/) {
         openMenuKey = new KeyMapping(
             "key.clickuitestmod.open_menu",
             InputConstants.Type.KEYSYM,
@@ -80,11 +80,11 @@ public class TestMod implements BaseComponents {
             "key.categories.clickuitestmod"
         );
         //? if forge
-        /^MinecraftForge.EVENT_BUS.register(this);^/
+        MinecraftForge.EVENT_BUS.register(this);
         //? if neoforge {
-        /^NeoForge.EVENT_BUS.register(this);
+        /*NeoForge.EVENT_BUS.register(this);
         modBus.addListener(this::registerKeys);
-        ^///?}
+        *///?}
     }
 
     public void registerKeys(RegisterKeyMappingsEvent event) {
@@ -92,12 +92,12 @@ public class TestMod implements BaseComponents {
     }
 
     @SubscribeEvent
-    public void onClientTick(/^? if forge {^//^TickEvent.ClientTickEvent^//^?} elif neoforge {^/ /^PlayerTickEvent.Post ^//^?}^/ event) {
+    public void onClientTick(/*? if forge {*/TickEvent.ClientTickEvent/*?} elif neoforge {*/ /*PlayerTickEvent.Post *//*?}*/ event) {
         while (openMenuKey.consumeClick()) {
             this.openTestScreen();
         }
     }
-    *///?}
+    //?}
 
     private void openTestScreen() {
         var screen = UiScreen.asScreen(box()

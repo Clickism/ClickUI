@@ -23,10 +23,10 @@ import net.minecraft.client.input.InputWithModifiers;
 
 // Versioned dependencies
 //? if < 1.21{
-/*import net.minecraft.SharedConstants;
-*///?} elif >= 1.21 {
-import net.minecraft.util.StringUtil;
-//?}
+import net.minecraft.SharedConstants;
+//?} elif >= 1.21 {
+/*import net.minecraft.util.StringUtil;
+*///?}
 
 //? if >= 26.1 {
 /*class KeyInput implements InputWithModifiers {
@@ -312,10 +312,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
     protected String applyFilter(String input) {
         // Remove invalid characters
         //? if < 1.21 {
-         /*input = SharedConstants.filterText(input, multiLine);
-        *///?} elif >= 1.21 {
-        input = StringUtil.filterText(input, multiLine);
-        //?}
+         input = SharedConstants.filterText(input, multiLine);
+        //?} elif >= 1.21 {
+        /*input = StringUtil.filterText(input, multiLine);
+        *///?}
         // Apply custom input filter
         input = inputFilter.apply(input);
         // Limit to max length

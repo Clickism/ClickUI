@@ -14,9 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 //? if < 1.21
-//import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
+import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
 //? if >= 1.21
-import net.minecraft.client.gui.components.WidgetSprites;
+//import net.minecraft.client.gui.components.WidgetSprites;
 //? if >= 26.1
 //import net.minecraft.client.renderer.RenderPipelines;
 
@@ -25,7 +25,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
  */
 public class Button extends UiElement<Button> {
     //? if >= 1.21
-    private static final WidgetSprites SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_disabled"), ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
+    //private static final WidgetSprites SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_disabled"), ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
     private static final int DEFAULT_HEIGHT = 20;
     private static final Padding DEFAULT_PADDING = Padding.create(4, 8);
 
@@ -193,19 +193,19 @@ public class Button extends UiElement<Button> {
         // Render button texture
         try {
             //? if < 1.21 {
-            /*graphics.blitNineSliced(
+            graphics.blitNineSliced(
                 WIDGETS_LOCATION,
                 bounds.x(), bounds.y(), bounds.width(), bounds.height(),
                 20, 4, 200, 20, 0, textureY()
             );
-            *///?} elif >= 1.21 {
-            graphics.blitSprite(
+            //?} elif >= 1.21 {
+            /*graphics.blitSprite(
                     //? if >= 26.1
                     //RenderPipelines.GUI_TEXTURED,
                     SPRITES.get(!state().disabled(), state().focused() || state().hovered()),
                     bounds.x(), bounds.y(), bounds.width(), bounds.height()
             );
-            //?}
+            *///?}
 
         } catch (Exception e) {
             // Log the error and continue rendering

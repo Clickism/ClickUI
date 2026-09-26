@@ -20,18 +20,18 @@ public class Checkbox extends UiElement<Checkbox> {
      * The checkbox texture to render.
      */
     //? if < 1.21 {
-    /*public static final ResourceLocation TEXTURE = ResourceLocation.tryBuild(
+    public static final ResourceLocation TEXTURE = ResourceLocation.tryBuild(
         ResourceLocation.DEFAULT_NAMESPACE,
         "textures/gui/checkbox.png"
     );
-    *///?} elif >= 1.21 {
-    private static final ResourceLocation TEXTURE_BOTH = ResourceLocation.withDefaultNamespace("widget/checkbox_selected_highlighted");
+    //?} elif >= 1.21 {
+    /*private static final ResourceLocation TEXTURE_BOTH = ResourceLocation.withDefaultNamespace("widget/checkbox_selected_highlighted");
     private static final ResourceLocation TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("widget/checkbox_selected");
     private static final ResourceLocation TEXTURE_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("widget/checkbox_highlighted");
     private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("widget/checkbox");
-    /**
+    /^*
      * Returns the proper texture for this state
-     */
+     ^/
     private ResourceLocation resolve() {
         if (!state().disabled()) {
             if (state().hovered() && checked) {
@@ -44,7 +44,7 @@ public class Checkbox extends UiElement<Checkbox> {
         }
         return TEXTURE;
     }
-    //?}
+    *///?}
 
     private static final int SIZE = 20;
 
@@ -133,7 +133,7 @@ public class Checkbox extends UiElement<Checkbox> {
         *///?}
         // Render the checkbox texture based on its state (focused and checked)
         //? if < 1.21 {
-        /*graphics.blit(
+        graphics.blit(
             TEXTURE,
             bounds.x(),
             bounds.y(),
@@ -146,9 +146,9 @@ public class Checkbox extends UiElement<Checkbox> {
             64,
             64
         );
-        *///?} elif < 26.1 {
-        graphics.blitSprite(resolve(), bounds.x(), bounds.y(), SIZE, SIZE);
-        //?} elif >= 26.1 {
+        //?} elif < 26.1 {
+        /*graphics.blitSprite(resolve(), bounds.x(), bounds.y(), SIZE, SIZE);
+        *///?} elif >= 26.1 {
         /*graphics.blitSprite(RenderPipelines.GUI_TEXTURED, resolve(), bounds.x(), bounds.y(), SIZE, SIZE);
         *///?}
         graphics.pose().popPose();
