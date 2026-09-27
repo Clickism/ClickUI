@@ -10,6 +10,7 @@ import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
 import de.clickism.clickui.render.UiGraphics;
 import de.clickism.clickui.style.Border;
+import de.clickism.clickui.style.StyleData;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
 import de.clickism.clickui.util.versioning.VersionUtil;
@@ -105,12 +106,21 @@ public class Button extends UiElement<Button> {
     }
 
     @Override
+    public void renderElement(RenderContext context) {
+        super.renderElement(context);
+        // Render text on top of outline
+        renderText(context);
+    }
+
+    @Override
     public void render(RenderContext context) {
-        var bounds = this.bounds();
         // Render default background
         if (defaultBackground) {
             renderBackground(context);
         }
+    }
+
+    private void renderText(RenderContext context) {
         scrollTextIfNeeded(context);
         // Transform by displayOffsetX for scrolling effect
         var graphics = context.graphics();
@@ -118,16 +128,18 @@ public class Button extends UiElement<Button> {
         var scissorBounds = graphics.scissorBounds(this);
         var scissorPadding = 2;
         graphics.enableScissor(new Rect(
-                scissorBounds.x() + scissorPadding,
-                scissorBounds.y(),
-                scissorBounds.width() - scissorPadding * 2,
-                scissorBounds.height()
+            scissorBounds.x() + scissorPadding,
+            scissorBounds.y(),
+            scissorBounds.width() - scissorPadding * 2,
+            scissorBounds.height()
         ));
         graphics.translate(-displayOffsetX, 0);
         // Render label
-        var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
+        var style = resolvedStyle();
+        var fontScale = style.get(StyleProperty.FONT_SCALE);
         var renderer = new ScaledTextRenderer(context);
         // Center the label vertically and horizontally
+        var bounds = this.bounds();
         var textWidth = renderer.measureWidth(label, fontScale);
         var textHeight = renderer.measureHeight(fontScale);
         var textX = (int) (bounds.x() + (bounds.width() - textWidth) / 2);
@@ -140,7 +152,19 @@ public class Button extends UiElement<Button> {
         var color = state().disabled()
             ? 0xFFAAAAAA
             : 0xFFFFFFFF;
-        renderer.render(label, textX, textY, fontScale, color);
+        var shadowColor = style.get(StyleProperty.OVERLAY_COLOR)
+                .alpha(0.4f)
+                .color();
+        // Apply alpha since rendering separately
+        graphics.alpha(style.get(StyleProperty.ALPHA));
+        // Render default text
+        renderer.render(label, textX, textY, fontScale, color, true);
+        // Render shadow with lower alpha to match shadow color to outline color
+        renderer.render(label, textX + 1, textY + 1, fontScale, shadowColor, false);
+        // Render text again to ensure it's on top of the shadow
+        renderer.render(label, textX, textY, fontScale, color, false);
+        // Revert alpha and scissor
+        graphics.alpha(1.0f);
         graphics.disableScissor();
         // Undo transform
         graphics.pop();

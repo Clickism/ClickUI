@@ -22,8 +22,22 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(Component text, int x, int y, float scale, int color) {
+        render(text, x, y, scale, color, true);
+    }
+
+    /**
+     * Renders the given text at the specified position with the specified scale, color, and shadow option.
+     *
+     * @param text   the text to render
+     * @param x      the x position to render the text at
+     * @param y      the y position to render the text at
+     * @param scale  the scale to render the text at
+     * @param color  the color to render the text with
+     * @param shadow whether to render a shadow
+     */
+    public void render(Component text, int x, int y, float scale, int color, boolean shadow) {
         context.graphics().withScaleAbout(x, y, scale, scale, () -> {
-            context.graphics().text(text, x, y, color, true);
+            context.graphics().text(text, x, y, color, shadow);
         });
     }
 
@@ -37,8 +51,22 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(FormattedCharSequence text, int x, int y, float scale, int color) {
+        render(text, x, y, scale, color, true);
+    }
+
+    /**
+     * Renders the given text at the specified position with the specified scale, color, and shadow option.
+     *
+     * @param text   the text to render
+     * @param x      the x position to render the text at
+     * @param y      the y position to render the text at
+     * @param scale  the scale to render the text at
+     * @param color  the color to render the text with
+     * @param shadow whether to render a shadow
+     */
+    public void render(FormattedCharSequence text, int x, int y, float scale, int color, boolean shadow) {
         context.graphics().withScaleAbout(x, y, scale, scale, () -> {
-            context.graphics().text(text, x, y, color, true);
+            context.graphics().text(text, x, y, color, shadow);
         });
     }
 

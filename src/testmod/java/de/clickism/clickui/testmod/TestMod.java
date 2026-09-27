@@ -263,6 +263,7 @@ public class TestMod implements BaseComponents {
                         checkbox()
                             .size(10),
                         button("Print Number")
+                            .buttonColor(UiColor.LIME)
                             .tooltip(new Counter())
                             .onClick(event -> {
                                 var number = numberRef.get().doubleValue();
