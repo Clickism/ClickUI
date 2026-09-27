@@ -1,11 +1,11 @@
 plugins {
     id("java")
-    id("net.fabricmc.fabric-loom") version "1.17-SNAPSHOT"
+    id("net.fabricmc.fabric-loom-remap") version "1.17-SNAPSHOT"
     id("maven-publish")
 }
 val modVersion = property("mod.version").toString()
-val minecraftVersion = property("mod.minecraft_version").toString()
-val loader = stonecutter.current.project.substringAfterLast('-')
+val minecraftVersion = stonecutter.current.project.substringBeforeLast('-')
+val loader = stonecutter.current.project.substringAfterLast('-').substringBeforeLast('+')
 
 group = project.property("maven_group").toString()
 version = "$modVersion+$minecraftVersion-$loader"
@@ -27,11 +27,8 @@ loom {
     runConfigs.all {
         generateRunConfig.set(true)
         runDirectory.set(rootProject.file("runs/fabric"))
-//        if (runtimeEnvironment.get() == "client") {
-//            programArguments.set(listOf("--username=ClickToPlay"))
-//        }
     }
-    //createRemapConfigurations(sourceSets["testmod"])
+    createRemapConfigurations(sourceSets["testmod"])
     mods {
         create("clickui-testmod") {
             sourceSet(sourceSets["testmod"])
@@ -47,15 +44,9 @@ loom {
 }
 
 java {
-    if (sc.current.parsed >= "26.1") {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(25))
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
-    } else {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(25))
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 base {
@@ -74,10 +65,16 @@ configurations {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
+    // Mappings
+    @Suppress("UnstableApiUsage")
+    mappings(loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${property("deps.parchment")}@zip")
+    })
 
     // Testmod-only dependencies
-    "implementation"("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    "implementation"("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    "modTestmodImplementation"("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    "modTestmodImplementation"("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
     compileOnly("org.jetbrains:annotations:24.0.1")
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
@@ -121,11 +118,12 @@ publishing {
         }
     }
 }
+
 stonecutter {
-    replacements.string(sc.current.parsed >= "26.1") {
-        replace("GuiGraphics", "GuiGraphicsExtractor")
-        replace("ResourceLocation", "Identifier")
-        replace("pushPose", "pushMatrix")
-        replace("popPose", "popMatrix")
+    replacements.string(sc.current.parsed < "26.1") {
+        replace("GuiGraphicsExtractor", "GuiGraphics")
+        replace("Identifier", "ResourceLocation")
+        replace("pushMatrix", "pushPose")
+        replace("popMatrix", "popPose")
     }
 }
