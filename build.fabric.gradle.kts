@@ -85,7 +85,7 @@ tasks.processResources {
     dependsOn(tasks.named("stonecutterGenerate"))
     val properties = mapOf(
         "mod_version" to modVersion,
-        "minecraft_version" to minecraftVersion,
+        "minecraft_version" to project.property("mod.minecraft_version"),
         "fabric_loader_version" to project.property("deps.fabric_loader")
     )
 

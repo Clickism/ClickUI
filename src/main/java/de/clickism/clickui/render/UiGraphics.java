@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
-//? if >= 1.21.1 {
+//? if >= 26.1 {
 /*import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 *///?} else {
@@ -167,6 +167,7 @@ public class UiGraphics {
 
     public void alpha(float alpha) {
         this.alpha = alpha;
+        graphics.setColor(1.0f, 1.0f, 1.0f, alpha);
     }
 
     public float alpha() {
@@ -174,11 +175,16 @@ public class UiGraphics {
     }
 
     public int withAlpha(int color) {
-        int a = (int) ((color >> 24 & 0xFF) * alpha);
+        //? if <26.1 {
+        // Alpha is applied globally here
+        return color;
+        //?} else {
+        /*int a = (int) ((color >> 24 & 0xFF) * alpha);
         int r = color >> 16 & 0xFF;
         int g = color >> 8 & 0xFF;
         int b = color & 0xFF;
         return a << 24 | r << 16 | g << 8 | b;
+        *///?}
     }
 
     public void renderSprite(Sprite sprite, int x, int y, int width, int height) {
@@ -188,8 +194,9 @@ public class UiGraphics {
             //RenderPipelines.GUI_TEXTURED,
             sprite.texture(),
             x, y,
-            width, height,
-            alpha
+            width, height
+            //? if >= 26.1
+            //,alpha
         );
         *///?} else {
         graphics.blit(
@@ -209,8 +216,9 @@ public class UiGraphics {
             //RenderPipelines.GUI_TEXTURED,
             sprite.texture(),
             x, y,
-            width, height,
-            alpha
+            width, height
+            //? if >= 26.1
+            //,alpha
         );
         *///?} else {
         graphics.blitNineSliced(
@@ -232,8 +240,9 @@ public class UiGraphics {
             x, y,
             0, 0,
             width, height,
-            width, height,
-            withAlpha(WHITE)
+            width, height
+            //? if >= 26.1
+            //,withAlpha(WHITE)
         );
     }
 

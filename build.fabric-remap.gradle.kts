@@ -44,9 +44,15 @@ loom {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    if (sc.current.parsed >= "1.20.5") {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    } else {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 base {
@@ -86,7 +92,7 @@ tasks.processResources {
     dependsOn(tasks.named("stonecutterGenerate"))
     val properties = mapOf(
         "mod_version" to modVersion,
-        "minecraft_version" to minecraftVersion,
+        "minecraft_version" to project.property("mod.minecraft_version"),
         "fabric_loader_version" to project.property("deps.fabric_loader")
     )
 
