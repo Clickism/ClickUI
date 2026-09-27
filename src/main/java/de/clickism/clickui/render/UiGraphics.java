@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 public class UiGraphics {
     private final GuiGraphics graphics;
+    private float alpha = 1.0f;
 
     public UiGraphics(GuiGraphics graphics) {
         this.graphics = graphics;
@@ -101,32 +102,32 @@ public class UiGraphics {
     }
 
     public void fill(int x0, int y0, int x1, int y1, int color) {
-        graphics.fill(RenderPipelines.GUI, x0, y0, x1, y1, color);
+        graphics.fill(RenderPipelines.GUI, x0, y0, x1, y1, withAlpha(color));
     }
 
     public void fill(RenderType type, int x0, int y0, int x1, int y1, int color) {
         var pipeline = type.pipeline();
-        graphics.fill(pipeline, x0, y0, x1, y1, color);
+        graphics.fill(pipeline, x0, y0, x1, y1, withAlpha(color));
     }
 
     public void outline(int x, int y, int width, int height, int color) {
-        graphics.outline(x, y, width, height, color);
+        graphics.outline(x, y, width, height, withAlpha(color));
     }
 
     public void outline(Rect rect, int color) {
-        outline(rect.x(), rect.y(), rect.width(), rect.height(), color);
+        outline(rect.x(), rect.y(), rect.width(), rect.height(), withAlpha(color));
     }
 
     public void text(String string, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), string, x, y, color, dropShadow);
+        graphics.text(Util.font(), string, x, y, withAlpha(color), dropShadow);
     }
 
     public void text(FormattedCharSequence text, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), text, x, y, color, dropShadow);
+        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
 
     public void text(Component text, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), text, x, y, color, dropShadow);
+        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
 
     public void tooltipBackground(Rect bounds, ResourceLocation style) {
@@ -139,6 +140,22 @@ public class UiGraphics {
             style
             //TODO: , -1
         );
+    }
+
+    public void alpha(float alpha) {
+        this.alpha = alpha;
+    }
+
+    public float alpha() {
+        return this.alpha;
+    }
+
+    public int withAlpha(int color) {
+        int a = (int) ((color >> 24 & 0xFF) * alpha);
+        int r = color >> 16 & 0xFF;
+        int g = color >> 8 & 0xFF;
+        int b = color & 0xFF;
+        return a << 24 | r << 16 | g << 8 | b;
     }
 
     public enum RenderType {
