@@ -4,6 +4,7 @@ import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
+import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -19,13 +20,6 @@ import java.util.function.Predicate;
 //? if >= 26.1 {
 /*import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.InputWithModifiers;
-*///?}
-
-// Versioned dependencies
-//? if < 1.21{
-import net.minecraft.SharedConstants;
-//?} elif >= 1.21 {
-/*import net.minecraft.util.StringUtil;
 *///?}
 
 //? if >= 26.1 {
@@ -311,11 +305,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     protected String applyFilter(String input) {
         // Remove invalid characters
-        //? if < 1.21 {
-         input = SharedConstants.filterText(input, multiLine);
-        //?} elif >= 1.21 {
-        /*input = StringUtil.filterText(input, multiLine);
-        *///?}
+        input = VersionUtil.applyDefaultFilter(input, multiLine);
         // Apply custom input filter
         input = inputFilter.apply(input);
         // Limit to max length

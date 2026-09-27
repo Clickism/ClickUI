@@ -117,6 +117,7 @@ publishing {
         }
     }
 }
+
 stonecutter {
     replacements.string(sc.current.parsed >= "26.1") {
         replace("GuiGraphics", "GuiGraphicsExtractor")

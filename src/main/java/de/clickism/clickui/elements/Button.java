@@ -10,13 +10,9 @@ import de.clickism.clickui.render.ScaledTextRenderer;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
+import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
-//? if < 1.21
-import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
-//? if >= 1.21
-//import net.minecraft.client.gui.components.WidgetSprites;
 //? if >= 26.1
 //import net.minecraft.client.renderer.RenderPipelines;
 
@@ -24,8 +20,6 @@ import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATIO
  * A simple UI element that can be clicked and displays a label.
  */
 public class Button extends UiElement<Button> {
-    //? if >= 1.21
-    //private static final WidgetSprites SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_disabled"), ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
     private static final int DEFAULT_HEIGHT = 20;
     private static final Padding DEFAULT_PADDING = Padding.create(4, 8);
 
@@ -191,19 +185,21 @@ public class Button extends UiElement<Button> {
         RenderSystem.defaultBlendFunc();
         //?}
         // Render button texture
+        var buttonTexture = VersionUtil.buttonTexture(state().disabled());
         try {
             //? if < 1.21 {
             graphics.blitNineSliced(
-                WIDGETS_LOCATION,
+                buttonTexture.texture(),
                 bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-                20, 4, 200, 20, 0, textureY()
+                20, 4, 200, 20, 0,
+                buttonTexture.textureY()
             );
             //?} elif >= 1.21 {
             /*graphics.blitSprite(
-                    //? if >= 26.1
-                    //RenderPipelines.GUI_TEXTURED,
-                    SPRITES.get(!state().disabled(), state().focused() || state().hovered()),
-                    bounds.x(), bounds.y(), bounds.width(), bounds.height()
+                //? if >= 26.1
+                //RenderPipelines.GUI_TEXTURED,
+                buttonTexture.texture(),
+                bounds.x(), bounds.y(), bounds.width(), bounds.height()
             );
             *///?}
 
@@ -214,18 +210,5 @@ public class Button extends UiElement<Button> {
         // Revert blending
         //? if < 26.1
         RenderSystem.disableBlend();
-    }
-
-    /**
-     * Calculates the Y position of the button texture based on the button's state.
-     *
-     * @return the Y position of the button texture
-     */
-    private int textureY() {
-        int textureY = 46;
-        if (!state().disabled()) {
-            textureY += 20;
-        }
-        return textureY;
     }
 }

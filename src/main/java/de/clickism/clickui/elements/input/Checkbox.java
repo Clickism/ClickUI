@@ -6,7 +6,7 @@ import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.Border;
-import net.minecraft.resources.ResourceLocation;
+import de.clickism.clickui.util.versioning.VersionUtil;
 //? if >= 26.1
 //import net.minecraft.client.renderer.RenderPipelines;
 
@@ -16,36 +16,6 @@ import java.util.function.Consumer;
  * A simple checkbox UI element that can be toggled on and off.
  */
 public class Checkbox extends UiElement<Checkbox> {
-    /**
-     * The checkbox texture to render.
-     */
-    //? if < 1.21 {
-    public static final ResourceLocation TEXTURE = ResourceLocation.tryBuild(
-        ResourceLocation.DEFAULT_NAMESPACE,
-        "textures/gui/checkbox.png"
-    );
-    //?} elif >= 1.21 {
-    /*private static final ResourceLocation TEXTURE_BOTH = ResourceLocation.withDefaultNamespace("widget/checkbox_selected_highlighted");
-    private static final ResourceLocation TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("widget/checkbox_selected");
-    private static final ResourceLocation TEXTURE_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("widget/checkbox_highlighted");
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("widget/checkbox");
-    /^*
-     * Returns the proper texture for this state
-     ^/
-    private ResourceLocation resolve() {
-        if (!state().disabled()) {
-            if (state().hovered() && checked) {
-                return TEXTURE_BOTH;
-            } else if (state().hovered()) {
-                return TEXTURE_HIGHLIGHTED;
-            } else if (checked) {
-                return TEXTURE_SELECTED;
-            }
-        }
-        return TEXTURE;
-    }
-    *///?}
-
     private static final int SIZE = 20;
 
     private boolean checked = false;
@@ -132,24 +102,25 @@ public class Checkbox extends UiElement<Checkbox> {
         graphics.pose().translate(-bounds.x(), -bounds.y());
         *///?}
         // Render the checkbox texture based on its state (focused and checked)
+
+        var checkboxTexture = VersionUtil.checkboxTexture(checked);
+
         //? if < 1.21 {
         graphics.blit(
-            TEXTURE,
+            checkboxTexture.texture(),
             bounds.x(),
             bounds.y(),
             0.0F,
-            checked
-                ? 20.0F
-                : 0.0F,
+            checkboxTexture.textureY(),
             SIZE,
             SIZE,
             64,
             64
         );
         //?} elif < 26.1 {
-        /*graphics.blitSprite(resolve(), bounds.x(), bounds.y(), SIZE, SIZE);
+        /*graphics.blitSprite(checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
         *///?} elif >= 26.1 {
-        /*graphics.blitSprite(RenderPipelines.GUI_TEXTURED, resolve(), bounds.x(), bounds.y(), SIZE, SIZE);
+        /*graphics.blitSprite(RenderPipelines.GUI_TEXTURED, checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
         *///?}
         graphics.pose().popPose();
     }

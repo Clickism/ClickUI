@@ -8,14 +8,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
+
 //? if >= 26.1 {
 /*import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.CharacterEvent;
 *///?}
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A screen that handles hovered elements and all events,
@@ -135,7 +136,6 @@ public abstract class UiEventHandler extends Screen {
 
     @Override
     //? if < 26.1 {
-    
     public void render
     //?} elif >= 26.1 {
     /*public void extractRenderState
@@ -156,7 +156,6 @@ public abstract class UiEventHandler extends Screen {
      * @return true if the event was fired to a hovered element, false otherwise
      */
     private boolean fireMouseEvent(Event event) {
-//        updateHoverState(x, y);
         if (hoveredElement == null || hoveredElement.disabled()) return false;
         // Fire event to the hovered element
         hoveredElement.propagateEventUp(event);
@@ -318,8 +317,6 @@ public abstract class UiEventHandler extends Screen {
             //?} elif >= 26.1 {
             /*(MouseButtonEvent _event, double dragX, double dragY) {
             *///?}
-        // TODO: Necessary?
-//        updateHoverState(x, y);
         //? if >= 26.1 {
         /*double mouseX = _event.x();
         double mouseY = _event.y();
