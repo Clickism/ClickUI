@@ -1,8 +1,8 @@
 modLoader="javafml"
-loaderVersion="[4,)"
+loaderVersion="[1,)"
 
 license="GPL-3.0"
-issueTrackerURL="https://github.com/Clickism/ClickSigns/issues"
+issueTrackerURL="https://github.com/Clickism/ClickUI/issues"
 showAsResourcePack=false
 clientSideOnly=false
 
