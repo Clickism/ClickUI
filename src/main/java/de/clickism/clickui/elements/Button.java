@@ -186,7 +186,7 @@ public class Button extends UiElement<Button> {
         var buttonTexture = VersionUtil.buttonTexture(state().disabled());
         try {
             //? if < 1.21 {
-            graphics.blitNineSliced(
+            graphics.unwrap().blitNineSliced(
                 buttonTexture.texture(),
                 bounds.x(), bounds.y(), bounds.width(), bounds.height(),
                 20, 4, 200, 20, 0,

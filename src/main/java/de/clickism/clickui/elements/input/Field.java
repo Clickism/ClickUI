@@ -8,10 +8,6 @@ import de.clickism.clickui.render.UiGraphics;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
-//? if < 26.1
-import net.minecraft.client.renderer.RenderType;
-//? if >= 26.1
-//import net.minecraft.client.renderer.RenderPipelines;
 
 /**
  * A simple implementation of a text field with default styling and behavior.
@@ -144,7 +140,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
     protected void renderHighlight(RenderContext context, int x, int y, int width) {
         // Render highlight rectangle
         context.graphics().fill(
-            UiGraphics.RenderType.GUI_TEXT_HIGHLIGHT,
+            UiGraphics.RenderMode.GUI_TEXT_HIGHLIGHT,
             x - 1,
             y - 1,
             x + width,

@@ -6,11 +6,15 @@ import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import org.jspecify.annotations.Nullable;
+
+//? if >= 26.1 {
+/*import net.minecraft.client.renderer.RenderPipelines;
+*///?} else {
+import net.minecraft.client.renderer.RenderType;
+//?}
 
 public class UiGraphics {
     private final GuiGraphics graphics;
@@ -38,17 +42,25 @@ public class UiGraphics {
     }
 
     public void translate(float x, float y) {
-        graphics.pose().translate(x, y);
+        graphics.pose().translate(
+            x, y
+            //? if < 26.1
+            , 0
+        );
     }
 
     public void scale(float x, float y) {
-        graphics.pose().scale(x, y);
+        graphics.pose().scale(
+            x, y
+            //? if < 26.1
+            , 0
+        );
     }
 
     public void scaleAbout(float x, float y, float scaleX, float scaleY) {
-        graphics.pose().translate(x, y);
-        graphics.pose().scale(scaleX, scaleY);
-        graphics.pose().translate(-x, -y);
+        translate(x, y);
+        scale(scaleX, scaleY);
+        translate(-x, -y);
     }
 
     public void enableScissor(Rect rect) {
@@ -92,53 +104,63 @@ public class UiGraphics {
         graphics.disableScissor();
     }
 
-    public void withScaleAround(float x, float y, float scaleX, float scaleY, Runnable action) {
+    public void withScaleAbout(float x, float y, float scaleX, float scaleY, Runnable action) {
         push();
-        graphics.pose().translate(x, y);
-        graphics.pose().scale(scaleX, scaleY);
-        graphics.pose().translate(-x, -y);
+        translate(x, y);
+        scale(scaleX, scaleY);
+        translate(-x, -y);
         action.run();
         pop();
     }
 
     public void fill(int x0, int y0, int x1, int y1, int color) {
-        graphics.fill(RenderPipelines.GUI, x0, y0, x1, y1, withAlpha(color));
+        fill(RenderMode.GUI, x0, y0, x1, y1, withAlpha(color));
     }
 
-    public void fill(RenderType type, int x0, int y0, int x1, int y1, int color) {
+    public void fill(RenderMode type, int x0, int y0, int x1, int y1, int color) {
         var pipeline = type.pipeline();
         graphics.fill(pipeline, x0, y0, x1, y1, withAlpha(color));
     }
 
     public void outline(int x, int y, int width, int height, int color) {
-        graphics.outline(x, y, width, height, withAlpha(color));
+        //~ if < 26.1 '.outline' -> '.renderOutline'
+        graphics.renderOutline(x, y, width, height, withAlpha(color));
     }
 
     public void outline(Rect rect, int color) {
         outline(rect.x(), rect.y(), rect.width(), rect.height(), withAlpha(color));
     }
 
+    //~ if < 26.1 '.text' -> '.drawString' {
     public void text(String string, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), string, x, y, withAlpha(color), dropShadow);
+        graphics.drawString(Util.font(), string, x, y, withAlpha(color), dropShadow);
     }
 
     public void text(FormattedCharSequence text, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
+        graphics.drawString(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
 
     public void text(Component text, int x, int y, int color, boolean dropShadow) {
-        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
+        graphics.drawString(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
+    //~}
 
     public void tooltipBackground(Rect bounds, ResourceLocation style) {
-        TooltipRenderUtil.extractTooltipBackground(
+        TooltipRenderUtil
+            //? if >= 26.1 {
+            /*.extractTooltipBackground
+            *///?} else
+            .renderTooltipBackground
+        (
             graphics,
             bounds.x(),
             bounds.y(),
             bounds.width(),
-            bounds.height(),
-            style
-            //TODO: , -1
+            bounds.height()
+            //? if >= 26.1 {
+            /*, style
+            *///?} else
+            , 0
         );
     }
 
@@ -158,15 +180,24 @@ public class UiGraphics {
         return a << 24 | r << 16 | g << 8 | b;
     }
 
-    public enum RenderType {
+    public enum RenderMode {
         GUI,
         GUI_TEXT_HIGHLIGHT;
 
-        public RenderPipeline pipeline() {
+        //? if >= 26.1 {
+        /*public RenderPipeline pipeline() {
             return switch (this) {
                 case GUI -> RenderPipelines.GUI;
                 case GUI_TEXT_HIGHLIGHT -> RenderPipelines.GUI_TEXT_HIGHLIGHT;
             };
         }
+        *///?} else {
+        public RenderType pipeline() {
+            return switch (this) {
+                case GUI -> RenderType.gui();
+                case GUI_TEXT_HIGHLIGHT -> RenderType.guiTextHighlight();
+            };
+        }
+        //?}
     }
 }

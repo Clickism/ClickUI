@@ -22,7 +22,7 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(Component text, int x, int y, float scale, int color) {
-        context.graphics().withScaleAround(x, y, scale, scale, () -> {
+        context.graphics().withScaleAbout(x, y, scale, scale, () -> {
             context.graphics().text(text, x, y, color, true);
         });
     }
@@ -37,7 +37,7 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(FormattedCharSequence text, int x, int y, float scale, int color) {
-        context.graphics().withScaleAround(x, y, scale, scale, () -> {
+        context.graphics().withScaleAbout(x, y, scale, scale, () -> {
             context.graphics().text(text, x, y, color, true);
         });
     }
