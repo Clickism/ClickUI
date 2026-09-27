@@ -16,7 +16,7 @@ import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.network.chat.Component;
 
 //? if >= 26.1
-//import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderPipelines;
 
 /**
  * A simple UI element that can be clicked and displays a label.
@@ -180,9 +180,9 @@ public class Button extends UiElement<Button> {
         }
         // Override render to enable blending for semi-transparent textures
         //? if < 26.1 {
-        RenderSystem.enableBlend();
+        /*RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        //?}
+        *///?}
         // Render button texture
         var sprite = VersionUtil.buttonSprite(state().disabled());
         try {
@@ -193,6 +193,6 @@ public class Button extends UiElement<Button> {
         }
         // Revert blending
         //? if < 26.1
-        RenderSystem.disableBlend();
+        //RenderSystem.disableBlend();
     }
 }

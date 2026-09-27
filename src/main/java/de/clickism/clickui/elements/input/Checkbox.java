@@ -8,7 +8,7 @@ import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.util.versioning.VersionUtil;
 //? if >= 26.1
-//import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderPipelines;
 
 import java.util.function.Consumer;
 
@@ -90,9 +90,9 @@ public class Checkbox extends UiElement<Checkbox> {
         var bounds = this.bounds();
         graphics.push();
         //? if < 26.1 {
-        RenderSystem.enableDepthTest();
+        /*RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
-        //?}
+        *///?}
         // Adjust scale to fit in the checkbox size
         graphics.scaleAbout(
             bounds.x(), bounds.y(),

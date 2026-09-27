@@ -4,43 +4,43 @@ import com.mojang.math.Axis;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
 //? if >= 26.1 {
-/*import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-*///?} else {
-import net.minecraft.client.renderer.RenderType;
-//?}
+//?} else {
+/*import net.minecraft.client.renderer.RenderType;
+*///?}
 
 /**
  * A wrapper around gui graphics that provides version-independent rendering methods for UI elements.
  */
 public class UiGraphics {
     private static final int WHITE = 0xFFFFFFFF;
-    private final GuiGraphics graphics;
+    private final GuiGraphicsExtractor graphics;
     private float alpha = 1.0f;
 
     /**
-     * Creates a new UiGraphics instance wrapping the given GuiGraphics.
+     * Creates a new UiGraphics instance wrapping the given GuiGraphicsExtractor.
      *
-     * @param graphics The GuiGraphics instance to wrap.
+     * @param graphics The GuiGraphicsExtractor instance to wrap.
      */
-    public UiGraphics(GuiGraphics graphics) {
+    public UiGraphics(GuiGraphicsExtractor graphics) {
         this.graphics = graphics;
     }
 
     /**
-     * Returns the underlying GuiGraphics instance.
+     * Returns the underlying GuiGraphicsExtractor instance.
      *
-     * @return The GuiGraphics instance.
+     * @return The GuiGraphicsExtractor instance.
      */
-    public GuiGraphics unwrap() {
+    public GuiGraphicsExtractor unwrap() {
         return graphics;
     }
 
@@ -48,14 +48,14 @@ public class UiGraphics {
      * Pushes the current transformation matrix onto the stack.
      */
     public void push() {
-        graphics.pose().pushPose();
+        graphics.pose().pushMatrix();
     }
 
     /**
      * Pops the current transformation matrix from the stack.
      */
     public void pop() {
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     /**
@@ -68,7 +68,7 @@ public class UiGraphics {
         graphics.pose().translate(
             x, y
             //? if < 26.1
-            , 0
+            //, 0
         );
     }
 
@@ -79,10 +79,10 @@ public class UiGraphics {
      */
     public void rotateRadians(float radians) {
         //? if >= 26.1 {
-        /*graphics.pose().rotate(radians);
-        *///?} else {
-        graphics.pose().rotateAround(Axis.ZP.rotation(radians), 0, 0, 0);
-        //?}
+        graphics.pose().rotate(radians);
+        //?} else {
+        /*graphics.pose().rotateAround(Axis.ZP.rotation(radians), 0, 0, 0);
+        *///?}
     }
 
     /**
@@ -117,7 +117,7 @@ public class UiGraphics {
         graphics.pose().scale(
             x, y
             //? if < 26.1
-            , 0
+            //, 0
         );
     }
 
@@ -214,9 +214,9 @@ public class UiGraphics {
      */
     public Rect scissorBounds(UiElement<?> element) {
         //? if >= 26.1 {
-        /*return element.bounds();
-        *///?} else
-         return element.renderBounds();
+        return element.bounds();
+        //?} else
+         //return element.renderBounds();
     }
 
     /**
@@ -265,7 +265,7 @@ public class UiGraphics {
      */
     public void outline(int x, int y, int width, int height, int color) {
         //~ if < 26.1 '.outline' -> '.renderOutline'
-        graphics.renderOutline(x, y, width, height, withAlpha(color));
+        graphics.outline(x, y, width, height, withAlpha(color));
     }
 
     /**
@@ -314,7 +314,7 @@ public class UiGraphics {
      * @param dropShadow  Whether to draw a drop shadow behind the text.
      */
     public void text(String string, int x, int y, int color, boolean dropShadow) {
-        graphics.drawString(Util.font(), string, x, y, withAlpha(color), dropShadow);
+        graphics.text(Util.font(), string, x, y, withAlpha(color), dropShadow);
     }
 
     /**
@@ -327,7 +327,7 @@ public class UiGraphics {
      * @param dropShadow  Whether to draw a drop shadow behind the text.
      */
     public void text(FormattedCharSequence text, int x, int y, int color, boolean dropShadow) {
-        graphics.drawString(Util.font(), text, x, y, withAlpha(color), dropShadow);
+        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
 
     /**
@@ -340,7 +340,7 @@ public class UiGraphics {
      * @param dropShadow  Whether to draw a drop shadow behind the text.
      */
     public void text(Component text, int x, int y, int color, boolean dropShadow) {
-        graphics.drawString(Util.font(), text, x, y, withAlpha(color), dropShadow);
+        graphics.text(Util.font(), text, x, y, withAlpha(color), dropShadow);
     }
 
     //~}
@@ -351,18 +351,18 @@ public class UiGraphics {
      * @param bounds The rectangular bounds of the tooltip background.
      * @param style  The style identifier for the tooltip background.
      */
-    public void tooltipBackground(Rect bounds, @Nullable ResourceLocation style) {
+    public void tooltipBackground(Rect bounds, @Nullable Identifier style) {
         //~ if < 26.1 '.extractTooltipBackground' -> '.renderTooltipBackground'
-        TooltipRenderUtil.renderTooltipBackground(
+        TooltipRenderUtil.extractTooltipBackground(
             graphics,
             bounds.x(),
             bounds.y(),
             bounds.width(),
             bounds.height()
             //? if >= 26.1 {
-            /*, style
-            *///?} else
-            , 0
+            , style
+            //?} else
+            //, 0
         );
     }
 
@@ -375,7 +375,7 @@ public class UiGraphics {
         this.alpha = alpha;
         // Set color globally
         //? if < 26.1
-        graphics.setColor(1.0f, 1.0f, 1.0f, alpha);
+        //graphics.setColor(1.0f, 1.0f, 1.0f, alpha);
     }
 
     /**
@@ -397,15 +397,15 @@ public class UiGraphics {
      */
     public int withAlpha(int color) {
         //? if <26.1 {
-        // Alpha is applied globally already here
+        /*// Alpha is applied globally already here
         return color;
-        //?} else {
-        /*int a = (int) ((color >> 24 & 0xFF) * alpha);
+        *///?} else {
+        int a = (int) ((color >> 24 & 0xFF) * alpha);
         int r = color >> 16 & 0xFF;
         int g = color >> 8 & 0xFF;
         int b = color & 0xFF;
         return a << 24 | r << 16 | g << 8 | b;
-        *///?}
+        //?}
     }
 
     /**
@@ -419,24 +419,24 @@ public class UiGraphics {
      */
     public void renderSprite(Sprite sprite, int x, int y, int width, int height) {
         //? if >= 1.21.1 {
-        /*graphics.blitSprite(
+        graphics.blitSprite(
             //? if >= 26.1
-            //RenderPipelines.GUI_TEXTURED,
+            RenderPipelines.GUI_TEXTURED,
             sprite.texture(),
             x, y,
             width, height
             //? if >= 26.1
-            //,alpha
+            ,alpha
         );
-        *///?} else {
-        graphics.blit(
+        //?} else {
+        /*graphics.blit(
             sprite.texture(),
             x, y,
             sprite.textureX(), sprite.textureY(),
             width, height,
             sprite.uWidth(), sprite.vHeight()
         );
-        //?}
+        *///?}
     }
 
     /**
@@ -450,17 +450,17 @@ public class UiGraphics {
      */
     public void renderSpriteSliced(Sprite sprite, int x, int y, int width, int height) {
         //? if >= 1.21.1 {
-        /*graphics.blitSprite(
+        graphics.blitSprite(
             //? if >= 26.1
-            //RenderPipelines.GUI_TEXTURED,
+            RenderPipelines.GUI_TEXTURED,
             sprite.texture(),
             x, y,
             width, height
             //? if >= 26.1
-            //,alpha
+            ,alpha
         );
-        *///?} else {
-        graphics.blitNineSliced(
+        //?} else {
+        /*graphics.blitNineSliced(
             sprite.texture(),
             x, y,
             width, height,
@@ -468,7 +468,7 @@ public class UiGraphics {
             sprite.uWidth(), sprite.vHeight(),
             sprite.textureX(), sprite.textureY()
         );
-        //?}
+        *///?}
     }
 
     /**
@@ -480,17 +480,17 @@ public class UiGraphics {
      * @param width   The width of the image.
      * @param height  The height of the image.
      */
-    public void renderImage(ResourceLocation texture, int x, int y, int width, int height) {
+    public void renderImage(Identifier texture, int x, int y, int width, int height) {
         graphics.blit(
             //? if >= 26.1
-            //RenderPipelines.GUI,
+            RenderPipelines.GUI,
             texture,
             x, y,
             0, 0,
             width, height,
             width, height
             //? if >= 26.1
-            //,withAlpha(WHITE)
+            ,withAlpha(WHITE)
         );
     }
 
@@ -502,20 +502,20 @@ public class UiGraphics {
         GUI_TEXT_HIGHLIGHT;
 
         //? if >= 26.1 {
-        /*public RenderPipeline pipeline() {
+        public RenderPipeline pipeline() {
             return switch (this) {
                 case GUI -> RenderPipelines.GUI;
                 case GUI_TEXT_HIGHLIGHT -> RenderPipelines.GUI_TEXT_HIGHLIGHT;
             };
         }
-        *///?} else {
-        public RenderType pipeline() {
+        //?} else {
+        /*public RenderType pipeline() {
             return switch (this) {
                 case GUI -> RenderType.gui();
                 case GUI_TEXT_HIGHLIGHT -> RenderType.guiTextHighlight();
             };
         }
-        //?}
+        *///?}
     }
 
     /**
@@ -530,7 +530,7 @@ public class UiGraphics {
      * @param textureY    The y-coordinate of the texture in the atlas.
      */
     public record Sprite(
-        ResourceLocation texture,
+        Identifier texture,
         int sliceWidth,
         int sliceHeight,
         int uWidth,
@@ -543,7 +543,7 @@ public class UiGraphics {
          *
          * @param texture The texture identifier of the sprite.
          */
-        public Sprite(ResourceLocation texture) {
+        public Sprite(Identifier texture) {
             this(texture, 0, 0, 0, 0, 0, 0);
         }
     }

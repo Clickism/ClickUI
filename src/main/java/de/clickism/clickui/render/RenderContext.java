@@ -5,7 +5,7 @@ import de.clickism.clickui.UiScreenHandler;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
  * Represents the render context when rendering a UI element.
