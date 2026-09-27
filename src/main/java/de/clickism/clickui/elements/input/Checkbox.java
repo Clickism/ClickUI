@@ -99,24 +99,14 @@ public class Checkbox extends UiElement<Checkbox> {
             (float) bounds.width() / SIZE, (float) bounds.height() / SIZE
         );
         // Render the checkbox texture based on its state (focused and checked)
-        var checkboxTexture = VersionUtil.checkboxTexture(checked);
-        //? if < 1.21 {
-        graphics.unwrap().blit(
-            checkboxTexture.texture(),
+        var sprite = VersionUtil.checkboxSprite(checked);
+        graphics.renderSprite(
+            sprite,
             bounds.x(),
             bounds.y(),
-            0.0F,
-            checkboxTexture.textureY(),
             SIZE,
-            SIZE,
-            64,
-            64
+            SIZE
         );
-        //?} elif < 26.1 {
-        /*graphics.unwrap().blitSprite(checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
-        *///?} elif >= 26.1 {
-        /*graphics.unwrap().blitSprite(RenderPipelines.GUI_TEXTURED, checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
-        *///?}
         graphics.pop();
     }
 }

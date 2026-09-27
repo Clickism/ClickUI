@@ -276,6 +276,8 @@ public class TestMod implements BaseComponents {
                                     .borderWidth(3)
                                     .borderColor(UiColor.WHITE_A50))),
                         button("Go back but very long so the text should be scrolling! So let's see if it actually does that")
+                            .style(style()
+                                .alpha(0.5f))
                             .width(150)
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {

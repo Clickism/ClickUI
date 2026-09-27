@@ -91,13 +91,12 @@ public class Image extends UiElement<Image> {
         RenderSystem.defaultBlendFunc();
         //?}
         // Render image
-        graphics.unwrap().blit(
+        graphics.renderImage(
             texture,
             bounds.x(),
             bounds.y(),
-            0, 0,
-            bounds.width(), bounds.height(),
-            bounds.width(), bounds.height()
+            bounds.width(),
+            bounds.height()
         );
         // Revert blending
         //? if < 26.1

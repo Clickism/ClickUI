@@ -8,6 +8,7 @@ import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
+import de.clickism.clickui.render.UiGraphics;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
@@ -183,24 +184,9 @@ public class Button extends UiElement<Button> {
         RenderSystem.defaultBlendFunc();
         //?}
         // Render button texture
-        var buttonTexture = VersionUtil.buttonTexture(state().disabled());
+        var sprite = VersionUtil.buttonSprite(state().disabled());
         try {
-            //? if < 1.21 {
-            graphics.unwrap().blitNineSliced(
-                buttonTexture.texture(),
-                bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-                20, 4, 200, 20, 0,
-                buttonTexture.textureY()
-            );
-            //?} elif >= 1.21 {
-            /*graphics.unwrap().blitSprite(
-                //? if >= 26.1
-                //RenderPipelines.GUI_TEXTURED,
-                buttonTexture.texture(),
-                bounds.x(), bounds.y(), bounds.width(), bounds.height()
-            );
-            *///?}
-
+            graphics.renderSpriteSliced(sprite, bounds.x(), bounds.y(), bounds.width(), bounds.height());
         } catch (Exception e) {
             // Log the error and continue rendering
             System.err.println("Error rendering button background: " + e.getMessage());

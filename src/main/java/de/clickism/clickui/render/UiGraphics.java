@@ -1,6 +1,5 @@
 package de.clickism.clickui.render;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.util.Util;
@@ -10,13 +9,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
-//? if >= 26.1 {
+//? if >= 1.21.1 {
 /*import net.minecraft.client.renderer.RenderPipelines;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 *///?} else {
 import net.minecraft.client.renderer.RenderType;
 //?}
 
 public class UiGraphics {
+    private static final int WHITE = 0xFFFFFFFF;
     private final GuiGraphics graphics;
     private float alpha = 1.0f;
 
@@ -180,6 +181,62 @@ public class UiGraphics {
         return a << 24 | r << 16 | g << 8 | b;
     }
 
+    public void renderSprite(Sprite sprite, int x, int y, int width, int height) {
+        //? if >= 1.21.1 {
+        /*graphics.blitSprite(
+            //? if >= 26.1
+            //RenderPipelines.GUI_TEXTURED,
+            sprite.texture(),
+            x, y,
+            width, height,
+            alpha
+        );
+        *///?} else {
+        graphics.blit(
+            sprite.texture(),
+            x, y,
+            sprite.textureX(), sprite.textureY(),
+            width, height,
+            sprite.uWidth(), sprite.vHeight()
+        );
+        //?}
+    }
+
+    public void renderSpriteSliced(Sprite sprite, int x, int y, int width, int height) {
+        //? if >= 1.21.1 {
+        /*graphics.blitSprite(
+            //? if >= 26.1
+            //RenderPipelines.GUI_TEXTURED,
+            sprite.texture(),
+            x, y,
+            width, height,
+            alpha
+        );
+        *///?} else {
+        graphics.blitNineSliced(
+            sprite.texture(),
+            x, y,
+            width, height,
+            sprite.sliceWidth(), sprite.sliceHeight(),
+            sprite.uWidth(), sprite.vHeight(),
+            sprite.textureX(), sprite.textureY()
+        );
+        //?}
+    }
+
+    public void renderImage(ResourceLocation texture, int x, int y, int width, int height) {
+        graphics.blit(
+            //? if >= 26.1
+            //RenderPipelines.GUI,
+            texture,
+            x, y,
+            0, 0,
+            width, height,
+            width, height,
+            withAlpha(WHITE)
+        );
+    }
+
     public enum RenderMode {
         GUI,
         GUI_TEXT_HIGHLIGHT;
@@ -199,5 +256,19 @@ public class UiGraphics {
             };
         }
         //?}
+    }
+
+    public record Sprite(
+        ResourceLocation texture,
+        int sliceWidth,
+        int sliceHeight,
+        int uWidth,
+        int vHeight,
+        int textureX,
+        int textureY
+    ) {
+        public Sprite(ResourceLocation texture) {
+            this(texture, 0, 0, 0, 0, 0, 0);
+        }
     }
 }
