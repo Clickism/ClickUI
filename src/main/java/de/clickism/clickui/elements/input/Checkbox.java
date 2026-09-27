@@ -88,25 +88,20 @@ public class Checkbox extends UiElement<Checkbox> {
     public void render(RenderContext context) {
         var graphics = context.graphics();
         var bounds = this.bounds();
-        graphics.pose().pushPose();
+        graphics.push();
         //? if < 26.1 {
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
+        //?}
         // Adjust scale to fit in the checkbox size
-        graphics.pose().translate(bounds.x(), bounds.y(), 0.0F);
-        graphics.pose().scale((float) bounds.width() / SIZE, (float) bounds.height() / SIZE, 1.0F);
-        graphics.pose().translate(-bounds.x(), -bounds.y(), 0.0F);
-        //?} elif >= 26.1 {
-        /*graphics.pose().translate(bounds.x(), bounds.y());
-        graphics.pose().scale((float) bounds.width() / SIZE, (float) bounds.height() / SIZE);
-        graphics.pose().translate(-bounds.x(), -bounds.y());
-        *///?}
+        graphics.scaleAbout(
+            bounds.x(), bounds.y(),
+            (float) bounds.width() / SIZE, (float) bounds.height() / SIZE
+        );
         // Render the checkbox texture based on its state (focused and checked)
-
         var checkboxTexture = VersionUtil.checkboxTexture(checked);
-
         //? if < 1.21 {
-        graphics.blit(
+        graphics.unwrap().blit(
             checkboxTexture.texture(),
             bounds.x(),
             bounds.y(),
@@ -118,10 +113,10 @@ public class Checkbox extends UiElement<Checkbox> {
             64
         );
         //?} elif < 26.1 {
-        /*graphics.blitSprite(checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
+        /*graphics.unwrap().blitSprite(checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
         *///?} elif >= 26.1 {
-        /*graphics.blitSprite(RenderPipelines.GUI_TEXTURED, checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
+        /*graphics.unwrap().blitSprite(RenderPipelines.GUI_TEXTURED, checkboxTexture.texture(), bounds.x(), bounds.y(), SIZE, SIZE);
         *///?}
-        graphics.pose().popPose();
+        graphics.pop();
     }
 }

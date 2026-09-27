@@ -18,7 +18,7 @@ import net.minecraft.client.gui.GuiGraphics;
  * @param debug    Whether debug mode is enabled.
  */
 public record RenderContext(
-    GuiGraphics graphics,
+    UiGraphics graphics,
     int mouseX,
     int mouseY,
     float delta,
@@ -60,16 +60,5 @@ public record RenderContext(
      */
     public RenderContext withDebug(boolean debug) {
         return new RenderContext(graphics, mouseX, mouseY, delta, screen, debug);
-    }
-
-    public void withScissor(Rect screenBounds, Runnable render) {
-        graphics.enableScissor(
-            screenBounds.x(),
-            screenBounds.y(),
-            screenBounds.x() + screenBounds.width(),
-            screenBounds.y() + screenBounds.height()
-        );
-        render.run();
-        graphics.disableScissor();
     }
 }

@@ -700,7 +700,9 @@ public abstract class AbstractField<S extends AbstractField<S>>
     public void render(RenderContext context) {
         // Render with scissor enabled
         if (scrolling) {
-            renderWithScissor(context, () -> renderTextField(context));
+            context.graphics().withElementScissor(this, () -> {
+                renderTextField(context);
+            });
         } else {
             renderTextField(context);
         }
@@ -718,8 +720,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
         if (scrolling) {
             // Transform by display pos
             int offset = context.font().width(text.substring(0, displayPos));
-            graphics.pose().pushPose();
-            graphics.pose().translate(-offset, 0/*? if < 26.1 {*/, 0/*?}*/);
+            graphics.push();
+            graphics.translate(-offset, 0);
         }
 
         try {
@@ -760,32 +762,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
         } finally {
             // Undo transform
             if (scrolling) {
-                graphics.pose().popPose();
+                graphics.pop();
             }
         }
 
-    }
-
-    /**
-     * Renders the given content with scisorr enabled.
-     *
-     * @param context the render context
-     * @param render  the rendering logic
-     */
-    protected void renderWithScissor(RenderContext context, Runnable render) {
-        var graphics = context.graphics();
-        // Enable scissor
-        var bounds = renderBounds();
-        graphics.enableScissor(
-            bounds.x() + 1, // For inline border
-            bounds.y(),
-            bounds.x() + bounds.width() - 1, // For inline border
-            bounds.y() + bounds.height()
-        );
-        // Render
-        render.run();
-        // Disable scissor
-        graphics.disableScissor();
     }
 
     /**

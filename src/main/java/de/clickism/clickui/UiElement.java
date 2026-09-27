@@ -656,17 +656,7 @@ public abstract class UiElement<S extends UiElement<S>>
     public void renderDebugInfo(RenderContext context) {
         // Render the bounds of this element as a red outline
         var graphics = context.graphics();
-        graphics
-                //? if < 26.1
-                .renderOutline(
-                //? if >= 26.1
-                //.outline(
-            bounds().x(),
-            bounds().y(),
-            bounds().width(),
-            bounds().height(),
-            0xffff0000
-        );
+        graphics.outline(bounds(), 0xffff0000);
 
         // Render overlay if hovered
         if (state().hoveredSelf()) {

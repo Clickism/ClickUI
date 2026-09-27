@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Padding;
+import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
@@ -112,19 +113,16 @@ public class Button extends UiElement<Button> {
         scrollTextIfNeeded(context);
         // Transform by displayOffsetX for scrolling effect
         var graphics = context.graphics();
-        graphics.pose().pushPose();
-        var renderBounds = this.renderBounds();
+        graphics.push();
+        var scissorBounds = graphics.scissorBounds(this);
         var scissorPadding = 2;
-        graphics.enableScissor(
-            renderBounds.x() + scissorPadding,
-            renderBounds.y(),
-            renderBounds.x() + renderBounds.width() - scissorPadding,
-            renderBounds.y() + renderBounds.height()
-        );
-        //? if < 26.1
-        graphics.pose().translate(-displayOffsetX, 0, 0);
-        //? if >= 26.1
-        //graphics.pose().translate(-displayOffsetX, 0);
+        graphics.enableScissor(new Rect(
+                scissorBounds.x() + scissorPadding,
+                scissorBounds.y(),
+                scissorBounds.width() - scissorPadding * 2,
+                scissorBounds.height()
+        ));
+        graphics.translate(-displayOffsetX, 0);
         // Render label
         var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
         var renderer = new ScaledTextRenderer(context);
@@ -144,7 +142,7 @@ public class Button extends UiElement<Button> {
         renderer.render(label, textX, textY, fontScale, color);
         graphics.disableScissor();
         // Undo transform
-        graphics.pose().popPose();
+        graphics.pop();
     }
 
     private void scrollTextIfNeeded(RenderContext context) {
@@ -195,7 +193,7 @@ public class Button extends UiElement<Button> {
                 buttonTexture.textureY()
             );
             //?} elif >= 1.21 {
-            /*graphics.blitSprite(
+            /*graphics.unwrap().blitSprite(
                 //? if >= 26.1
                 //RenderPipelines.GUI_TEXTURED,
                 buttonTexture.texture(),
