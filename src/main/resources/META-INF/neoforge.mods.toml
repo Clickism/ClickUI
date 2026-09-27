@@ -14,12 +14,12 @@ logoFile="assets/clickui/icon.png"
 authors="Clickism"
 description="A modern, declarative, reactive, client-side UI framework for Minecraft."
 
-[[dependencies.clickui]]
-modId="neoforge"
-type="required"
-versionRange="*"
-side="BOTH"
-
-[[dependencies.clickui]]
-modId = "minecraft"
-type = "required"
+#[[dependencies.clickui]]
+#modId="neoforge"
+#type="required"
+#versionRange="*"
+#side="BOTH"
+#
+#[[dependencies.clickui]]
+#modId = "minecraft"
+#type = "required"
