@@ -48,14 +48,20 @@ public class UiGraphics {
      * Pushes the current transformation matrix onto the stack.
      */
     public void push() {
+        //? if >= 26.1 {
         graphics.pose().pushMatrix();
+        //?} else
+        //graphics.pose().pushPose();
     }
 
     /**
      * Pops the current transformation matrix from the stack.
      */
     public void pop() {
+        //? if >= 26.1 {
         graphics.pose().popMatrix();
+        //?} else
+        //graphics.pose().popPose();
     }
 
     /**

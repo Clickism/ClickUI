@@ -12,7 +12,6 @@ version = "$modVersion+$minecraftVersion-$loader"
 
 repositories {
     mavenCentral()
-    maven("https://thedarkcolour.github.io/KotlinForForge/")
 }
 
 sourceSets {
@@ -76,6 +75,7 @@ dependencies {
 //}
 
 java {
+    // Only 1.20.1, so always Java 17
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -112,14 +112,5 @@ publishing {
             artifactId = "clickui"
             version = version.toString()
         }
-    }
-}
-
-stonecutter {
-    replacements.string(sc.current.parsed < "26.1") {
-        replace("GuiGraphicsExtractor", "GuiGraphics")
-        replace("Identifier", "ResourceLocation")
-        replace("pushMatrix", "pushPose")
-        replace("popMatrix", "popPose")
     }
 }

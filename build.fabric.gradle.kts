@@ -1,3 +1,5 @@
+import kotlin.text.compareTo
+
 plugins {
     id("java")
     id("net.fabricmc.fabric-loom") version "1.17-SNAPSHOT"
@@ -43,15 +45,10 @@ loom {
 }
 
 java {
-    if (sc.current.parsed >= "26.1") {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(25))
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
-    } else {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(25))
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
-    }
+    // Only 26.x, so always Java 25
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 base {
@@ -115,14 +112,5 @@ publishing {
             artifactId = "clickui"
             version = version.toString()
         }
-    }
-}
-
-stonecutter {
-    replacements.string(sc.current.parsed >= "26.1") {
-        replace("GuiGraphics", "GuiGraphicsExtractor")
-        replace("ResourceLocation", "Identifier")
-        replace("pushPose", "pushMatrix")
-        replace("popPose", "popMatrix")
     }
 }
