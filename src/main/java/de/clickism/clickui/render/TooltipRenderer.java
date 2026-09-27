@@ -9,8 +9,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
  * Renders a tooltip element at the mouse position, ensuring it is displayed above other UI elements.
  */
 public class TooltipRenderer {
-    private static final int TOOLTIP_Z_INDEX = 1000; // Render tooltips above other elements
-
     private final UiElementTree tooltip;
     private final RenderContext context;
 
@@ -53,20 +51,13 @@ public class TooltipRenderer {
 
         // Render the tooltip at the calculated position
         var graphics = context.graphics();
-        graphics.pose().pushPose();
-        graphics.pose().translate(tooltipX, tooltipY, TOOLTIP_Z_INDEX);
+        graphics.push();
+        graphics.translate((float) tooltipX, (float) tooltipY);
 
         // Render background with padding
-        TooltipRenderUtil.renderTooltipBackground(
-            context.graphics(),
-            bounds.x(),
-            bounds.y(),
-            bounds.width(),
-            bounds.height(),
-            -1 // Render behind actual tooltip
-        );
+        graphics.tooltipBackground(bounds, null);
         // Render tooltip content
         tooltip.render(context);
-        graphics.pose().popPose();
+        graphics.pop();
     }
 }

@@ -15,10 +15,9 @@ public class StyleRenderer {
 
     public void renderElement() {
         var style = element.elementStyle().resolve(new StyleContext(element, element.state()));
-
         // Apply alpha
-        context.graphics().setColor(1.0f, 1.0f, 1.0f, style.get(StyleProperty.ALPHA));
-
+        var oldAlpha = context.graphics().alpha();
+        context.graphics().alpha(style.get(StyleProperty.ALPHA));
         // Render background
         var background = style.get(StyleProperty.BACKGROUND_COLOR);
         if (background != null) {
@@ -48,10 +47,11 @@ public class StyleRenderer {
 
         var border = FourSided.<Border>of(null);
         for (var side : FourSided.Side.values()) {
+            var sideColor = borderColor.get(side);
             border = border.with(side, new Border(
                 borderWidth.get(side),
                 borderPosition.get(side),
-                borderColor.get(side)
+                sideColor
             ));
         }
 
@@ -66,7 +66,7 @@ public class StyleRenderer {
         });
 
         // Revert alpha
-        context.graphics().setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        context.graphics().alpha(oldAlpha);
     }
 
     protected void renderBackground(int color) {

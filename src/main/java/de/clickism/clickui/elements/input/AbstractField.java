@@ -1,12 +1,13 @@
 package de.clickism.clickui.elements.input;
 
 import de.clickism.clickui.UiElement;
+import de.clickism.clickui.event.events.KeyEvent;
 import de.clickism.clickui.layout.Point;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.util.Util;
-import net.minecraft.SharedConstants;
+import de.clickism.clickui.util.versioning.KeyUtil;
+import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -58,13 +59,13 @@ public abstract class AbstractField<S extends AbstractField<S>>
         // Register key press event handler
         this.onKeyPress(event -> {
             if (!listening()) return;
-            if (handleKeyPress(event.code())) {
+            if (handleKeyPress(event)) {
                 event.consume();
             }
         });
         this.onKeyHeld(event -> {
             if (!listening()) return;
-            if (handleKeyPress(event.code())) {
+            if (handleKeyPress(event)) {
                 event.consume();
             }
         });
@@ -80,7 +81,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
             if (!listening()) return;
             int newCursorPos = cursorPosAt(event.x(), event.y());
             cursorPos = Mth.clamp(newCursorPos, 0, value.length());
-            if (!Screen.hasShiftDown()) {
+            if (!KeyUtil.hasShiftDown()) {
                 highlightPos = cursorPos;
             }
         });
@@ -279,7 +280,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      */
     protected String applyFilter(String input) {
         // Remove invalid characters
-        input = SharedConstants.filterText(input, multiLine);
+        input = VersionUtil.applyDefaultFilter(input, multiLine);
         // Apply custom input filter
         input = inputFilter.apply(input);
         // Limit to max length
@@ -475,7 +476,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * @param direction the direction to move in, positive or negative
      */
     protected void moveCursor(int direction) {
-        if (Screen.hasControlDown()) {
+        if (KeyUtil.hasControlDown()) {
             // Move to next word
             cursorPos = wordPosition(direction);
         } else {
@@ -490,7 +491,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
                 cursorPos = highlightStart();
             }
         }
-        if (!Screen.hasShiftDown()) {
+        if (!KeyUtil.hasShiftDown()) {
             highlightPos = cursorPos;
         }
         handleCursorMove();
@@ -499,30 +500,30 @@ public abstract class AbstractField<S extends AbstractField<S>>
     /**
      * Handles key press events for the text box, including text editing and navigation.
      *
-     * @param code the key code of the pressed key
+     * @param event the key press event to handle
      * @return true if the key press was handled, false otherwise
      */
-    protected boolean handleKeyPress(int code) {
-        if (Screen.isSelectAll(code)) {
+    protected boolean handleKeyPress(KeyEvent event) {
+        if (event.isSelectAll()) {
             // Move cursor to the end
             cursorPos = value.length();
             highlightPos = 0; // Highlight from start to end
             handleCursorMove();
             return true;
         }
-        if (Screen.isCopy(code)) {
+        if (event.isCopy()) {
             // Copy highlighted text to clipboard
             var keyboard = Minecraft.getInstance().keyboardHandler;
             keyboard.setClipboard(highlightedText());
             return true;
         }
-        if (Screen.isPaste(code)) {
+        if (event.isPaste()) {
             // Paste text from clipboard
             var keyboard = Minecraft.getInstance().keyboardHandler;
             insertText(keyboard.getClipboard());
             return true;
         }
-        if (Screen.isCut(code)) {
+        if (event.isCut()) {
             // Copy highlighted text to clipboard and remove it from the value
             var keyboard = Minecraft.getInstance().keyboardHandler;
             keyboard.setClipboard(highlightedText());
@@ -531,7 +532,7 @@ public abstract class AbstractField<S extends AbstractField<S>>
         }
         // Other keys
         boolean processed = true;
-        switch (code) {
+        switch (event.code()) {
             case GLFW.GLFW_KEY_BACKSPACE -> {
                 deleteText(-1);
             }
@@ -546,13 +547,13 @@ public abstract class AbstractField<S extends AbstractField<S>>
             }
             case GLFW.GLFW_KEY_HOME -> {
                 cursorPos = 0;
-                if (!Screen.hasShiftDown()) {
+                if (!KeyUtil.hasShiftDown()) {
                     highlightPos = cursorPos;
                 }
             }
             case GLFW.GLFW_KEY_END -> {
                 cursorPos = value.length();
-                if (!Screen.hasShiftDown()) {
+                if (!KeyUtil.hasShiftDown()) {
                     highlightPos = cursorPos;
                 }
             }
@@ -699,7 +700,9 @@ public abstract class AbstractField<S extends AbstractField<S>>
     public void render(RenderContext context) {
         // Render with scissor enabled
         if (scrolling) {
-            renderWithScissor(context, () -> renderTextField(context));
+            context.graphics().withElementScissor(this, () -> {
+                renderTextField(context);
+            });
         } else {
             renderTextField(context);
         }
@@ -717,8 +720,8 @@ public abstract class AbstractField<S extends AbstractField<S>>
         if (scrolling) {
             // Transform by display pos
             int offset = context.font().width(text.substring(0, displayPos));
-            graphics.pose().pushPose();
-            graphics.pose().translate(-offset, 0, 0);
+            graphics.push();
+            graphics.translate(-offset, 0);
         }
 
         try {
@@ -759,32 +762,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
         } finally {
             // Undo transform
             if (scrolling) {
-                graphics.pose().popPose();
+                graphics.pop();
             }
         }
 
-    }
-
-    /**
-     * Renders the given content with scisorr enabled.
-     *
-     * @param context the render context
-     * @param render  the rendering logic
-     */
-    protected void renderWithScissor(RenderContext context, Runnable render) {
-        var graphics = context.graphics();
-        // Enable scissor
-        var bounds = renderBounds();
-        graphics.enableScissor(
-            bounds.x() + 1, // For inline border
-            bounds.y(),
-            bounds.x() + bounds.width() - 1, // For inline border
-            bounds.y() + bounds.height()
-        );
-        // Render
-        render.run();
-        // Disable scissor
-        graphics.disableScissor();
     }
 
     /**

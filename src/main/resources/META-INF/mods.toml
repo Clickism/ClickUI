@@ -10,6 +10,7 @@ clientSideOnly=false
 modId="clickui"
 version="${mod_version}"
 displayName="ClickUI"
+logoFile="assets/clickui/icon.png"
 authors="Clickism"
 description="A modern, declarative, reactive, client-side UI framework for Minecraft."
 

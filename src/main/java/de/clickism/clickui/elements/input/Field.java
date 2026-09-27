@@ -4,10 +4,10 @@ import de.clickism.clickui.UiColor;
 import de.clickism.clickui.layout.Padding;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
+import de.clickism.clickui.render.UiGraphics;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
-import net.minecraft.client.renderer.RenderType;
 
 /**
  * A simple implementation of a text field with default styling and behavior.
@@ -115,10 +115,10 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
         }
         // Render text
         var color = textColor(placeholder);
-        graphics.drawString(context.font(), text, x, y, color, textShadow);
+        graphics.text(text, x, y, color, textShadow);
         // Render suggestion
         x += context.font().width(text);
-        graphics.drawString(context.font(), sugestion, x, y, UiColor.GRAY.color(), textShadow);
+        graphics.text(sugestion, x, y, UiColor.GRAY.color(), textShadow);
     }
 
     @Override
@@ -129,10 +129,10 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
             y -= 1; // Render slightly above the text for better visibility
             var width = 1;
             var height = context.font().lineHeight + 1;
-            context.graphics().fill(RenderType.guiOverlay(), x, y, x + width, y + height, color);
+            context.graphics().fill(x, y, x + width, y + height, color);
         } else {
             // Underscore cursor
-            context.graphics().drawString(context.font(), "_", x, y, color, false); // Never shadow
+            context.graphics().text("_", x, y, color, false); // Never shadow
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class Field<S extends Field<S>> extends AbstractField<S> {
     protected void renderHighlight(RenderContext context, int x, int y, int width) {
         // Render highlight rectangle
         context.graphics().fill(
-            RenderType.guiTextHighlight(),
+            UiGraphics.RenderMode.GUI_TEXT_HIGHLIGHT,
             x - 1,
             y - 1,
             x + width,

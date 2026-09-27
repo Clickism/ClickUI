@@ -68,7 +68,8 @@ public abstract class UiScreen<S extends UiScreen<S>> extends UiComponent<S>
      * @param context the render context to use for rendering the background
      */
     public void renderBackground(RenderContext context) {
-        context.graphics().fillGradient(0, 0, context.screenWidth(), context.screenHeight(), -0x4FEFEFF0, -0x3FEFEFF0);
+        context.graphics().unwrap()
+            .fillGradient(0, 0, context.screenWidth(), context.screenHeight(), -0x4FEFEFF0, -0x3FEFEFF0);
     }
 
     /**

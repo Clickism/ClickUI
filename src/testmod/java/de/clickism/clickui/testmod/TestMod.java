@@ -7,41 +7,62 @@ import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
 import de.clickism.clickui.layout.Align;import de.clickism.clickui.style.Border;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+//? if < 26.1
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-//?} else {
+//? if >= 26.1
+//import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+//?} elif forge {
 /*import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+*///?} elif neoforge {
+/*import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.bus.api.IEventBus;
 *///?}
 
 //? if fabric {
 public class TestMod implements ClientModInitializer, BaseComponents {
- //?} else {
+ //?} elif forge {
+/*@Mod("clickuitestmod")
+public class TestMod implements BaseComponents {
+ *///?} elif neoforge {
 /*@Mod("clickuitestmod")
 public class TestMod implements BaseComponents {
 *///?}
 
+    //? if >= 26.1
+    //public static final KeyMapping.Category CLICKUITESTMOD = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("clickui","testmod"));
     private static KeyMapping openMenuKey;
 
     //? if fabric {
     @Override
     public void onInitializeClient() {
+        //? if < 26.1
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        //? if >= 26.1
+        //openMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clickuitestmod.open_menu",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
+            //? if < 26.1
             "category.clickuitestmod"
+            //? if >= 26.1
+            //CLICKUITESTMOD
         ));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenuKey.consumeClick()) {
@@ -51,23 +72,27 @@ public class TestMod implements BaseComponents {
     }
     //?} else {
 
-    /*public TestMod() {
+    /*public TestMod(/^? if neoforge {^//^IEventBus modBus^//^?}^/) {
         openMenuKey = new KeyMapping(
             "key.clickuitestmod.open_menu",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
             "key.categories.clickuitestmod"
         );
-        MinecraftForge.EVENT_BUS.register(this);
+        //? if forge
+        //MinecraftForge.EVENT_BUS.register(this);
+        //? if neoforge {
+        /^NeoForge.EVENT_BUS.register(this);
+        modBus.addListener(this::registerKeys);
+        ^///?}
     }
 
-    @SubscribeEvent
     public void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(openMenuKey);
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(/^? if forge {^//^TickEvent.ClientTickEvent^//^?} elif neoforge {^/ /^PlayerTickEvent.Post ^//^?}^/ event) {
         while (openMenuKey.consumeClick()) {
             this.openTestScreen();
         }
@@ -251,6 +276,8 @@ public class TestMod implements BaseComponents {
                                     .borderWidth(3)
                                     .borderColor(UiColor.WHITE_A50))),
                         button("Go back but very long so the text should be scrolling! So let's see if it actually does that")
+                            .style(style()
+                                .alpha(0.5f))
                             .width(150)
                             .tooltip("Click to go back to the previous screen")
                             .onClick(event -> {

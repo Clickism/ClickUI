@@ -236,47 +236,34 @@ public class Box extends UiElement<Box> {
     }
 
     @Override
-    public void renderTree(RenderContext context) {
+    public void renderTree(RenderContext treeContext) {
         if (!scrollable) {
             // Skip scroll rendering
-            super.renderTree(context);
+            super.renderTree(treeContext);
             return;
         }
-        context = renderContextToUse(context);
+        final var context = renderContextToUse(treeContext);
         // Render self
         this.renderElement(context);
         // Render children with scroll offset
         var graphics = context.graphics();
         // Enable scissor to clip children
-        var bounds = renderBounds();
-        var x1 = bounds.x();
-        var y1 = bounds.y();
-        var x2 = bounds.x() + bounds.width();
-        var y2 = bounds.y() + bounds.height();
-        graphics.enableScissor(x1, y1, x2, y2);
-
-        graphics.pose().pushPose();
-        // Apply scroll offset
-        scrollY(scrollY); // Clamp scrollY to valid range
-        graphics.pose().translate(0, -scrollY, 0);
-
-        // Render children
-        for (var child : children()) {
-            child.renderTree(context);
-        }
-
-        graphics.pose().popPose();
-        // Disable scissor
-        graphics.disableScissor();
+        graphics.withElementScissor(this, () -> {
+            graphics.push();
+            // Apply scroll offset
+            scrollY(scrollY); // Clamp scrollY to valid range
+            graphics.translate(0f, (float) -scrollY);
+            // Render children
+            for (var child : children()) {
+                child.renderTree(context);
+            }
+            graphics.pop();
+        });
 
         if (scrollable && isOverflowing()) {
-            graphics.pose().pushPose();
-            // Render scrollbar on top of children
-            graphics.pose().translate(0, 0, 100);
-
+            // TODO: Z-index, render scrollbar on top of children!
+            //  OLD: graphics.pose().translate(0, 0, 100);
             renderScrollbar(context);
-
-            graphics.pose().popPose();
         }
 
     }
@@ -288,7 +275,6 @@ public class Box extends UiElement<Box> {
 
     /**
      * Renders the scrollbar on the right side of the container.
-     * Mostly inspired by {@link net.minecraft.client.gui.components.AbstractSelectionList#render}
      *
      * @param context the render context to render with
      */

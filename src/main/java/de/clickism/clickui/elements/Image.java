@@ -85,18 +85,21 @@ public class Image extends UiElement<Image> {
         var graphics = context.graphics();
         var bounds = bounds();
         // Override render to enable blending for semi-transparent textures
+        // TODO: Check if transparency works!
+        //? if < 26.1 {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        //?}
         // Render image
-        graphics.blit(
+        graphics.renderImage(
             texture,
             bounds.x(),
             bounds.y(),
-            0, 0,
-            bounds.width(), bounds.height(),
-            bounds.width(), bounds.height()
+            bounds.width(),
+            bounds.height()
         );
         // Revert blending
+        //? if < 26.1
         RenderSystem.disableBlend();
     }
 }

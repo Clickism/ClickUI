@@ -4,15 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Padding;
+import de.clickism.clickui.layout.Rect;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.ScaledTextRenderer;
+import de.clickism.clickui.render.UiGraphics;
 import de.clickism.clickui.style.Border;
 import de.clickism.clickui.style.StyleProperty;
 import de.clickism.clickui.util.Util;
+import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.network.chat.Component;
 
-import static net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION;
+//? if >= 26.1
+//import net.minecraft.client.renderer.RenderPipelines;
 
 /**
  * A simple UI element that can be clicked and displays a label.
@@ -110,16 +114,16 @@ public class Button extends UiElement<Button> {
         scrollTextIfNeeded(context);
         // Transform by displayOffsetX for scrolling effect
         var graphics = context.graphics();
-        graphics.pose().pushPose();
-        var renderBounds = this.renderBounds();
+        graphics.push();
+        var scissorBounds = graphics.scissorBounds(this);
         var scissorPadding = 2;
-        graphics.enableScissor(
-            renderBounds.x() + scissorPadding,
-            renderBounds.y(),
-            renderBounds.x() + renderBounds.width() - scissorPadding,
-            renderBounds.y() + renderBounds.height()
-        );
-        graphics.pose().translate(-displayOffsetX, 0, 0);
+        graphics.enableScissor(new Rect(
+                scissorBounds.x() + scissorPadding,
+                scissorBounds.y(),
+                scissorBounds.width() - scissorPadding * 2,
+                scissorBounds.height()
+        ));
+        graphics.translate(-displayOffsetX, 0);
         // Render label
         var fontScale = resolvedStyle().get(StyleProperty.FONT_SCALE);
         var renderer = new ScaledTextRenderer(context);
@@ -139,7 +143,7 @@ public class Button extends UiElement<Button> {
         renderer.render(label, textX, textY, fontScale, color);
         graphics.disableScissor();
         // Undo transform
-        graphics.pose().popPose();
+        graphics.pop();
     }
 
     private void scrollTextIfNeeded(RenderContext context) {
@@ -175,33 +179,20 @@ public class Button extends UiElement<Button> {
             return; // Avoid division by zero or rendering issues if bounds are empty
         }
         // Override render to enable blending for semi-transparent textures
+        //? if < 26.1 {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        //?}
         // Render button texture
+        var sprite = VersionUtil.buttonSprite(state().disabled());
         try {
-            graphics.blitNineSliced(
-                WIDGETS_LOCATION,
-                bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-                20, 4, 200, 20, 0, textureY()
-            );
+            graphics.renderSpriteSliced(sprite, bounds.x(), bounds.y(), bounds.width(), bounds.height());
         } catch (Exception e) {
             // Log the error and continue rendering
             System.err.println("Error rendering button background: " + e.getMessage());
         }
         // Revert blending
+        //? if < 26.1
         RenderSystem.disableBlend();
-    }
-
-    /**
-     * Calculates the Y position of the button texture based on the button's state.
-     *
-     * @return the Y position of the button texture
-     */
-    private int textureY() {
-        int textureY = 46;
-        if (!state().disabled()) {
-            textureY += 20;
-        }
-        return textureY;
     }
 }

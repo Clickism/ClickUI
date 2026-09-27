@@ -10,5 +10,5 @@ public record KeyPressEvent(
     int scanCode,
     int modifiers,
     EventState state
-) implements Event {
+) implements Event, KeyEvent {
 }

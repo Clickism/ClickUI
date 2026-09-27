@@ -1,5 +1,5 @@
 //? if forge {
-/*package de.clickism.clickui;
+/*package de.clickism.clickui.platform;
 
 import net.minecraftforge.fml.common.Mod;
 

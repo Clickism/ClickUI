@@ -22,8 +22,8 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(Component text, int x, int y, float scale, int color) {
-        renderWithScale(x, y, scale, () -> {
-            context.graphics().drawString(Util.font(), text, 0, 0, color);
+        context.graphics().withScaleAbout(x, y, scale, scale, () -> {
+            context.graphics().text(text, x, y, color, true);
         });
     }
 
@@ -37,20 +37,9 @@ public record ScaledTextRenderer(
      * @param color the color to render the text with
      */
     public void render(FormattedCharSequence text, int x, int y, float scale, int color) {
-        renderWithScale(x, y, scale, () -> {
-            context.graphics().drawString(Util.font(), text, 0, 0, color);
+        context.graphics().withScaleAbout(x, y, scale, scale, () -> {
+            context.graphics().text(text, x, y, color, true);
         });
-    }
-
-    private void renderWithScale(int x, int y, float scale, Runnable render) {
-        var graphics = context.graphics();
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(scale, scale, 1);
-
-        render.run();
-
-        graphics.pose().popPose();
     }
 
     public float measureWidth(Component text, float scale) {

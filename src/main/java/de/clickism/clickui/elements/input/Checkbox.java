@@ -6,7 +6,9 @@ import de.clickism.clickui.UiElement;
 import de.clickism.clickui.layout.Size;
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.style.Border;
-import net.minecraft.resources.ResourceLocation;
+import de.clickism.clickui.util.versioning.VersionUtil;
+//? if >= 26.1
+//import net.minecraft.client.renderer.RenderPipelines;
 
 import java.util.function.Consumer;
 
@@ -14,14 +16,6 @@ import java.util.function.Consumer;
  * A simple checkbox UI element that can be toggled on and off.
  */
 public class Checkbox extends UiElement<Checkbox> {
-    /**
-     * The checkbox texture to render.
-     */
-    public static final ResourceLocation TEXTURE = ResourceLocation.tryBuild(
-        ResourceLocation.DEFAULT_NAMESPACE,
-        "textures/gui/checkbox.png"
-    );
-
     private static final int SIZE = 20;
 
     private boolean checked = false;
@@ -94,27 +88,25 @@ public class Checkbox extends UiElement<Checkbox> {
     public void render(RenderContext context) {
         var graphics = context.graphics();
         var bounds = this.bounds();
+        graphics.push();
+        //? if < 26.1 {
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
+        //?}
         // Adjust scale to fit in the checkbox size
-        graphics.pose().pushPose();
-        graphics.pose().translate(bounds.x(), bounds.y(), 0.0F);
-        graphics.pose().scale((float) bounds.width() / SIZE, (float) bounds.height() / SIZE, 1.0F);
-        graphics.pose().translate(-bounds.x(), -bounds.y(), 0.0F);
+        graphics.scaleAbout(
+            bounds.x(), bounds.y(),
+            (float) bounds.width() / SIZE, (float) bounds.height() / SIZE
+        );
         // Render the checkbox texture based on its state (focused and checked)
-        graphics.blit(
-            TEXTURE,
+        var sprite = VersionUtil.checkboxSprite(checked);
+        graphics.renderSprite(
+            sprite,
             bounds.x(),
             bounds.y(),
-            0.0F,
-            checked
-                ? 20.0F
-                : 0.0F,
             SIZE,
-            SIZE,
-            64,
-            64
+            SIZE
         );
-        graphics.pose().popPose();
+        graphics.pop();
     }
 }
