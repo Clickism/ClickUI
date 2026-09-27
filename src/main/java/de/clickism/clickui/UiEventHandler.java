@@ -134,20 +134,16 @@ public abstract class UiEventHandler extends Screen {
         }
     }
 
+    //~ if < 26.1 'extractRenderState' -> 'render' {
+
     @Override
-    //? if < 26.1 {
-    public void render
-    //?} elif >= 26.1 {
-    /*public void extractRenderState
-    *///?}
-    (GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //? if < 26.1
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         super.render(guiGraphics, mouseX, mouseY, delta);
-        //? if >= 26.1
-        //super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
         // Update element states first
         updateHoverState(mouseX, mouseY);
     }
+
+    //~}
 
     /**
      * Fires a mouse event to the currently hovered element, if any.
@@ -177,30 +173,27 @@ public abstract class UiEventHandler extends Screen {
         return true;
     }
 
-    @Override
-    public boolean mouseClicked
-        //? if < 26.1 {
-        (double mouseX, double mouseY, int button) {
-        //?} elif >= 26.1 {
-        /*(MouseButtonEvent _event, boolean doubleClicked) {
-        *///?}
-        //? if >= 26.1 {
-        /*double mouseX = _event.x();
-        double mouseY = _event.y();
-        int button = _event.button();
-        *///?}
-        int x = (int) mouseX;
-        int y = (int) mouseY;
-        updateFocusState(hoveredElement, x, y);
+    //~ if < 26.1 'MouseButtonEvent screenEvent' -> 'double mouseX, double mouseY, int button' {
+    //~ if >= 26.1 'unwrapEvent();' -> 'int mouseX = (int) screenEvent.x(); int mouseY = (int) screenEvent.y(); int button = screenEvent.button();' {
 
-        var event = new MouseClickEvent(hoveredElement, x, y, button, new EventState());
+    @Override
+    public boolean mouseClicked(
+        double mouseX, double mouseY, int button
+        //? if >= 26.1
+        //,boolean doubleClick
+    ) {
+        unwrapEvent();
+
+        updateFocusState(hoveredElement, (int) mouseX, (int) mouseY);
+
+        var event = new MouseClickEvent(hoveredElement, (int) mouseX, (int) mouseY, button, new EventState());
         if (fireMouseEvent(event)) {
             if (hoveredElement == null) return true;
             // Start dragging
             draggedElement = hoveredElement;
             dragStartX = mouseX;
             dragStartY = mouseY;
-            var dragEvent = new DragStartEvent(hoveredElement, x, y, button, new EventState());
+            var dragEvent = new DragStartEvent(hoveredElement, mouseX, mouseY, button, new EventState());
             draggedElement.propagateEventUp(dragEvent);
             root.propagateEventDownGlobal(dragEvent);
             return true;
@@ -210,26 +203,15 @@ public abstract class UiEventHandler extends Screen {
     }
 
     @Override
-    public boolean mouseReleased
-        //? if < 26.1 {
-        (double mouseX, double mouseY, int button) {
-        //?} elif >= 26.1 {
-        /*(MouseButtonEvent _event) {
-        *///?}
-        //? if >= 26.1 {
-        /*double mouseX = _event.x();
-        double mouseY = _event.y();
-        int button = _event.button();
-        *///?}
-        int x = (int) mouseX;
-        int y = (int) mouseY;
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        unwrapEvent();
 
-        var event = new MouseReleaseEvent(hoveredElement, x, y, button, new EventState());
+        var event = new MouseReleaseEvent(hoveredElement, (int) mouseX, (int) mouseY, button, new EventState());
         var fired = fireMouseEvent(event);
 
         // End dragging
         if (draggedElement != null) {
-            var dragEndEvent = new DragEndEvent(draggedElement, dragStartX, dragStartY, x, y, button, new EventState());
+            var dragEndEvent = new DragEndEvent(draggedElement, dragStartX, dragStartY, mouseX, mouseY, button, new EventState());
             draggedElement.propagateEventUp(dragEndEvent);
             root.propagateEventDownGlobal(dragEndEvent);
             draggedElement = null;
@@ -239,89 +221,21 @@ public abstract class UiEventHandler extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >= 1.21 {*/ /*double hdelta, *//*?}*/ double delta) {
+    public boolean mouseScrolled(
+        double mouseX, double mouseY,
+        //? if >= 1.21.1
+        //double horizontalDelta,
+        double delta
+    ) {
         // Fire to all
         var event = new MouseScrollEvent(hoveredElement, (int) mouseX, (int) mouseY, delta, new EventState());
         return fireMouseEvent(event);
     }
 
     @Override
-    public boolean keyPressed
-            //? if < 26.1 {
-            (int code, int scanCode, int modifiers) {
-            //?} elif >= 26.1 {
-            /*(KeyEvent _event) {
-            *///?}
-        //? if >= 26.1 {
-        /*int code = _event.key();
-        int scanCode = _event.scancode();
-        int modifiers = _event.modifiers();
-        if (super.keyPressed(_event)) return true;
-        *///?} else {
-        if (super.keyPressed(code, scanCode, modifiers)) return true;
-        //?}
-        if (!pressedKeys.add(code)) {
-            // Key is already pressed, ignore repeat and call held event
-            var event = new KeyHeldEvent(focusedElement, code, scanCode, modifiers, new EventState());
-            return fireKeyEvent(event);
-        }
-        var event = new KeyPressEvent(focusedElement, code, scanCode, modifiers, new EventState());
-        return fireKeyEvent(event);
-    }
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        unwrapEvent();
 
-    @Override
-    public boolean keyReleased
-            //? if < 26.1 {
-            (int code, int scanCode, int modifiers) {
-            //?} elif >= 26.1 {
-            /*(KeyEvent _event) {
-            *///?}
-        //? if >= 26.1 {
-        /*int code = _event.key();
-        int scanCode = _event.scancode();
-        int modifiers = _event.modifiers();
-        *///?}
-        pressedKeys.remove(code);
-        var event = new KeyReleaseEvent(focusedElement, code, scanCode, modifiers, new EventState());
-        fireKeyEvent(event);
-        //? if < 26.1
-        return super.keyReleased(code, scanCode, modifiers);
-        //? if >= 26.1
-        //return super.keyReleased(_event);
-    }
-
-    @Override
-    public boolean charTyped
-            //? if < 26.1 {
-            (char character, int modifiers) {
-            //?} elif >= 26.1 {
-            /*(CharacterEvent _event) {
-            *///?}
-        //? if >= 26.1 {
-        /*char character = (char) _event.codepoint();
-        int modifiers = 0;
-        if (super.charTyped(_event)) return true;
-        *///?} else {
-        if (super.charTyped(character, modifiers)) return true;
-        //?}
-        // Fire to all
-        var event = new CharTypeEvent(focusedElement, character, modifiers, new EventState());
-        fireKeyEvent(event);
-        return false;
-    }
-
-    @Override
-    public boolean mouseDragged
-            //? if < 26.1 {
-            (double mouseX, double mouseY, int button, double dragX, double dragY) {
-            //?} elif >= 26.1 {
-            /*(MouseButtonEvent _event, double dragX, double dragY) {
-            *///?}
-        //? if >= 26.1 {
-        /*double mouseX = _event.x();
-        double mouseY = _event.y();
-        int button = _event.button();
-        *///?}
         if (draggedElement == null || draggedElement.disabled()) return false;
         // Fire mouse drag event to the dragged element
         var event = new DragEvent(
@@ -338,5 +252,67 @@ public abstract class UiEventHandler extends Screen {
         draggedElement.propagateEventUp(event);
         root.propagateEventDownGlobal(event);
         return true;
+    }
+
+    //~}
+    //~}
+
+    //~ if < 26.1 'KeyEvent screenEvent' -> 'int code, int scanCode, int modifiers' {
+    //~ if >= 26.1 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();' {
+    //~ if < 26.1 '(screenEvent)' -> '(code, scanCode, modifiers)' {
+
+    @Override
+    public boolean keyPressed(int code, int scanCode, int modifiers) {
+        unwrapEvent();
+
+        if (super.keyPressed(code, scanCode, modifiers)) return true;
+
+        if (!pressedKeys.add(code)) {
+            // Key is already pressed, ignore repeat and call held event
+            var event = new KeyHeldEvent(focusedElement, code, scanCode, modifiers, new EventState());
+            return fireKeyEvent(event);
+        }
+        var event = new KeyPressEvent(focusedElement, code, scanCode, modifiers, new EventState());
+        return fireKeyEvent(event);
+    }
+
+    @Override
+    public boolean keyReleased(int code, int scanCode, int modifiers) {
+        unwrapEvent();
+
+        pressedKeys.remove(code);
+        var event = new KeyReleaseEvent(focusedElement, code, scanCode, modifiers, new EventState());
+        fireKeyEvent(event);
+
+        return super.keyReleased(code, scanCode, modifiers);
+    }
+
+    //~}
+    //~}
+    //~}
+
+
+    //~ if < 26.1 'CharacterEvent screenEvent' -> 'char character, int modifiers' {
+    //~ if >= 26.1 'unwrapEvent();' -> 'char character = (char) screenEvent.codepoint(); int modifiers = 0;' {
+    //~ if < 26.1 '(screenEvent)' -> '(character, modifiers)' {
+
+    @Override
+    public boolean charTyped(char character, int modifiers) {
+        unwrapEvent();
+
+        if (super.charTyped(character, modifiers)) return true;
+
+        var event = new CharTypeEvent(focusedElement, character, modifiers, new EventState());
+        fireKeyEvent(event);
+
+        return false;
+    }
+
+    //~}
+    //~}
+    //~}
+
+    private void unwrapEvent() {
+        // Nothing, used as placeholder for versioning
     }
 }
