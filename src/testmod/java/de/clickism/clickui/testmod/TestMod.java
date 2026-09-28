@@ -77,7 +77,10 @@ public class TestMod implements BaseComponents {
             "key.clickuitestmod.open_menu",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
-            "key.categories.clickuitestmod"
+            //? if >= 26.1 {
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath("clickui","testmod"))
+            //?} else
+            //"key.categories.clickuitestmod"
         );
         //? if forge
         //MinecraftForge.EVENT_BUS.register(this);
