@@ -492,7 +492,7 @@ public class UiGraphics {
     public void renderImage(Identifier texture, int x, int y, int width, int height) {
         graphics.blit(
             //? if >= 26.1
-            RenderPipelines.GUI,
+            RenderPipelines.GUI_TEXTURED,
             texture,
             x, y,
             0, 0,

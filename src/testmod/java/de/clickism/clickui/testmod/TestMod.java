@@ -65,7 +65,7 @@ public class TestMod implements BaseComponents {
 
             //? if >=26.3 {
             InputConstants.Type.KEYBOARD,
-            SDLKeycode.SDLK_0,
+            SDLKeycode.SDLK_O,
             //?} else {
             /*InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
@@ -295,6 +295,11 @@ public class TestMod implements BaseComponents {
                             .onClick(event -> {
                                 this.openTestScreen();
                             }),
+                        image(
+                            Identifier.withDefaultNamespace("textures/block/stone.png"),
+                            64,
+                            64
+                        ),
                         button("Go back but very long so the text should be scrolling! So let's see if it actually does that")
                             .style(style()
                                 .alpha(0.5f))
