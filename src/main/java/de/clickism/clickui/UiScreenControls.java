@@ -14,31 +14,6 @@ public interface UiScreenControls {
     Screen screenToOpen();
 
     /**
-     * Returns the parent screen of this UiScreen, if any.
-     *
-     * @return the parent screen, or null if there is no parent
-     */
-    default @Nullable Screen parentScreen() {
-        var current = UiScreenHandler.current();
-        if (current != null) {
-            return current.parentScreen();
-        }
-        return null;
-    }
-
-    /**
-     * Sets the parent screen of this UiScreen.
-     *
-     * @param screen the parent screen to set, or null if there is no parent
-     */
-    default void parentScreen(@Nullable Screen screen) {
-        var current = UiScreenHandler.current();
-        if (current != null) {
-            current.parentScreen(screen);
-        }
-    }
-
-    /**
      * Opens this UiScreen in the Minecraft client, setting the current screen as its parent.
      * <p>
      * Will navigate back to the previous screen when this screen is closed.
@@ -53,8 +28,13 @@ public interface UiScreenControls {
      * @param parent the parent screen to set for this UiScreen
      */
     default void open(@Nullable Screen parent) {
-        Util.openScreen(this.screenToOpen());
-        this.parentScreen(parent);
+        var screen = screenToOpen();
+
+        if (screen instanceof UiScreenHandler handler) {
+            handler.parentScreen(parent);
+        }
+
+        Util.openScreen(screen);
     }
 
     /**
@@ -70,11 +50,14 @@ public interface UiScreenControls {
      * Closes this screen and navigates back to the parent screen, if any.
      */
     default void close() {
-        var parent = parentScreen();
-        if (parent == null) {
+        var current = UiScreenHandler.current();
+
+        if (current == null) {
             Util.openScreen(null);
             return;
         }
+
+        var parent = current.parentScreen();
         Util.openScreen(parent);
     }
 
