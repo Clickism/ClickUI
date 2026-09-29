@@ -10,6 +10,7 @@ pluginManagement {
 rootProject.name = "ClickUI"
 
 plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     id("dev.kikugie.stonecutter") version "0.9"
 }
 
@@ -25,6 +26,8 @@ stonecutter {
         version("1.20.1", "fabric-remap", "forge")
         version("1.21.1", "fabric-remap", "neoforge")
         version("26.1", "fabric", "neoforge")
-        vcsVersion = "26.1-fabric"
+        version("26.2", "fabric", "neoforge")
+        version("26.3", "fabric", "neoforge")
+        vcsVersion = "26.3-fabric"
     }
 }

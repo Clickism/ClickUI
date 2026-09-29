@@ -44,7 +44,7 @@ public interface UiScreenControls {
      * Will navigate back to the previous screen when this screen is closed.
      */
     default void open() {
-        open(Minecraft.getInstance().screen);
+        open(Util.currentScreen());
     }
 
     /**

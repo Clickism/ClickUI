@@ -68,7 +68,20 @@ public class Util {
      */
     public static void openScreen(@Nullable Screen screen) {
         var minecraft = Minecraft.getInstance();
-        minecraft.execute(() -> minecraft.setScreen(screen));
+        //~ if >=26.1 'setScreen' -> 'setScreenAndShow'
+        minecraft.execute(() -> minecraft.setScreenAndShow(screen));
+    }
+
+    /**
+     * Returns the current screen in the Minecraft client.
+     *
+     * @return the current screen
+     */
+    public static Screen currentScreen() {
+        //? if >=26.2 {
+        return Minecraft.getInstance().gui.screen();
+        //?} else
+        //return Minecraft.getInstance().screen;
     }
 
 }

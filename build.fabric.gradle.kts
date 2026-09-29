@@ -1,5 +1,3 @@
-import kotlin.text.compareTo
-
 plugins {
     id("java")
     id("net.fabricmc.fabric-loom") version "1.17-SNAPSHOT"

@@ -2,6 +2,7 @@ package de.clickism.clickui;
 
 import de.clickism.clickui.render.RenderContext;
 import de.clickism.clickui.render.UiGraphics;
+import de.clickism.clickui.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -108,7 +109,7 @@ public class UiScreenHandler extends UiEventHandler implements UiScreenControls 
      * @return the current UiScreenHandler, or null if the open screen is not a UiScreenHandler
      */
     public static @Nullable UiScreenHandler current() {
-        var screen = Minecraft.getInstance().screen;
+        var screen = Util.currentScreen();
         if (screen instanceof UiScreenHandler handler) {
             return handler;
         }

@@ -9,7 +9,7 @@ import de.clickism.clickui.util.versioning.KeyUtil;
 import de.clickism.clickui.util.versioning.VersionUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
-import org.lwjgl.glfw.GLFW;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+//? if >=26.3 {
+import org.lwjgl.sdl.SDLKeycode;
+//?} else
+//import org.lwjgl.glfw.GLFW;
 
 /**
  * An abstract class representing a text field UI element.
@@ -26,6 +31,28 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractField<S extends AbstractField<S>>
     extends UiElement<S> {
+
+    //? if >=26.3 {
+    private static final int KEY_BACKSPACE = SDLKeycode.SDLK_BACKSPACE;
+    private static final int KEY_DELETE = SDLKeycode.SDLK_DELETE;
+    private static final int KEY_LEFT = SDLKeycode.SDLK_LEFT;
+    private static final int KEY_RIGHT = SDLKeycode.SDLK_RIGHT;
+    private static final int KEY_HOME = SDLKeycode.SDLK_HOME;
+    private static final int KEY_END = SDLKeycode.SDLK_END;
+    private static final int KEY_TAB = SDLKeycode.SDLK_TAB;
+    private static final int KEY_ENTER = SDLKeycode.SDLK_RETURN;
+    private static final int KEY_KP_ENTER = SDLKeycode.SDLK_KP_ENTER;
+    //?} else {
+    /*private static final int KEY_BACKSPACE = GLFW.GLFW_KEY_BACKSPACE;
+    private static final int KEY_DELETE = GLFW.GLFW_KEY_DELETE;
+    private static final int KEY_LEFT = GLFW.GLFW_KEY_LEFT;
+    private static final int KEY_RIGHT = GLFW.GLFW_KEY_RIGHT;
+    private static final int KEY_HOME = GLFW.GLFW_KEY_HOME;
+    private static final int KEY_END = GLFW.GLFW_KEY_END;
+    private static final int KEY_TAB = GLFW.GLFW_KEY_TAB;
+    private static final int KEY_ENTER = GLFW.GLFW_KEY_ENTER;
+    private static final int KEY_KP_ENTER = GLFW.GLFW_KEY_KP_ENTER;
+    *///?}
 
     private String value = "";
     private String placeholder = "";
@@ -533,37 +560,37 @@ public abstract class AbstractField<S extends AbstractField<S>>
         // Other keys
         boolean processed = true;
         switch (event.code()) {
-            case GLFW.GLFW_KEY_BACKSPACE -> {
+            case KEY_BACKSPACE -> {
                 deleteText(-1);
             }
-            case GLFW.GLFW_KEY_DELETE -> {
+            case KEY_DELETE -> {
                 deleteText(1);
             }
-            case GLFW.GLFW_KEY_LEFT -> {
+            case KEY_LEFT -> {
                 moveCursor(-1);
             }
-            case GLFW.GLFW_KEY_RIGHT -> {
+            case KEY_RIGHT -> {
                 moveCursor(1);
             }
-            case GLFW.GLFW_KEY_HOME -> {
+            case KEY_HOME -> {
                 cursorPos = 0;
                 if (!KeyUtil.hasShiftDown()) {
                     highlightPos = cursorPos;
                 }
             }
-            case GLFW.GLFW_KEY_END -> {
+            case KEY_END -> {
                 cursorPos = value.length();
                 if (!KeyUtil.hasShiftDown()) {
                     highlightPos = cursorPos;
                 }
             }
-            case GLFW.GLFW_KEY_TAB -> {
+            case KEY_TAB -> {
                 // Apply suggestion
                 if (!currentSuggestion.isEmpty()) {
                     insertText(currentSuggestion);
                 }
             }
-            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
+            case KEY_ENTER, KEY_KP_ENTER -> {
                 if (multiLine) {
                     insertText("\n");
                 }

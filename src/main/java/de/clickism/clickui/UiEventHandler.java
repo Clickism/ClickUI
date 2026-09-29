@@ -173,7 +173,7 @@ public abstract class UiEventHandler extends Screen {
         return true;
     }
 
-    //~ if < 26.1 'MouseButtonEvent screenEvent' -> 'double mouseX, double mouseY, int button' {
+    //~ if < 26.1 'MouseButtonEvent screenEvent' -> 'double mouseX, double mouseY, int button'
     //~ if >= 26.1 'unwrapEvent();' -> 'int mouseX = (int) screenEvent.x(); int mouseY = (int) screenEvent.y(); int button = screenEvent.button();' {
 
     @Override
@@ -253,17 +253,17 @@ public abstract class UiEventHandler extends Screen {
         root.propagateEventDownGlobal(event);
         return true;
     }
-
+    
     //~}
-    //~}
 
-    //~ if < 26.1 'KeyEvent screenEvent' -> 'int code, int scanCode, int modifiers' {
-    //~ if >= 26.1 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();' {
-    //~ if < 26.1 '(screenEvent)' -> '(code, scanCode, modifiers)' {
+    //~ if < 26.1 'KeyEvent screenEvent' -> 'int code, int scanCode, int modifiers'
+    //~ if >= 26.1 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();'
+    //~ if < 26.1 '(screenEvent)' -> '(code, scanCode, modifiers)'
+    //~ if >=26.3 'scancode' -> 'keycode' {
 
     @Override
     public boolean keyPressed(KeyEvent screenEvent) {
-        int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();
+        int code = screenEvent.key(); int scanCode = screenEvent.keycode(); int modifiers = screenEvent.modifiers();
 
         if (super.keyPressed(screenEvent)) return true;
 
@@ -278,7 +278,7 @@ public abstract class UiEventHandler extends Screen {
 
     @Override
     public boolean keyReleased(KeyEvent screenEvent) {
-        int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();
+        int code = screenEvent.key(); int scanCode = screenEvent.keycode(); int modifiers = screenEvent.modifiers();
 
         pressedKeys.remove(code);
         var event = new KeyReleaseEvent(focusedElement, code, scanCode, modifiers, new EventState());
@@ -288,12 +288,9 @@ public abstract class UiEventHandler extends Screen {
     }
 
     //~}
-    //~}
-    //~}
 
-
-    //~ if < 26.1 'CharacterEvent screenEvent' -> 'char character, int modifiers' {
-    //~ if >= 26.1 'unwrapEvent();' -> 'char character = (char) screenEvent.codepoint(); int modifiers = 0;' {
+    //~ if < 26.1 'CharacterEvent screenEvent' -> 'char character, int modifiers'
+    //~ if >= 26.1 'unwrapEvent();' -> 'char character = (char) screenEvent.codepoint(); int modifiers = 0;'
     //~ if < 26.1 '(screenEvent)' -> '(character, modifiers)' {
 
     @Override
@@ -308,8 +305,6 @@ public abstract class UiEventHandler extends Screen {
         return false;
     }
 
-    //~}
-    //~}
     //~}
 
     private void unwrapEvent() {

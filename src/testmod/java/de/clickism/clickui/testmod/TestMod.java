@@ -6,12 +6,17 @@ import de.clickism.clickui.SafeRef;
 import de.clickism.clickui.UiColor;
 import de.clickism.clickui.UiScreen;
 import de.clickism.clickui.elements.input.NumberField;
-import de.clickism.clickui.layout.Align;import de.clickism.clickui.style.Border;
+import de.clickism.clickui.layout.Align;
+import de.clickism.clickui.style.Border;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
+
+//? if >=26.3 {
+import org.lwjgl.sdl.SDLKeycode;
+//?} else
+//import org.lwjgl.glfw.GLFW;
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
@@ -57,8 +62,15 @@ public class TestMod implements BaseComponents {
         //? if >= 26.1
         openMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clickuitestmod.open_menu",
-            InputConstants.Type.KEYSYM,
+
+            //? if >=26.3 {
+            InputConstants.Type.KEYBOARD,
+            SDLKeycode.SDLK_0,
+            //?} else {
+            /*InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
+            *///?}
+
             //? if < 26.1
             //"category.clickuitestmod"
             //? if >= 26.1

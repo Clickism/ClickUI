@@ -13,7 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 //? if >= 26.1 {
 import net.minecraft.client.renderer.RenderPipelines;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+//? if >=26.3 {
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+//?} else
+//import com.mojang.blaze3d.pipeline.RenderPipeline;
 //?} else {
 /*import net.minecraft.client.renderer.RenderType;
 *///?}
