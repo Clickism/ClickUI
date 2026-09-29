@@ -4,14 +4,20 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.fabricmc.net/")
         maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.kikugie.dev/snapshots")
+    }
+    buildscript {
+        dependencies {
+            // Need this for some reason or else IntelliJ doesn't load gradle properly
+            classpath("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.4.1")
+        }
     }
 }
 
 rootProject.name = "ClickUI"
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.9"
+    id("dev.kikugie.stonecutter") version "0.10-alpha.11"
 }
 
 stonecutter {

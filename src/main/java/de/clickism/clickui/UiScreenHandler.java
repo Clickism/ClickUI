@@ -43,8 +43,8 @@ public class UiScreenHandler extends UiEventHandler implements UiScreenControls 
 
     @Override
     //? if < 26.1 {
-    /*public void render
-    *///?} elif >= 26.1 {
+    //public void render
+    //?} elif >= 26.1 {
     public void extractRenderState
     //?}
             (GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
@@ -55,6 +55,7 @@ public class UiScreenHandler extends UiEventHandler implements UiScreenControls 
         //super.render(graphics, mouseX, mouseY, delta);
         //? if >= 26.1
         super.extractRenderState(graphics, mouseX, mouseY, delta);
+
         // Render the tree
         var uiGraphics = new UiGraphics(graphics);
         var context = new RenderContext(uiGraphics, mouseX, mouseY, delta, this, false);

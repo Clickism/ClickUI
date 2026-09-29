@@ -257,9 +257,9 @@ public abstract class UiEventHandler extends Screen {
     //~}
 
     //~ if < 26.1 'KeyEvent screenEvent' -> 'int code, int scanCode, int modifiers'
-    //~ if >= 26.1 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();'
-    //~ if < 26.1 '(screenEvent)' -> '(code, scanCode, modifiers)'
-    //~ if >=26.3 'scancode' -> 'keycode' {
+    //~ if >= 26.1 && <26.3 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.scancode(); int modifiers = screenEvent.modifiers();'
+    //~ if >= 26.3 'unwrapEvent();' -> 'int code = screenEvent.key(); int scanCode = screenEvent.keycode(); int modifiers = screenEvent.modifiers();'
+    //~ if < 26.1 '(screenEvent)' -> '(code, scanCode, modifiers)' {
 
     @Override
     public boolean keyPressed(KeyEvent screenEvent) {

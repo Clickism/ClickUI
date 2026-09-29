@@ -7,8 +7,8 @@ import org.jetbrains.annotations.ApiStatus;
 //? if >= 1.21.1 {
 import net.minecraft.util.StringUtil;
 //?} else {
-/*import net.minecraft.SharedConstants;
-*///?}
+//import net.minecraft.SharedConstants;
+//?}
 
 /**
  * Utility class for version-specific operations.
@@ -27,8 +27,8 @@ public class VersionUtil {
         //? if >= 1.21.1 {
         return StringUtil.filterText(string, multiline);
         //?} else {
-        /*return SharedConstants.filterText(string, multiline);
-        *///?}
+        //return SharedConstants.filterText(string, multiline);
+        //?}
     }
 
     public static UiGraphics.Sprite buttonSprite(boolean disabled) {

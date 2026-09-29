@@ -18,8 +18,8 @@ import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 //?} else
 //import com.mojang.blaze3d.pipeline.RenderPipeline;
 //?} else {
-/*import net.minecraft.client.renderer.RenderType;
-*///?}
+//import net.minecraft.client.renderer.RenderType;
+//?}
 
 /**
  * A wrapper around gui graphics that provides version-independent rendering methods for UI elements.
@@ -90,8 +90,8 @@ public class UiGraphics {
         //? if >= 26.1 {
         graphics.pose().rotate(radians);
         //?} else {
-        /*graphics.pose().rotateAround(Axis.ZP.rotation(radians), 0, 0, 0);
-        *///?}
+        //graphics.pose().rotateAround(Axis.ZP.rotation(radians), 0, 0, 0);
+        //?}
     }
 
     /**
