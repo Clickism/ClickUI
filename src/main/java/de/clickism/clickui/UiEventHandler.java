@@ -55,9 +55,24 @@ public abstract class UiEventHandler extends Screen {
     protected UiEventHandler(Component component, UiElement<?> root) {
         super(component);
         this.root = root;
+    }
+
+    @Override
+    public void added() {
+        super.added();
+
         // Handle SDL input
         //? if >=26.3
         Minecraft.getInstance().onTextInputFocusChange(this, true);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+
+        // Handle SDL input
+        //? if >=26.3
+        Minecraft.getInstance().onTextInputFocusChange(this, false);
     }
 
     /**
