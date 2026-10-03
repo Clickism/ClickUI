@@ -4,24 +4,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
 //? if >=26.3 {
-import org.lwjgl.sdl.SDLKeycode;
+import com.mojang.blaze3d.platform.InputConstants;
 //?} else
 //import org.lwjgl.glfw.GLFW;
 
 //~ if >= 26.1 'Screen' -> 'Minecraft.getInstance()' {
 public class KeyUtil {
     //? if >=26.3 {
-    public static final int KEY_BACKSPACE = SDLKeycode.SDLK_BACKSPACE;
-    public static final int KEY_DELETE = SDLKeycode.SDLK_DELETE;
-    public static final int KEY_LEFT = SDLKeycode.SDLK_LEFT;
-    public static final int KEY_RIGHT = SDLKeycode.SDLK_RIGHT;
-    public static final int KEY_UP = SDLKeycode.SDLK_UP;
-    public static final int KEY_DOWN = SDLKeycode.SDLK_DOWN;
-    public static final int KEY_HOME = SDLKeycode.SDLK_HOME;
-    public static final int KEY_END = SDLKeycode.SDLK_END;
-    public static final int KEY_TAB = SDLKeycode.SDLK_TAB;
-    public static final int KEY_ENTER = SDLKeycode.SDLK_RETURN;
-    public static final int KEY_KP_ENTER = SDLKeycode.SDLK_KP_ENTER;
+    public static final int KEY_BACKSPACE = InputConstants.KEY_BACKSPACE;
+    public static final int KEY_DELETE = InputConstants.KEY_DELETE;
+    public static final int KEY_LEFT = InputConstants.KEY_LEFT;
+    public static final int KEY_RIGHT = InputConstants.KEY_RIGHT;
+    public static final int KEY_UP = InputConstants.KEY_UP;
+    public static final int KEY_DOWN = InputConstants.KEY_DOWN;
+    public static final int KEY_HOME = InputConstants.KEY_HOME;
+    public static final int KEY_END = InputConstants.KEY_END;
+    public static final int KEY_TAB = InputConstants.KEY_TAB;
+    public static final int KEY_ENTER = InputConstants.KEY_RETURN;
+    public static final int KEY_KP_ENTER = InputConstants.KEY_NUMPADENTER;
     //?} else {
     /*public static final int KEY_BACKSPACE = GLFW.GLFW_KEY_BACKSPACE;
     public static final int KEY_DELETE = GLFW.GLFW_KEY_DELETE;

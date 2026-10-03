@@ -1,9 +1,11 @@
 package de.clickism.clickui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.clickism.clickui.event.Event;
 import de.clickism.clickui.event.EventState;
 import de.clickism.clickui.event.HitTester;
 import de.clickism.clickui.event.events.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -53,6 +55,9 @@ public abstract class UiEventHandler extends Screen {
     protected UiEventHandler(Component component, UiElement<?> root) {
         super(component);
         this.root = root;
+        // Handle SDL input
+        //? if >=26.3
+        Minecraft.getInstance().onTextInputFocusChange(this, true);
     }
 
     /**

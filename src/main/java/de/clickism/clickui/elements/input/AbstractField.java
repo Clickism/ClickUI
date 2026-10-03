@@ -1,5 +1,6 @@
 package de.clickism.clickui.elements.input;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.clickism.clickui.UiElement;
 import de.clickism.clickui.event.events.KeyEvent;
 import de.clickism.clickui.layout.Point;
