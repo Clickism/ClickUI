@@ -43,6 +43,13 @@ public abstract class UiElement<S extends UiElement<S>>
     private boolean dirtyLayout = false;
 
     /**
+     * Whether this element should render its children before itself.
+     * If true, the children will be rendered first, and then this element will be rendered on top of them.
+     * If false, this element will be rendered first, and then the children will be rendered on top of it.
+     */
+    private boolean renderChildrenFirst = false;
+
+    /**
      * Layout information for this element,
      */
     private final Layout layout = new Layout();
@@ -592,9 +599,21 @@ public abstract class UiElement<S extends UiElement<S>>
      * @param ref the ref to set
      * @return this element
      */
-
     public S ref(Ref<S> ref) {
         ref.set(self());
+        return self();
+    }
+
+    /**
+     * Sets whether this element should render its children before itself.
+     * If true, the children will be rendered first, and then this element will be rendered on top of them.
+     * If false, this element will be rendered first, and then the children will be rendered on top of it.
+     *
+     * @param renderChildrenFirst whether this element should render its children before itself
+     * @return this element
+     */
+    protected S renderChildrenFirst(boolean renderChildrenFirst) {
+        this.renderChildrenFirst = renderChildrenFirst;
         return self();
     }
 
@@ -614,10 +633,23 @@ public abstract class UiElement<S extends UiElement<S>>
      */
     public void renderTree(RenderContext context) {
         var contextToUse = renderContextToUse(context);
-        this.renderElement(contextToUse);
-        // Render children
+        if (renderChildrenFirst) {
+            this.renderChildren(contextToUse);
+            this.renderElement(contextToUse);
+        } else {
+            this.renderElement(contextToUse);
+            this.renderChildren(contextToUse);
+        }
+    }
+
+    /**
+     * Renders all children of this element recursively.
+     *
+     * @param context the render context to render to
+     */
+    protected void renderChildren(RenderContext context) {
         for (var child : children) {
-            child.renderTree(contextToUse);
+            child.renderTree(context);
         }
     }
 
