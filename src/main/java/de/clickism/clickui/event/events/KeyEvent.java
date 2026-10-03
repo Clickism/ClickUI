@@ -45,4 +45,18 @@ public interface KeyEvent {
         //?} else
         //return Screen.isPaste(code());
     }
+
+    default boolean hasControlDown() {
+        //? if >= 26.1 {
+        return asKeyEvent().hasControlDownWithQuirk();
+        //?} else
+        //return Screen.hasControlDown();
+    }
+
+    default boolean hasShiftDown() {
+        //? if >= 26.1 {
+        return asKeyEvent().hasShiftDown();
+        //?} else
+        //return Screen.hasShiftDown();
+    }
 }

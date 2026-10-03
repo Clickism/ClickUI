@@ -477,9 +477,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
      * (positive for forward, negative for backward).
      *
      * @param direction the direction to move in, positive or negative
+     * @param controlDown whether the control key is held down
      */
-    protected void moveCursor(int direction) {
-        if (KeyUtil.hasControlDown()) {
+    protected void moveCursor(int direction, boolean controlDown) {
+        if (controlDown) {
             // Move to next word
             cursorPos = wordPosition(direction);
         } else {
@@ -543,10 +544,10 @@ public abstract class AbstractField<S extends AbstractField<S>>
                 deleteText(1);
             }
             case KEY_LEFT -> {
-                moveCursor(-1);
+                moveCursor(-1, event.hasControlDown());
             }
             case KEY_RIGHT -> {
-                moveCursor(1);
+                moveCursor(1, event.hasControlDown());
             }
             case KEY_HOME -> {
                 cursorPos = 0;

@@ -5,6 +5,8 @@ import net.minecraft.client.gui.screens.Screen;
 
 //? if >=26.3 {
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.InputQuirks;
+import org.lwjgl.sdl.SDLKeyboard;
 //?} else
 //import org.lwjgl.glfw.GLFW;
 
@@ -41,7 +43,10 @@ public class KeyUtil {
     }
 
     public static boolean hasControlDown() {
-        return Minecraft.getInstance().hasControlDown();
+        //? if >=26.3 {
+        return (SDLKeyboard.SDL_GetModState() & InputQuirks.EDIT_SHORTCUT_KEY_MODIFIER) != 0;
+        //?} else
+        //return Minecraft.getInstance().hasControlDown();
     }
 }
 //~}
