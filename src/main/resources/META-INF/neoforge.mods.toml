@@ -10,7 +10,10 @@ clientSideOnly=false
 modId="clickui"
 version="${mod_version}"
 displayName="ClickUI"
-logoFile="assets/clickui/icon.png"
+#? if >=26.2 {
+iconFile="assets/clickui/icon.png"
+#?} else
+#logoFile="assets/clickui/icon.png"
 authors="Clickism"
 description="A modern, declarative, reactive, client-side UI framework for Minecraft."
 

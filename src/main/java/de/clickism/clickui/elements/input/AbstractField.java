@@ -18,10 +18,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-//? if >=26.3 {
-import org.lwjgl.sdl.SDLKeycode;
-//?} else
-//import org.lwjgl.glfw.GLFW;
+import static de.clickism.clickui.util.versioning.KeyUtil.*;
 
 /**
  * An abstract class representing a text field UI element.
@@ -31,28 +28,6 @@ import org.lwjgl.sdl.SDLKeycode;
  */
 public abstract class AbstractField<S extends AbstractField<S>>
     extends UiElement<S> {
-
-    //? if >=26.3 {
-    private static final int KEY_BACKSPACE = SDLKeycode.SDLK_BACKSPACE;
-    private static final int KEY_DELETE = SDLKeycode.SDLK_DELETE;
-    private static final int KEY_LEFT = SDLKeycode.SDLK_LEFT;
-    private static final int KEY_RIGHT = SDLKeycode.SDLK_RIGHT;
-    private static final int KEY_HOME = SDLKeycode.SDLK_HOME;
-    private static final int KEY_END = SDLKeycode.SDLK_END;
-    private static final int KEY_TAB = SDLKeycode.SDLK_TAB;
-    private static final int KEY_ENTER = SDLKeycode.SDLK_RETURN;
-    private static final int KEY_KP_ENTER = SDLKeycode.SDLK_KP_ENTER;
-    //?} else {
-    /*private static final int KEY_BACKSPACE = GLFW.GLFW_KEY_BACKSPACE;
-    private static final int KEY_DELETE = GLFW.GLFW_KEY_DELETE;
-    private static final int KEY_LEFT = GLFW.GLFW_KEY_LEFT;
-    private static final int KEY_RIGHT = GLFW.GLFW_KEY_RIGHT;
-    private static final int KEY_HOME = GLFW.GLFW_KEY_HOME;
-    private static final int KEY_END = GLFW.GLFW_KEY_END;
-    private static final int KEY_TAB = GLFW.GLFW_KEY_TAB;
-    private static final int KEY_ENTER = GLFW.GLFW_KEY_ENTER;
-    private static final int KEY_KP_ENTER = GLFW.GLFW_KEY_KP_ENTER;
-    *///?}
 
     private String value = "";
     private String placeholder = "";
