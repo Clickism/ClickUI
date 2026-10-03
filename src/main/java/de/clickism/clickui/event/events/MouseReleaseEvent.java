@@ -10,5 +10,5 @@ public record MouseReleaseEvent(
     int y,
     int button,
     EventState state
-) implements Event {
+) implements Event, MouseButtonEvent {
 }
